@@ -1,6 +1,6 @@
 <template>
     <div class="default">
-        Style.vue
+        Tree.vue
     </div>
 </template>
 

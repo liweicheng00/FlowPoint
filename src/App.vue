@@ -6,15 +6,33 @@
     </div>
     <router-view/>
     <Block/>
+    <All/>
+    <Demo/>
+    <Keyboard/>
+    <Tree/>
+    <Style/>
+    <Tool/>
   </div>
 </template>
 
 <script>
   import Block from '@/components/Block.vue'
+  import All from '@/components/All.vue'
+  import Demo from '@/components/Demo.vue'
+  import Keyboard from '@/components/Keyboard.vue'
+  import Tree from '@/components/Tree.vue'
+  import Style from '@/components/Style.vue'
+  import Tool from '@/components/Tool.vue'
   export default {
-  name: 'Block',
+  name: 'app',
   components: {
-    Block
+    Block,
+    All,
+    Demo,
+    Keyboard,
+    Tree,
+    Style,
+    Tool
   }
 }
 </script>
