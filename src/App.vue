@@ -5,8 +5,19 @@
       <router-link to="/about">About</router-link>
     </div>
     <router-view/>
+    <Block/>
   </div>
 </template>
+
+<script>
+  import Block from '@/components/Block.vue'
+  export default {
+  name: 'Block',
+  components: {
+    Block
+  }
+}
+</script>
 
 <style>
 #app {
