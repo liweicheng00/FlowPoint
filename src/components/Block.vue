@@ -1,214 +1,131 @@
 <template>
-  <div class="block" @click.self="clickEvent">
-    <!-- <h1 @dblclick.self="backdblclickEvent">{{self.id}}</h1>
-    <p>height:{{props.clientHeight}} width:{{props.clientWidth}}</p>-->
-    <svg
-      id="block"
-      version="1.1"
-      baseProfile="full"
-      xmlns="http://www.w3.org/2000/svg"
-      :width="props.clientWidth"
-      :height="props.clientHeight"
-      @contextmenu.prevent
-      @click.right="rightclickEvent"
-      @dblclick.self="dblclickEvent"
-      @drag="dragEvent"
-      @select="selectEvent"
-      @mousedown.right="mousedownEvent"
-      @mouseup.right="mouseupEvent"
-      @mousemove="mousemoveEvent"
-    >
-      <g class="g_zoom">
-        <Preview
-          v-for="(child, index) in childs"
-          :key="index"
-          :data="child"
-          :parent="self"
-          @dblclick.self="previewdblclickEvent($event)"
-          @mouseenter="PreviewMouseenterEvent($event)"
-        />
-      </g>
-    </svg>
-  </div>
+  <g
+    @mouseenter="$emit('mouseenter',$event,data, {styleObject, textObject})"
+    @mouseleave="$emit('mouseleave',$event,data, {styleObject, textObject})"
+    @mousedown.right="$emit('mousedown-right',$event,data, {styleObject, textObject})"
+    @mouseup.right="$emit('mouseup-right',$event,data, {styleObject, textObject})"
+    @focus="onFocus($event)"
+  >
+    <rect
+      class="Preview"
+      :id="data.id"
+      @dblclick.self="$emit('dblclick', $event,data)"
+      v-bind="styleObject"
+      :class="{focus: ifFocus}"
+    />
+    <text v-bind="textObject" @select.prevent>{{content}}</text>
+  </g>
 </template>
 
 <script>
-import mousemove from "@/api/position.js";
-import Preview from "@/components/Preview.vue";
-import Element from "@/api/element.js";
-import * as d3 from "d3";
-// import * as zoom from "d3-zoom";
+// import func from "../../vue-temp/vue-editor-bridge";
+// import { mapState } from "vuex";
 
 export default {
-  components: {
-    Preview,
-  },
   props: {
     data: Object,
+    parent: Object,｀
   },
   data: function () {
     return {
-      allowZoom: false,
-      self: this.data,
-      childs: this.data.childs,
-      parent: this.data.parent,
-      dom: {},
-      svg: null,
-      linkStatus: false,
-      arrowstartPreview: null,
-      arrowendPreview: null,
-      arrowObject: null,
-      arrowDom: null,
-      props: { clientHeight: null, clientWidth: null },
+      ifFocus: false,
+      content: "",
+      styleDefault: {
+        width: "100",
+        height: "30",
+        stroke: "black",
+        fill: "transparent",
+        "stroke-width": "1",
+      },
+      textDefault: {
+        fill: "black",
+        "text-anchor": "middle",
+        style: `shape-inside:url(#${this.data.id});shape-padding:25px;font-family:DejaVu Sans;font-size:12px;text-align:justified;line-height:110%`,
+        // "shape-inside": `url(#${this.data.id})`,
+        // "shape-padding": "25px",
+        // "font-family": "DejaVu Sans",
+        // "font-size": "12px",
+        // "text-align": "justified",
+        // "line-height": "110%",
+      },
     };
   },
-  created() {
-    // console.log(zoom);
-    this.$bus.$on("tool:undo", () => {
-      this.backtoolclickEvent();
-    });
-    window.addEventListener("resize", () => {
-      this.windowresizeEvent();
+  created: function () {
+    // todo: content
+    this.content = this.data.id;
+
+    this.$bus.$on("TextEditor:change", (content) => {
+      if (this.ifFocus) {
+        this.content = content;
+      }
     });
   },
-  mounted: function () {
-    // console.log("mounted");
-    this.svg = d3.select("#block");
-    const g = this.svg.select("g");
-
-    this.svg.call(
-      d3
-        .zoom()
-        .extent([
-          [0, 0],
-          [300, 300],
-        ])
-        .scaleExtent([1, 8])
-        .on("zoom", zoomed)
-    );
-    function zoomed() {
-      console.log("zoom event");
-      g.attr("transform", d3.event.transform);
-      console.log(d3.event.sourceEvent);
-    }
-    if (!this.allowZoom) {
-      this.svg.on(".zoom", null);
-    }
-    this.props.clientHeight = this.$el.clientHeight;
-    this.props.clientWidth = this.$el.clientWidth;
-  },
-
-  computed: {},
   watch: {
-    allowZoom: function (newValue) {
-      console.log("change");
-      if (!newValue) {
-        console.log(this.svg);
-        this.svg.on(".zoom", null);
-      }
-    },
-  },
-  methods: {
-    windowresizeEvent() {
-      this.props.clientHeight = this.$el.clientHeight;
-      this.props.clientWidth = this.$el.clientWidth;
-    },
-    clickEvent(event) {
-      console.log(event.type);
-    },
-    rightclickEvent(event) {
-      console.log(event);
-    },
-    dblclickEvent(event) {
-      console.log(event.type);
-      this.$store.commit("newID");
-      this.childs.push(
-        new Element(
-          "preview",
-          this.$store.state.IdArray[this.$store.state.IdArray.length - 1],
-          {
-            mouseclickposition: [
-              mousemove.event.offsetX,
-              mousemove.event.offsetY,
-            ],
-          }
-        )
-      );
-    },
-    mousedownEvent(event) {
-      if (event.target.classList.contains("Preview")) {
-        console.log(event.target);
-        this.linkStatus = true;
-        this.arrowstartPreview = event.target;
-      }
-    },
-    mousemoveEvent(event) {
-      if (this.linkStatus) {
-        //   todo: add Arrow components
-        console.log(event.x);
-        if (!this.arrowObject) {
-          this.$store.commit("newID");
-          this.arrowObject = new Element(
-            "arrow",
-            this.$store.state.IdArray[this.$store.state.IdArray.length - 1],
-            {}
-          );
-          this.childs.push(this.arrowObject);
-        } else {
-          this.arrowObject.props.len += 1;
-        }
-      }
-    },
-    mouseupEvent(event) {
-      this.linkStatus = false;
-      this.arrowObject = null;
-      if (event.target.classList.contains("Preview")) {
-        console.log(event.target);
-        this.arrowendPreview = event.target;
-      } else {
-        //   todo: remove new arrow element in this.childs
-        this.childs.pop();
-      }
-    },
+    focusingElementId: function (new_value) {
+      // pass content to TextEditor
 
-    dragEvent(event) {
-      // drag selected text
-      console.log(event.type);
-    },
-    selectEvent(event) {
-      console.log(event.type);
-    },
-    backtoolclickEvent(event) {
-      console.log("backdblclickEvent");
-      console.log(event);
-      if (this.parent) {
-        this.childs = this.parent.childs;
-        this.self = this.parent;
-        this.parent = this.parent.parent;
+      if (new_value == this.data.id) {
+        console.log(this.ifFocus);
+        this.ifFocus = true;
+        this.$bus.$emit("Block:focus", this.content);
       } else {
-        console.log("no parent");
+        this.ifFocus = false;
       }
     },
-    previewdblclickEvent(child) {
-      console.log("previewdblClick");
-      console.log(child);
-      this.self.parent = this.parent;
-      this.parent = this.self;
-      this.childs = child.childs;
-      this.self = child;
+  },
+  computed: {
+    styleObject: function () {
+      if (this.data.position.mouseclickposition) {
+        return Object.assign(this.styleDefault, {
+          color: "red",
+          x: `${
+            this.data.position.mouseclickposition[0] -
+            parseInt(this.styleDefault.width) / 2
+          }`,
+          y: `${
+            this.data.position.mouseclickposition[1] -
+            parseInt(this.styleDefault.height) / 2
+          }`,
+        });
+      } else {
+        return this.styleDefault;
+      }
     },
-    PreviewMouseenterEvent(child) {
-      console.log(child);
+    textObject: function () {
+      return Object.assign(this.textDefault, {
+        x: `${this.data.position.mouseclickposition[0]}`,
+        y: `${this.data.position.mouseclickposition[1]}`,
+      });
+    },
+    focusingElementId: function () {
+      return this.$store.state.FocusingElementId;
     },
   },
+  mounted: function () {},
+  methods: {
+    onFocus() {
+      this.$store.commit("changeFocusingElement", this.data.id);
+    },
+  },
+  beforeDestroy: function () {},
 };
 </script>
 
 <style scoped>
-.block {
-  background: white;
+.default {
+  background: rgb(233, 226, 226);
   border: solid 1px rgb(205, 202, 197);
-  height: 500px;
-  position: relative;
+  padding: 2px;
+  position: absolute;
 }
+.focus {
+  fill: greenyellow;
+}
+div {
+  border: 1px solid black;
+}
+/* .default:focus {
+  background-color: Aqua;
+  border: solid 1px rgb(204, 137, 30);
+} */
 </style>

@@ -1,59 +1,24 @@
 <template>
   <g>
-    <rect height="20" :width="data.props.width" />
     <defs>
-      <marker
-        id="arrow"
-        viewBox="0 0 10 10"
-        markerWidth="10"
-        markerHeight="10"
-        refx="10"
-        refy="30"
-        orient="auto"
-      >
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
         <path d="M0,0 L0,6 L9,3 z" fill="#f00" />
       </marker>
     </defs>
-    <line x1="50" y1="50" x2="250" y2="50" stroke="#000" stroke-width="5" marker-end="url(#arrow)" />
-    <defs>
-      <marker
-        id="a1"
-        viewBox="0 0 77 77"
-        refX="20"
-        refY="39"
-        markerWidth="30"
-        markerHeight="30"
-        orient="auto"
-      >
-        <path
-          fill="#f00"
-          d="M12.707,38.6C-8.594,27.4-1.594,0,22.406,0c30.3,0,51.7,38.5,51.7,38.5s-22.7,38.6-51.7,38.6 C-1.594,77.1-8.594,49.8,12.707,38.6z"
-        ></path>
-      </marker>
-
-      <marker
-        id="a2"
-        viewBox="0 0 80 45"
-        refX="50"
-        refY="22"
-        markerWidth="40"
-        markerHeight="30"
-        orient="auto"
-      >
-        <polygon
-          fill="#600"
-          points="65.397,0 0,0 14.173,22.417 0.001,44.833 65.398,44.833 79.569,22.417 "
-        />
-      </marker>
-    </defs>
-    <polyline
-      points="50,20 150,20"
-      fill="none"
-      stroke="black"
+    <!-- <line
+      :x1="x1"
+      :y1="y1"
+      :x2="x2"
+      :y2="y2"
+      stroke="#000"
       stroke-width="1"
-      marker-end="url(#a1)"
-      marker-start="url(#a2)"
-    ></polyline>
+      marker-end="url(#arrow)"
+    />-->
+    <path :d="d" stroke="#000" stroke-width="1" marker-end="url(#arrow)" />
+    <text :x="x1" :y="y1">
+      {{data.props.arrowendPreview?data.props.arrowendPreview.id:"null"}}
+      {{data.props.arrowstartPreview?data.props.arrowstartPreview.id:"null"}}
+    </text>
   </g>
 </template>
 
@@ -62,8 +27,66 @@ export default {
   props: {
     data: Object,
   },
-  created() {
-    // console.log("create arrow");
+  computed: {
+    x1() {
+      // todo: user this.data.props.arrowstartPreview.prop
+      return this.data.props.startX;
+    },
+    y1() {
+      // todo: user this.data.props.arrowstartPreview.prop
+
+      return this.data.props.startY;
+    },
+    // todo: user this.data.props.arrowendPreview.prop
+    x2() {
+      return this.data.props.offsetX;
+    },
+    // todo: user this.data.props.arrowendPreview.prop
+    y2() {
+      return this.data.props.offsetY;
+    },
+    d() {
+      var points = this.pathCalculate(this.data.props);
+      var M = `${points.x1},${points.y1}`;
+      var L = `${points.x2},${points.y2}`;
+      // var H;
+      // var V;
+      return `M${M} L${L}`;
+    },
+  },
+  methods: {
+    pathCalculate(props) {
+      var points = {
+        x1: props.startX,
+        y1:
+          parseInt(props.arrowstartPreview.prop.styleObject.y) +
+          parseInt(props.arrowstartPreview.prop.styleObject.height) / 2,
+        x2: props.offsetX,
+        y2: props.offsetY,
+      };
+      console.log("props", props);
+      if (
+        props.offsetX > parseInt(props.arrowstartPreview.prop.styleObject.x)
+      ) {
+        points.x1 =
+          parseInt(props.arrowstartPreview.prop.styleObject.x) +
+          parseInt(props.arrowstartPreview.prop.styleObject.width);
+      } else {
+        points.x1 = parseInt(props.arrowstartPreview.prop.styleObject.x);
+      }
+
+      if (props.arrowendPreview) {
+        points.x2 = props.arrowendPreview.prop.styleObject.x;
+        points.y2 =
+          parseInt(props.arrowendPreview.prop.styleObject.y) +
+          parseInt(props.arrowendPreview.prop.styleObject.height) / 2;
+      } else {
+        points.x2 = props.offsetX;
+        points.y2 = props.offsetY;
+      }
+      console.log(points);
+      return points;
+    },
   },
 };
 </script>

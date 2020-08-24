@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @click="getPosition">
+  <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link>|
       <router-link to="/about">About</router-link>
@@ -11,12 +11,13 @@
         </b-col>
         <b-col cols="8">
           <Tool />
-          <Block :data="data" />
+          <Main :data="data" />
         </b-col>
         <b-col>
           <All />
           <Demo />
           <Style />
+          <TextEditor />
         </b-col>
       </b-form-row>
       <Keyboard />
@@ -25,17 +26,20 @@
 </template>
 
 <script>
-import Block from "@/components/Block.vue";
+import Main from "@/components/Main.vue";
 import All from "@/components/All.vue";
 import Demo from "@/components/Demo.vue";
 import Keyboard from "@/components/Keyboard.vue";
 import Tree from "@/components/Tree.vue";
 import Style from "@/components/Style.vue";
 import Tool from "@/components/Tool.vue";
-import mousemove from "@/api/position.js";
+import TextEditor from "@/components/TextEditor.vue";
+
+// import mousemove from "@/api/position.js";
 
 import Vue from "vue";
 import Vuex from "vuex";
+import store from "@/store/index.js";
 
 Vue.use(Vuex);
 
@@ -55,47 +59,35 @@ Vue.prototype.$bus = new Vue();
 export default {
   name: "app",
   components: {
-    Block,
+    Main,
     All,
     Demo,
     Keyboard,
     Tree,
     Style,
     Tool,
+    TextEditor,
   },
+  store,
   state: {},
-  methods: {
-    getPosition() {
-      console.log(
-        `position: ${mousemove.event.pageX}, ${mousemove.event.pageY}`
-      );
-    },
-  },
+  methods: {},
   data: () => {
     return {
       data: {
         id: "1",
-        type: "preview",
+        type: "block",
         position: { mouseclickposition: [120, 20] },
         props: {},
         childs: [
           {
-            id: "a-1-1",
-            type: "arrow",
-            position: { mouseclickposition: [120, 20] },
-            props: { width: 10 },
-            childs: [],
-            parent: null,
-          },
-          {
             id: "1-1",
-            type: "preview",
+            type: "block",
             position: { mouseclickposition: [120, 20] },
             props: {},
             childs: [
               {
                 id: "1-1-1",
-                type: "preview",
+                type: "block",
                 position: { mouseclickposition: [30, 20] },
                 props: {},
                 childs: [],
@@ -106,13 +98,13 @@ export default {
           },
           {
             id: "1-2",
-            type: "preview",
+            type: "block",
             position: { mouseclickposition: [230, 20] },
             props: {},
             childs: [
               {
                 id: "1-2-1",
-                type: "preview",
+                type: "block",
                 position: { mouseclickposition: [20, 20] },
                 props: {},
                 childs: [],
@@ -120,13 +112,13 @@ export default {
               },
               {
                 id: "1-2-2",
-                type: "preview",
+                type: "block",
                 position: { mouseclickposition: [130, 20] },
                 props: {},
                 childs: [
                   {
                     id: "1-2-2-1",
-                    type: "preview",
+                    type: "block",
 
                     position: { mouseclickposition: [20, 20] },
                     props: {},
@@ -141,7 +133,7 @@ export default {
           },
           {
             id: "1-3",
-            type: "preview",
+            type: "block",
             position: { mouseclickposition: [340, 20] },
             props: {},
             childs: [],

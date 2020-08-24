@@ -4,7 +4,9 @@
       <b-button @click="undoclickEvent">
         <v-icon name="chevron-left"></v-icon>
       </b-button>
-      <!-- <b-button>Button 2</b-button> -->
+      <b-button @click="saveclickEvent">
+        <v-icon name="save"></v-icon>
+      </b-button>
       <!-- <b-button>Button 3</b-button> -->
     </b-button-group>Tool.vue
   </div>
@@ -15,6 +17,9 @@ export default {
   methods: {
     undoclickEvent() {
       this.$bus.$emit("tool:undo");
+    },
+    saveclickEvent() {
+      this.$bus.$emit("tool:save");
     },
   },
 };
