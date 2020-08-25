@@ -29,36 +29,6 @@
           @mouseenter="previewmouseenterEvent"
           @mouseleave="previewmouseleaveEvent"
         />
-        <rect id="rect1" x="25" y="25" width="225" height="175" fill="white" stroke="black" />
-
-        <rect
-          id="rect2"
-          x="200"
-          y="125"
-          width="225"
-          height="150"
-          fill="white"
-          stroke="black"
-          style="shape-margin:25px;"
-        />
-
-        <text
-          style="shape-inside:url(#rect1);
-          shape-subtract:url(#rect2);
-shape-padding:25px;
-font-family:DejaVu Sans;
-font-size:20px;
-text-align:justified;
-line-height:110%"
-        >Lorem idfgfpsuffffddgdzdhrtsuffffddgdzdhrtsuffffddgdzdhrtsuffffddgdzdhrttt</text>
-        <text
-          style="shape-inside:url(#rect2);
-shape-padding:25px;
-font-family:DejaVu Sans;
-font-size:12px;
-text-align:justified;
-line-height:110%"
-        >Lorem isuffffddgdzdhrtsuffffddgdzdhrtsuffffddgdzdhrtsuffffddgdzdhrt</text>
       </g>
     </svg>
   </div>
@@ -67,6 +37,7 @@ line-height:110%"
 <script>
 import Preview from "@/components/Preview.vue";
 import Element from "@/api/element.js";
+// import vueUndoRedo from "vue-undo-redo";
 // import * as d3 from "d3";
 // import * as zoom from "d3-zoom";
 
@@ -74,6 +45,7 @@ export default {
   components: {
     Preview,
   },
+  // mixins: [vueUndoRedo],
   props: {
     data: Object,
   },

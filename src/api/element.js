@@ -25,6 +25,7 @@ class Element {
                     mousemove.event.offsetY + cpn.props.viewBox["min-y"],
                 ],
             }
+            this.content = ""
             this.props = { default: 'default' }
             this.childs = []
             this.parent = null

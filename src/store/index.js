@@ -7,7 +7,8 @@ export default new Vuex.Store({
   strict: "debug",
   state: {
     IdArray: [],
-    FocusingElementId: null
+    FocusingElementId: null,
+    data: {}
   },
   mutations: {
     newID(state) {

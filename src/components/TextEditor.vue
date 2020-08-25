@@ -50,8 +50,8 @@ export default {
     onEditorChange({ quill, html, text }) {
       console.log("editor change!", quill, html, text);
       this.content = html;
-      // this.$bus.$emit("TextEditor:change", quill.getText());
-      this.$bus.$emit("TextEditor:change", quill.getContents());
+      this.$bus.$emit("TextEditor:change", quill.getText());
+      // this.$bus.$emit("TextEditor:change", quill.getContents());
       // this.$bus.$emit("TextEditor:change", this.content);
     },
   },

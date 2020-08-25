@@ -24,7 +24,7 @@
 export default {
   props: {
     data: Object,
-    parent: Object,｀
+    parent: Object,
   },
   data: function () {
     return {
@@ -40,13 +40,7 @@ export default {
       textDefault: {
         fill: "black",
         "text-anchor": "middle",
-        style: `shape-inside:url(#${this.data.id});shape-padding:25px;font-family:DejaVu Sans;font-size:12px;text-align:justified;line-height:110%`,
-        // "shape-inside": `url(#${this.data.id})`,
-        // "shape-padding": "25px",
-        // "font-family": "DejaVu Sans",
-        // "font-size": "12px",
-        // "text-align": "justified",
-        // "line-height": "110%",
+        "dominant-baseline": "middle",
       },
     };
   },
