@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Element from "@/api/element.js";
 
 Vue.use(Vuex)
 
@@ -8,7 +9,81 @@ export default new Vuex.Store({
   state: {
     IdArray: [],
     FocusingElementId: null,
-    data: {}
+    alldata: {
+      id: "1",
+      type: "block",
+      position: { mouseclickposition: [120, 20] },
+      props: {},
+      childs: [
+        {
+          id: "1-1",
+          type: "block",
+          position: { mouseclickposition: [120, 20] },
+          props: {},
+          childs: [
+            {
+              id: "1-1-1",
+              type: "block",
+              position: { mouseclickposition: [30, 20] },
+              props: {},
+              childs: [],
+              parent: null,
+            },
+          ],
+          parent: null,
+        },
+        {
+          id: "1-2",
+          type: "block",
+          position: { mouseclickposition: [230, 20] },
+          props: {},
+          childs: [
+            {
+              id: "1-2-1",
+              type: "block",
+              position: { mouseclickposition: [20, 20] },
+              props: {},
+              childs: [],
+              parent: null,
+            },
+            {
+              id: "1-2-2",
+              type: "block",
+              position: { mouseclickposition: [130, 20] },
+              props: {},
+              childs: [
+                {
+                  id: "1-2-2-1",
+                  type: "block",
+
+                  position: { mouseclickposition: [20, 20] },
+                  props: {},
+                  childs: [],
+                  parent: null,
+                },
+              ],
+              parent: null,
+            },
+          ],
+          parent: null,
+        },
+        {
+          id: "1-3",
+          type: "block",
+          position: { mouseclickposition: [340, 20] },
+          props: {},
+          childs: [],
+          parent: null,
+        },
+      ],
+      parent: null,
+    },
+  },
+  getters: {
+    getData: state => {
+      console.log("sdssd", state.alldata)
+      return state.alldata
+    }
   },
   mutations: {
     newID(state) {
@@ -25,6 +100,14 @@ export default new Vuex.Store({
     },
     changeFocusingElement(state, ElementId) {
       state.FocusingElementId = ElementId
+    },
+    addBlock(state, payload) {
+      console.log(payload)
+
+      var a = new Element("block", payload.props, payload.event)
+      // var a = new Element("block", payload.cpn, payload.event)
+      state.alldata.childs.push(a);
+      console.log('push')
     }
   },
   actions: {

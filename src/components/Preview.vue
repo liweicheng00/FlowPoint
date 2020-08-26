@@ -41,6 +41,7 @@ export default {
       this.$emit("mouseleave", event, data, prop);
     },
     dblclick(event, data) {
+      console.log("here");
       this.$emit("dblclick", event, data);
     },
   },

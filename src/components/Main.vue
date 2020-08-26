@@ -40,14 +40,14 @@ import Element from "@/api/element.js";
 // import vueUndoRedo from "vue-undo-redo";
 // import * as d3 from "d3";
 // import * as zoom from "d3-zoom";
-
+import { mapGetters } from "vuex";
 export default {
   components: {
     Preview,
   },
   // mixins: [vueUndoRedo],
   props: {
-    data: Object,
+    // data: Object,
   },
   data: function () {
     return {
@@ -128,6 +128,15 @@ export default {
         return "0 0 0 0";
       }
     },
+    childs() {
+      return this.data.childs;
+    },
+    parent() {
+      return this.data.parent;
+    },
+    ...mapGetters({
+      data: "getData",
+    }),
   },
   watch: {
     allowZoom: function (newValue) {
@@ -153,7 +162,11 @@ export default {
       // console.log(event);
     },
     dblclickEvent(event) {
-      this.addBlock(event);
+      this.$store.commit("addBlock", {
+        props: this.props,
+        event: event,
+      });
+      // this.addBlock(event);
     },
     leftmousedownEvent(event) {
       this.startPen(event);
@@ -233,22 +246,7 @@ export default {
       //   y: (event.clientY - CTM.f) / CTM.d,
       // };a
     },
-    addBlock(event) {
-      // this.$store.commit("newID");
-      // this.childs.push(
-      //   new Element(
-      //     "rect",
-      //     this.$store.state.IdArray[this.$store.state.IdArray.length - 1],
-      //     {
-      //       mouseclickposition: [
-      //         mousemove.event.offsetX + this.props.viewBox["min-x"],
-      //         mousemove.event.offsetY + this.props.viewBox["min-y"],
-      //       ],
-      //     }
-      //   )
-      // );
-      this.childs.push(new Element("block", this, event));
-    },
+    // addBlock(event) {},
     startLink(event, data, prop) {
       if (event.target.classList.contains("Preview")) {
         if (!this.arrowstartPreview) {

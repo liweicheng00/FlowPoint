@@ -11,7 +11,7 @@
         </b-col>
         <b-col cols="8">
           <Tool />
-          <Main :data="data" />
+          <Main />
         </b-col>
         <b-col>
           <All />
@@ -71,78 +71,14 @@ export default {
   store,
   state: {},
   methods: {},
+
   data: () => {
     return {
-      data: {
-        id: "1",
-        type: "block",
-        position: { mouseclickposition: [120, 20] },
-        props: {},
-        childs: [
-          {
-            id: "1-1",
-            type: "block",
-            position: { mouseclickposition: [120, 20] },
-            props: {},
-            childs: [
-              {
-                id: "1-1-1",
-                type: "block",
-                position: { mouseclickposition: [30, 20] },
-                props: {},
-                childs: [],
-                parent: null,
-              },
-            ],
-            parent: null,
-          },
-          {
-            id: "1-2",
-            type: "block",
-            position: { mouseclickposition: [230, 20] },
-            props: {},
-            childs: [
-              {
-                id: "1-2-1",
-                type: "block",
-                position: { mouseclickposition: [20, 20] },
-                props: {},
-                childs: [],
-                parent: null,
-              },
-              {
-                id: "1-2-2",
-                type: "block",
-                position: { mouseclickposition: [130, 20] },
-                props: {},
-                childs: [
-                  {
-                    id: "1-2-2-1",
-                    type: "block",
-
-                    position: { mouseclickposition: [20, 20] },
-                    props: {},
-                    childs: [],
-                    parent: null,
-                  },
-                ],
-                parent: null,
-              },
-            ],
-            parent: null,
-          },
-          {
-            id: "1-3",
-            type: "block",
-            position: { mouseclickposition: [340, 20] },
-            props: {},
-            childs: [],
-            parent: null,
-          },
-        ],
-        parent: null,
-      },
+      data: {},
     };
+  },
+  created() {
+    this.data = this.$store.state.alldata;
   },
 };
 </script>
