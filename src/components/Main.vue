@@ -36,11 +36,12 @@
 
 <script>
 import Preview from "@/components/Preview.vue";
-import Element from "@/api/element.js";
+import _ from "lodash";
+// import Element from "@/api/element.js";
 // import vueUndoRedo from "vue-undo-redo";
 // import * as d3 from "d3";
 // import * as zoom from "d3-zoom";
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 export default {
   components: {
     Preview,
@@ -53,15 +54,14 @@ export default {
     return {
       allowZoom: false,
       allowPen: false,
-      self: this.data,
-      childs: this.data.childs,
-      parent: this.data.parent,
+      // self: this.data,
+      // childs: this.data.childs,
+      // parent: this.data.parent,
       dom: {},
       svg: null,
       linkStatus: false,
-      arrowstartPreview: null,
-      arrowendPreview: null,
       arrowObject: null,
+
       arrowDom: null,
       props: {
         clientHeight: null,
@@ -73,51 +73,44 @@ export default {
           height: null,
           startPoint: [0, 0],
         },
+        arrowstartPreview: null,
+        arrowendPreview: null,
       },
     };
   },
   created() {
     // console.log(zoom);
-    this.$bus.$on("tool:undo", () => {
+    this.$bus.$on("tool:back", () => {
       this.backtoolclickEvent();
     });
     this.$bus.$on("tool:save", () => {
       console.log(this.$refs);
       this.savetoolclickEvent(this.$refs.svg);
     });
+    this.$bus.$on("tool:undo", () => {
+      if (this.canUndo) {
+        this.undo();
+      }
+    });
+    this.$bus.$on("tool:redo", () => {
+      if (this.canRedo) {
+        this.redo();
+      }
+    });
     window.addEventListener("resize", () => {
       this.windowresizeEvent();
     });
   },
   mounted: function () {
-    // console.log("mounted");
     var svg = document.getElementById("block");
     this.svg = svg;
-    // this.svg = d3.select("#block");
-    // const g = this.svg.select("g");
 
-    // this.svg.call(
-    //   d3
-    //     .zoom()
-    //     .extent([
-    //       [0, 0],
-    //       [300, 300],
-    //     ])
-    //     .scaleExtent([1, 8])
-    //     .on("zoom", zoomed)
-    // );
-    // function zoomed() {
-    //   console.log("zoom event");
-    //   g.attr("transform", d3.event.transform);
-    //   console.log(d3.event.sourceEvent);
-    // }
-    // if (!this.allowZoom) {
-    //   this.svg.on(".zoom", null);
-    // }
     this.props.clientHeight = this.$el.clientHeight;
     this.props.clientWidth = this.$el.clientWidth;
     this.props.viewBox.height = this.props.clientHeight;
     this.props.viewBox.width = this.props.clientWidth;
+
+    this.$store.commit("assignBeginingNode");
   },
 
   computed: {
@@ -128,15 +121,18 @@ export default {
         return "0 0 0 0";
       }
     },
+    data() {
+      return this.$store.state.alldata;
+    },
+    self() {
+      return this.$store.state.self;
+    },
     childs() {
-      return this.data.childs;
+      return this.self.childs;
     },
     parent() {
-      return this.data.parent;
+      return this.self.parent;
     },
-    ...mapGetters({
-      data: "getData",
-    }),
   },
   watch: {
     allowZoom: function (newValue) {
@@ -157,16 +153,16 @@ export default {
     clickEvent(event) {
       if (this.linkStatus) {
         this.endLink(event);
-        this.childs.pop();
+        this.$store.commit("cancelLink");
       }
-      // console.log(event);
     },
     dblclickEvent(event) {
-      this.$store.commit("addBlock", {
-        props: this.props,
+      this.$store.commit("addElement", {
+        type: "block",
+        props: _.cloneDeep(this.props),
         event: event,
+        parent: this.self,
       });
-      // this.addBlock(event);
     },
     leftmousedownEvent(event) {
       this.startPen(event);
@@ -182,12 +178,7 @@ export default {
         this.pen(event);
       }
     },
-    mouseleaveEvent() {
-      // if (this.linkStatus) {
-      //   this.linkStatus = false;
-      //   this.childs.pop();
-      // }
-    },
+    mouseleaveEvent() {},
     // Preview Event Methods
     previewmousedownEvent(event, data, prop) {
       this.startLink(event, data, prop);
@@ -196,28 +187,25 @@ export default {
       this.endLink(event, data, prop);
     },
     previewdblclickEvent(event, child) {
-      this.self.parent = this.parent;
-      this.parent = this.self;
-      this.childs = child.childs;
-      this.self = child;
+      console.log("db click");
+      this.$store.commit("changeSelf", child);
     },
     previewmouseenterEvent(event, data, prop) {
       if (this.linkStatus) {
-        this.arrowendPreview = { data, prop };
+        this.props.arrowendPreview = { data, prop };
       }
     },
     previewmouseleaveEvent() {
       if (this.linkStatus) {
-        this.arrowendPreview = null;
+        this.props.arrowendPreview = null;
       }
     },
     // Tool EventBus Event Methods
     backtoolclickEvent() {
       if (this.parent) {
-        this.childs = this.parent.childs;
-        this.self = this.parent;
-        this.parent = this.parent.parent;
+        this.$store.commit("gobackSelf");
       } else {
+        // todo: disable button
         console.log("no parent");
       }
     },
@@ -246,63 +234,34 @@ export default {
       //   y: (event.clientY - CTM.f) / CTM.d,
       // };a
     },
-    // addBlock(event) {},
     startLink(event, data, prop) {
       if (event.target.classList.contains("Preview")) {
-        if (!this.arrowstartPreview) {
+        if (!this.props.arrowstartPreview) {
           this.linkStatus = true;
-          this.arrowstartPreview = { data, prop };
+          this.props.arrowstartPreview = { data, prop };
         }
       }
     },
     endLink(event) {
       console.log(event.target);
       this.linkStatus = false;
-      this.arrowObject = null;
-      this.arrowstartPreview = null;
-      this.arrowendPreview = null;
-      // if (event.target.classList.contains("Preview")) {
-      //   console.log("stop");
-      //   this.arrowObject = null;
-      //   this.arrowendPreview = null;
-      // } else {
-      //   console.log(event.target);
-      //   if (this.arrowObject) {
-      //     this.arrowendPreview = null;
-
-      //     this.arrowObject = null;
-      //     this.childs.pop();
-      //   }
-      // }
+      this.$store.commit("endLink", _.cloneDeep(this.props.arrowendPreview));
+      this.props.arrowstartPreview = null;
+      this.props.arrowendPreview = null;
     },
     Link(event) {
       event.preventDefault();
-      if (!this.arrowObject) {
-        // this.$store.commit("newID");
-        // this.arrowObject = new Element(
-        //   "arrow",
-        //   this.$store.state.IdArray[this.$store.state.IdArray.length - 1],
-        //   {},
-        //   {
-        //     startX: event.offsetX + this.props.viewBox["min-x"],
-        //     startY: event.offsetY + this.props.viewBox["min-y"],
-        //     offsetX: event.offsetX + this.props.viewBox["min-x"],
-        //     offsetY: event.offsetY + this.props.viewBox["min-y"],
-        //     arrowstartPreview: this.arrowstartPreview,
-        //   }
-        // );
-        this.arrowObject = new Element("arrow", this, event);
-        this.childs.push(this.arrowObject);
+      if (!this.$store.state.arrowObject) {
+        this.$store.commit("addElement", {
+          type: "arrow",
+          props: _.cloneDeep(this.props),
+          event: event,
+        });
       } else {
-        this.arrowObject.props.offsetX =
-          event.offsetX + this.props.viewBox["min-x"] + 1;
-        this.arrowObject.props.offsetY =
-          event.offsetY + this.props.viewBox["min-y"] + 1;
-        if (this.arrowendPreview) {
-          this.arrowObject.props.arrowendPreview = this.arrowendPreview;
-        } else {
-          this.arrowObject.props.arrowendPreview = null;
-        }
+        this.$store.commit("setArrowPosition", {
+          event: event,
+          props: this.props,
+        });
       }
     },
     startPen(event) {
@@ -320,6 +279,9 @@ export default {
         this.props.viewBox.startPoint[0] - event.offsetX;
       this.props.viewBox["min-y"] =
         this.props.viewBox.startPoint[1] - event.offsetY;
+    },
+    key_u() {
+      console.log(this.done, this.undone);
     },
   },
 };

@@ -6,9 +6,9 @@
     </div>
     <b-container fluid>
       <b-form-row>
-        <b-col>
-          <Tree />
-        </b-col>
+        <!-- <b-col> -->
+        <!-- <Tree /> -->
+        <!-- </b-col> -->
         <b-col cols="8">
           <Tool />
           <Main />
@@ -20,7 +20,7 @@
           <TextEditor />
         </b-col>
       </b-form-row>
-      <Keyboard />
+      <!-- <Keyboard /> -->
     </b-container>
   </div>
 </template>
@@ -29,8 +29,8 @@
 import Main from "@/components/Main.vue";
 import All from "@/components/All.vue";
 import Demo from "@/components/Demo.vue";
-import Keyboard from "@/components/Keyboard.vue";
-import Tree from "@/components/Tree.vue";
+// import Keyboard from "@/components/Keyboard.vue";
+// import Tree from "@/components/Tree.vue";
 import Style from "@/components/Style.vue";
 import Tool from "@/components/Tool.vue";
 import TextEditor from "@/components/TextEditor.vue";
@@ -62,8 +62,8 @@ export default {
     Main,
     All,
     Demo,
-    Keyboard,
-    Tree,
+    // Keyboard,
+    // Tree,
     Style,
     Tool,
     TextEditor,

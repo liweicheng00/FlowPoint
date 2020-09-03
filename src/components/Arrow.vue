@@ -49,6 +49,7 @@ export default {
       var points = this.pathCalculate(this.data.props);
       var M = `${points.x1},${points.y1}`;
       var L = `${points.x2},${points.y2}`;
+
       // var H;
       // var V;
       return `M${M} L${L}`;
@@ -56,7 +57,23 @@ export default {
   },
   methods: {
     pathCalculate(props) {
-      var points = {
+      var points;
+      if (!props.visable) {
+        points = {
+          x1: props.startX,
+          y1:
+            parseInt(props.arrowstartPreview.prop.styleObject.y) +
+            parseInt(props.arrowstartPreview.prop.styleObject.height) / 2,
+        };
+
+        points.x1 =
+          parseInt(props.arrowstartPreview.prop.styleObject.x) +
+          parseInt(props.arrowstartPreview.prop.styleObject.width);
+        points.x2 = points.x1;
+        points.y2 = points.y1;
+        return points;
+      }
+      points = {
         x1: props.startX,
         y1:
           parseInt(props.arrowstartPreview.prop.styleObject.y) +
@@ -64,7 +81,6 @@ export default {
         x2: props.offsetX,
         y2: props.offsetY,
       };
-      console.log("props", props);
       if (
         props.offsetX > parseInt(props.arrowstartPreview.prop.styleObject.x)
       ) {
@@ -84,7 +100,6 @@ export default {
         points.x2 = props.offsetX;
         points.y2 = props.offsetY;
       }
-      console.log(points);
       return points;
     },
   },
