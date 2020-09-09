@@ -1,42 +1,63 @@
 <template>
-  <div class="block" @click.self="clickEvent">
-    <svg
-      ref="svg"
-      id="block"
-      version="1.1"
-      baseProfile="full"
-      xmlns="http://www.w3.org/2000/svg"
-      :width="props.clientWidth"
-      :height="props.clientHeight"
-      :viewBox="viewBox"
-      @contextmenu.prevent
-      @click="clickEvent"
-      @dblclick.self="dblclickEvent"
-      @mousedown.left="leftmousedownEvent"
-      @mouseup.left="leftmouseupEvent"
-      @mousemove="mousemoveEvent"
-      @mouseleave="mouseleaveEvent"
-    >
-      <g>
-        <Preview
-          v-for="(child, index) in childs"
-          :key="index"
-          :data="child"
-          :parent="self"
-          @dblclick="previewdblclickEvent"
-          @mousedown-right="previewmousedownEvent"
-          @mouseup-right="previewmouseupEvent"
-          @mouseenter="previewmouseenterEvent"
-          @mouseleave="previewmouseleaveEvent"
-        />
-      </g>
-    </svg>
-  </div>
+<div class="block" @click.self="clickEvent">
+  <svg
+    ref="svg"
+    id="block"
+    version="1.1"
+    baseProfile="full"
+    xmlns="http://www.w3.org/2000/svg"
+    :width="props.clientWidth"
+    :height="props.clientHeight"
+    :viewBox="viewBox"
+    @contextmenu.prevent
+    @click="clickEvent"
+    @dblclick.self="dblclickEvent"
+    @mousedown.left="leftmousedownEvent"
+    @mouseup.left="leftmouseupEvent"
+    @mousemove="mousemoveEvent"
+    @mouseleave="mouseleaveEvent"
+  >
+    <g>
+      <Preview
+        v-for="(child, index) in childs"
+        :key="index"
+        :data="child"
+        :parent="self"
+        @dblclick="previewdblclickEvent"
+        @mousedown-right="previewmousedownEvent"
+        @mouseup-right="previewmouseupEvent"
+        @mouseenter="previewmouseenterEvent"
+        @mouseleave="previewmouseleaveEvent"
+      />
+      <rect x="0" y="0" width="250" height="250" fill="aquamarine" />
+      <foreignobject x="0" y="0" width="250" height="250">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <div>Here is a long text that runs more than one line and works as a paragraph</div>
+          <br />
+          <div>
+            This is
+            <u>UNDER LINE</u> one
+          </div>
+          <br />
+          <div>
+            This is
+            <b>BOLD</b> one
+          </div>
+          <br />
+          <div>
+            This is
+            <i>Italic</i> one
+          </div>
+        </body>
+      </foreignobject>
+    </g>
+  </svg>
+</div>
 </template>
 
 <script>
 import Preview from "@/components/Preview.vue";
-import _ from "lodash";
+// import _ from "lodash";
 // import Element from "@/api/element.js";
 // import vueUndoRedo from "vue-undo-redo";
 // import * as d3 from "d3";
@@ -159,7 +180,7 @@ export default {
     dblclickEvent(event) {
       this.$store.commit("addElement", {
         type: "block",
-        props: _.cloneDeep(this.props),
+        props: this.props,
         event: event,
         parent: this.self,
       });
@@ -242,10 +263,9 @@ export default {
         }
       }
     },
-    endLink(event) {
-      console.log(event.target);
+    endLink() {
       this.linkStatus = false;
-      this.$store.commit("endLink", _.cloneDeep(this.props.arrowendPreview));
+      this.$store.commit("endLink", this.props.arrowendPreview);
       this.props.arrowstartPreview = null;
       this.props.arrowendPreview = null;
     },
@@ -254,7 +274,7 @@ export default {
       if (!this.$store.state.arrowObject) {
         this.$store.commit("addElement", {
           type: "arrow",
-          props: _.cloneDeep(this.props),
+          props: this.props,
           event: event,
         });
       } else {

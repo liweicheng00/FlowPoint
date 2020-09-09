@@ -8,7 +8,9 @@ class Element {
         this.event = event
         this.mainPage = false
         store.commit("newID")
+
         this.id = store.state.IdArray[store.state.IdArray.length - 1]
+
         if (type == "block") {
 
             this.position = {
@@ -24,6 +26,7 @@ class Element {
             this.parent = parent
         }
         else if (type == "arrow") {
+
             this.position = {}
             this.props = {
                 visable: false,
@@ -34,6 +37,7 @@ class Element {
                 arrowstartPreview: props.arrowstartPreview,
                 arrowendPreview: null,
             }
+
             this.childs = []
             this.parent = null
         }

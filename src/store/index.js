@@ -99,6 +99,7 @@ export default new Vuex.Store({
       }
     },
     changeFocusingElement(state, ElementId) {
+      console.log("change focus", ElementId)
       state.FocusingElementId = ElementId
     },
     addChildNum(state, level) {

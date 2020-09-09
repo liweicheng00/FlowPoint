@@ -48,20 +48,19 @@ export default {
     // todo: content
     this.content = this.data.id;
 
-    this.$bus.$on("TextEditor:change", (content) => {
-      if (this.ifFocus) {
+    this.$bus.$on("TextEditor:change", (content, id) => {
+      if (this.ifFocus && this.data.id == id) {
         this.content = content;
       }
     });
   },
   watch: {
-    focusingElementId: function (new_value) {
+    focusingElementId: function (new_value, oldvalue) {
       // pass content to TextEditor
-
+      console.log("watch", oldvalue, new_value, this.data.id);
       if (new_value == this.data.id) {
-        console.log(this.ifFocus);
         this.ifFocus = true;
-        this.$bus.$emit("Block:focus", this.content);
+        this.$bus.$emit("Block:focus", this.content, this.data.id);
       } else {
         this.ifFocus = false;
       }

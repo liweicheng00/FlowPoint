@@ -25,6 +25,7 @@ export default {
   data() {
     return {
       content: "<h2>I am Example</h2>",
+      focusId: null,
       editorOption: {
         modules: {
           toolbar: ["bold", "italic", "underline", "strike"],
@@ -33,8 +34,9 @@ export default {
     };
   },
   created: function () {
-    this.$bus.$on("Block:focus", (content) => {
+    this.$bus.$on("Block:focus", (content, id) => {
       this.content = content;
+      this.focusId = id;
     });
   },
   methods: {
@@ -42,8 +44,9 @@ export default {
     onEditorFocus() {},
     onEditorReady() {},
     onEditorChange({ quill, html }) {
-      this.content = html;
-      this.$bus.$emit("TextEditor:change", quill.getText());
+      // this.content = html;
+      console.log("html", html);
+      this.$bus.$emit("TextEditor:change", quill.getText(), this.focusId);
       // this.$bus.$emit("TextEditor:change", quill.getContents());
       // this.$bus.$emit("TextEditor:change", this.content);
     },
