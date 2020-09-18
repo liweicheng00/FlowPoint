@@ -28,17 +28,17 @@ export default {
 
   mounted: function () {},
   methods: {
-    mousedownright(event, data, prop) {
-      this.$emit("mousedown-right", event, data, prop);
+    mousedownright(event, data) {
+      this.$emit("mousedown-right", event, data);
     },
-    mouseupright(event, data, prop) {
-      this.$emit("mouseup-right", event, data, prop);
+    mouseupright(event, data) {
+      this.$emit("mouseup-right", event, data);
     },
-    mouseenter(event, data, prop) {
-      this.$emit("mouseenter", event, data, prop);
+    mouseenter(event, data) {
+      this.$emit("mouseenter", event, data);
     },
-    mouseleave(event, data, prop) {
-      this.$emit("mouseleave", event, data, prop);
+    mouseleave(event, data) {
+      this.$emit("mouseleave", event, data);
     },
     dblclick(event, data) {
       console.log("here");

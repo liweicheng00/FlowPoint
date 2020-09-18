@@ -106,15 +106,6 @@ export default new Vuex.Store({
       var t = level.parentCoor.reduce((ac, cur) => {
         return ac[cur]
       }, state.coor)
-      // console.log("t", t)
-      // if (!Array.isArray(t)) {
-      //   t += 1
-      //   console.log('not array', state.coor)
-      // } else {
-      //   if (!t[level.pkey]) {
-      //     t.push([])
-      //   }
-      // }
       if (!t[level.pkey]) {
         t.push([])
       }
@@ -129,8 +120,12 @@ export default new Vuex.Store({
       state.NumOfChilds[level] -= 1
 
     },
-    editContent(state, { styleObject, clientHeight }) {
-      styleObject.height = clientHeight
+    initStyleObject(state, { data, styleObject }) {
+      Object.assign(data.props.styleObject, styleObject)
+    },
+    editContent(state, { data, content, clientHeight }) {
+      data.props.styleObject.height = clientHeight
+      data.content = content
     }
 
 

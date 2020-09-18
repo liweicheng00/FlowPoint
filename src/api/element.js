@@ -13,15 +13,15 @@ class Element {
 
         if (type == "block") {
 
-            this.position = {
+            this.content = "<p style='color: grey;'>請輸入</p>"
+            this.props = {
                 mouseclickposition: [
                     event.offsetX + props.viewBox["min-x"],
                     event.offsetY + props.viewBox["min-y"],
                 ],
+                styleObject: {},
+                textObject: {}
             }
-
-            this.content = ""
-            this.props = { default: 'default' }
             this.childs = []
             this.parent = parent
         }

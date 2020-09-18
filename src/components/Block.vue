@@ -1,27 +1,27 @@
 <template>
 <g
-  @mouseenter="$emit('mouseenter',$event,data, {styleObject, textObject})"
-  @mouseleave="$emit('mouseleave',$event,data, {styleObject, textObject})"
-  @mousedown.right="$emit('mousedown-right',$event,data, {styleObject, textObject})"
-  @mouseup.right="$emit('mouseup-right',$event,data, {styleObject, textObject})"
+  @mouseenter="$emit('mouseenter',$event,data)"
+  @mouseleave="$emit('mouseleave',$event,data)"
+  @mousedown.right="$emit('mousedown-right',$event,data)"
+  @mouseup.right="$emit('mouseup-right',$event,data)"
   @focus="onFocus($event)"
 >
   <rect
     class="Preview"
     :id="data.id"
     @dblclick.self="$emit('dblclick', $event,data)"
-    v-bind="styleObject"
+    v-bind="data.props.styleObject"
     :class="{focus: ifFocus}"
   />
   <foreignObject
-    :x="styleObject.x"
-    :y="styleObject.y"
-    :width="styleObject.width"
-    :height="styleObject.height"
+    :x="data.props.styleObject.x"
+    :y="data.props.styleObject.y"
+    :width="data.props.styleObject.width"
+    :height="data.props.styleObject.height"
     pointer-events="none"
   >
     <body xmlns="http://www.w3.org/1999/xhtml">
-      <div ref="content" v-html="content" class="text"></div>
+      <div ref="content" v-html="data.content" class="text"></div>
     </body>
   </foreignObject>
   <!-- <text v-bind="textObject" @select.prevent>{{content}}</text> -->
@@ -40,7 +40,6 @@ export default {
   data: function () {
     return {
       ifFocus: false,
-      content: "",
       styleDefault: {
         width: "100",
         height: "30",
@@ -52,17 +51,19 @@ export default {
     };
   },
   created: function () {
-    // todo: content
-    this.content = this.data.id;
+    this.$store.commit("initStyleObject", {
+      data: this.data,
+      styleObject: this.styleObject,
+    });
 
     this.$bus.$on("TextEditor:change", (content, id) => {
       if (this.ifFocus && this.data.id == id) {
+        console.log(this.$refs, id);
         this.$store.commit("editContent", {
-          styleObject: this.styleObject,
+          data: this.data,
+          content: content,
           clientHeight: this.$refs.content.clientHeight,
         });
-        // this.styleObject.height = this.$refs.content.clientHeight;
-        this.content = content;
       }
     });
   },
@@ -71,7 +72,7 @@ export default {
       // pass content to TextEditor
       if (new_value == this.data.id) {
         this.ifFocus = true;
-        this.$bus.$emit("Block:focus", this.content, this.data.id);
+        this.$bus.$emit("Block:focus", this.data.content, this.data.id);
       } else {
         this.ifFocus = false;
       }
@@ -79,15 +80,15 @@ export default {
   },
   computed: {
     styleObject: function () {
-      if (this.data.position.mouseclickposition) {
+      if (this.data.props.mouseclickposition) {
         return Object.assign(this.styleDefault, {
           color: "red",
           x: `${
-            this.data.position.mouseclickposition[0] -
+            this.data.props.mouseclickposition[0] -
             parseInt(this.styleDefault.width) / 2
           }`,
           y: `${
-            this.data.position.mouseclickposition[1] -
+            this.data.props.mouseclickposition[1] -
             parseInt(this.styleDefault.height) / 2
           }`,
         });

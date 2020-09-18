@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      content: "<h2>I am Example</h2>",
+      content: "<h2>Choose a block!</h2>",
       focusId: null,
       editorOption: {
         modules: {

@@ -29,27 +29,6 @@
           @mouseenter="previewmouseenterEvent"
           @mouseleave="previewmouseleaveEvent"
         />
-        <!-- <rect x="0" y="0" width="250" height="250" fill="aquamarine" />
-      <foreignObject x="0" y="0" width="250" height="250">
-        <body xmlns="http://www.w3.org/1999/xhtml">
-          <div>Here is a long text that runs more than one line and works as a paragraph</div>
-          <br />
-          <div>
-            This is
-            <u>UNDER LINE</u> one
-          </div>
-          <br />
-          <div>
-            This is
-            <b>BOLD</b> one
-          </div>
-          <br />
-          <div>
-            This is
-            <i>Italic</i> one
-          </div>
-        </body>
-        </foreignbject>-->
       </g>
     </svg>
   </div>
@@ -201,19 +180,19 @@ export default {
     },
     mouseleaveEvent() {},
     // Preview Event Methods
-    previewmousedownEvent(event, data, prop) {
-      this.startLink(event, data, prop);
+    previewmousedownEvent(event, data) {
+      this.startLink(event, data);
     },
-    previewmouseupEvent(event, data, prop) {
-      this.endLink(event, data, prop);
+    previewmouseupEvent(event, data) {
+      this.endLink(event, data);
     },
     previewdblclickEvent(event, child) {
       console.log("db click");
       this.$store.commit("changeSelf", child);
     },
-    previewmouseenterEvent(event, data, prop) {
+    previewmouseenterEvent(event, data) {
       if (this.linkStatus) {
-        this.props.arrowendPreview = { data, prop };
+        this.props.arrowendPreview = data;
       }
     },
     previewmouseleaveEvent() {
@@ -255,11 +234,11 @@ export default {
       //   y: (event.clientY - CTM.f) / CTM.d,
       // };a
     },
-    startLink(event, data, prop) {
+    startLink(event, data) {
       if (event.target.classList.contains("Preview")) {
         if (!this.props.arrowstartPreview) {
           this.linkStatus = true;
-          this.props.arrowstartPreview = { data, prop };
+          this.props.arrowstartPreview = data;
         }
       }
     },
