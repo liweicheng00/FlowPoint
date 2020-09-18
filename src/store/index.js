@@ -128,6 +128,9 @@ export default new Vuex.Store({
     reduceChildNum(state, level) {
       state.NumOfChilds[level] -= 1
 
+    },
+    editContent(state, { styleObject, clientHeight }) {
+      styleObject.height = clientHeight
     }
 
 

@@ -1,36 +1,36 @@
 <template>
-<div class="block" @click.self="clickEvent">
-  <svg
-    ref="svg"
-    id="block"
-    version="1.1"
-    baseProfile="full"
-    xmlns="http://www.w3.org/2000/svg"
-    :width="props.clientWidth"
-    :height="props.clientHeight"
-    :viewBox="viewBox"
-    @contextmenu.prevent
-    @click="clickEvent"
-    @dblclick.self="dblclickEvent"
-    @mousedown.left="leftmousedownEvent"
-    @mouseup.left="leftmouseupEvent"
-    @mousemove="mousemoveEvent"
-    @mouseleave="mouseleaveEvent"
-  >
-    <g>
-      <Preview
-        v-for="(child, index) in childs"
-        :key="index"
-        :data="child"
-        :parent="self"
-        @dblclick="previewdblclickEvent"
-        @mousedown-right="previewmousedownEvent"
-        @mouseup-right="previewmouseupEvent"
-        @mouseenter="previewmouseenterEvent"
-        @mouseleave="previewmouseleaveEvent"
-      />
-      <rect x="0" y="0" width="250" height="250" fill="aquamarine" />
-      <foreignobject x="0" y="0" width="250" height="250">
+  <div class="block" @click.self="clickEvent">
+    <svg
+      ref="svg"
+      id="block"
+      version="2"
+      baseProfile="full"
+      xmlns="http://www.w3.org/2000/svg"
+      :width="props.clientWidth"
+      :height="props.clientHeight"
+      :viewBox="viewBox"
+      @contextmenu.prevent
+      @click="clickEvent"
+      @dblclick.self="dblclickEvent"
+      @mousedown.left="leftmousedownEvent"
+      @mouseup.left="leftmouseupEvent"
+      @mousemove="mousemoveEvent"
+      @mouseleave="mouseleaveEvent"
+    >
+      <g>
+        <Preview
+          v-for="(child, index) in childs"
+          :key="index"
+          :data="child"
+          :parent="self"
+          @dblclick="previewdblclickEvent"
+          @mousedown-right="previewmousedownEvent"
+          @mouseup-right="previewmouseupEvent"
+          @mouseenter="previewmouseenterEvent"
+          @mouseleave="previewmouseleaveEvent"
+        />
+        <!-- <rect x="0" y="0" width="250" height="250" fill="aquamarine" />
+      <foreignObject x="0" y="0" width="250" height="250">
         <body xmlns="http://www.w3.org/1999/xhtml">
           <div>Here is a long text that runs more than one line and works as a paragraph</div>
           <br />
@@ -49,10 +49,10 @@
             <i>Italic</i> one
           </div>
         </body>
-      </foreignobject>
-    </g>
-  </svg>
-</div>
+        </foreignbject>-->
+      </g>
+    </svg>
+  </div>
 </template>
 
 <script>

@@ -1,20 +1,31 @@
 <template>
-  <g
-    @mouseenter="$emit('mouseenter',$event,data, {styleObject, textObject})"
-    @mouseleave="$emit('mouseleave',$event,data, {styleObject, textObject})"
-    @mousedown.right="$emit('mousedown-right',$event,data, {styleObject, textObject})"
-    @mouseup.right="$emit('mouseup-right',$event,data, {styleObject, textObject})"
-    @focus="onFocus($event)"
+<g
+  @mouseenter="$emit('mouseenter',$event,data, {styleObject, textObject})"
+  @mouseleave="$emit('mouseleave',$event,data, {styleObject, textObject})"
+  @mousedown.right="$emit('mousedown-right',$event,data, {styleObject, textObject})"
+  @mouseup.right="$emit('mouseup-right',$event,data, {styleObject, textObject})"
+  @focus="onFocus($event)"
+>
+  <rect
+    class="Preview"
+    :id="data.id"
+    @dblclick.self="$emit('dblclick', $event,data)"
+    v-bind="styleObject"
+    :class="{focus: ifFocus}"
+  />
+  <foreignObject
+    :x="styleObject.x"
+    :y="styleObject.y"
+    :width="styleObject.width"
+    :height="styleObject.height"
+    pointer-events="none"
   >
-    <rect
-      class="Preview"
-      :id="data.id"
-      @dblclick.self="$emit('dblclick', $event,data)"
-      v-bind="styleObject"
-      :class="{focus: ifFocus}"
-    />
-    <text v-bind="textObject" @select.prevent>{{content}}</text>
-  </g>
+    <body xmlns="http://www.w3.org/1999/xhtml">
+      <div ref="content" v-html="content" class="text"></div>
+    </body>
+  </foreignObject>
+  <!-- <text v-bind="textObject" @select.prevent>{{content}}</text> -->
+</g>
 </template>
 
 <script>
@@ -37,11 +48,7 @@ export default {
         fill: "transparent",
         "stroke-width": "1",
       },
-      textDefault: {
-        fill: "black",
-        "text-anchor": "middle",
-        "dominant-baseline": "middle",
-      },
+      textDefault: {},
     };
   },
   created: function () {
@@ -50,14 +57,18 @@ export default {
 
     this.$bus.$on("TextEditor:change", (content, id) => {
       if (this.ifFocus && this.data.id == id) {
+        this.$store.commit("editContent", {
+          styleObject: this.styleObject,
+          clientHeight: this.$refs.content.clientHeight,
+        });
+        // this.styleObject.height = this.$refs.content.clientHeight;
         this.content = content;
       }
     });
   },
   watch: {
-    focusingElementId: function (new_value, oldvalue) {
+    focusingElementId: function (new_value) {
       // pass content to TextEditor
-      console.log("watch", oldvalue, new_value, this.data.id);
       if (new_value == this.data.id) {
         this.ifFocus = true;
         this.$bus.$emit("Block:focus", this.content, this.data.id);
@@ -85,10 +96,7 @@ export default {
       }
     },
     textObject: function () {
-      return Object.assign(this.textDefault, {
-        x: `${this.data.position.mouseclickposition[0]}`,
-        y: `${this.data.position.mouseclickposition[1]}`,
-      });
+      return Object.assign(this.textDefault, {});
     },
     focusingElementId: function () {
       return this.$store.state.FocusingElementId;
@@ -98,6 +106,9 @@ export default {
   methods: {
     onFocus() {
       this.$store.commit("changeFocusingElement", this.data.id);
+    },
+    resizeBody() {
+      console.log("here");
     },
   },
   beforeDestroy: function () {},
@@ -114,8 +125,11 @@ export default {
 .focus {
   fill: greenyellow;
 }
-div {
-  border: 1px solid black;
+body {
+  background: transparent;
+}
+.text {
+  padding: 3px;
 }
 /* .default:focus {
   background-color: Aqua;

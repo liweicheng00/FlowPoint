@@ -43,11 +43,12 @@ export default {
     onEditorBlur() {},
     onEditorFocus() {},
     onEditorReady() {},
-    onEditorChange({ quill, html }) {
+    onEditorChange({ html }) {
       // this.content = html;
-      console.log("html", html);
-      this.$bus.$emit("TextEditor:change", quill.getText(), this.focusId);
-      // this.$bus.$emit("TextEditor:change", quill.getContents());
+      // console.log("html", quill);
+      this.$bus.$emit("TextEditor:change", html, this.focusId);
+      // this.$bus.$emit("TextEditor:change", quill.getText(), this.focusId);
+      // this.$bus.$emit("TextEditor:change", quill.getContents(), this.focusId);
       // this.$bus.$emit("TextEditor:change", this.content);
     },
   },
