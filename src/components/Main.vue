@@ -16,8 +16,10 @@
       @mouseup.left="leftmouseupEvent"
       @mousemove="mousemoveEvent"
       @mouseleave="mouseleaveEvent"
+      @wheel="wheelEvent"
     >
       <g>
+        <rect x="0" y="0" width="10" height="10" />
         <Preview
           v-for="(child, index) in childs"
           :key="index"
@@ -116,7 +118,7 @@ export default {
   computed: {
     viewBox() {
       if (this.props.clientHeight) {
-        return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.clientWidth} ${this.props.clientHeight}`;
+        return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
       } else {
         return "0 0 0 0";
       }
@@ -162,6 +164,7 @@ export default {
         props: this.props,
         event: event,
         parent: this.self,
+        ctm: this.svg.getCTM(),
       });
     },
     leftmousedownEvent(event) {
@@ -179,6 +182,9 @@ export default {
       }
     },
     mouseleaveEvent() {},
+    wheelEvent(event) {
+      this.zoom(event);
+    },
     // Preview Event Methods
     previewmousedownEvent(event, data) {
       this.startLink(event, data);
@@ -255,6 +261,7 @@ export default {
           type: "arrow",
           props: this.props,
           event: event,
+          ctm: this.svg.getCTM(),
         });
       } else {
         this.$store.commit("setArrowPosition", {
@@ -278,6 +285,14 @@ export default {
         this.props.viewBox.startPoint[0] - event.offsetX;
       this.props.viewBox["min-y"] =
         this.props.viewBox.startPoint[1] - event.offsetY;
+    },
+    zoom(event) {
+      // todo not lower than zoro
+      var w = this.props.viewBox.width + event.deltaY;
+      var h = this.props.viewBox.height + event.deltaY;
+
+      this.props.viewBox.width = w >= 0 ? w : 0;
+      this.props.viewBox.height = h >= 0 ? h : 0;
     },
     key_u() {
       console.log(this.done, this.undone);

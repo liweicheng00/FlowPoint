@@ -44,6 +44,7 @@ export default {
         width: "100",
         height: "30",
         stroke: "black",
+        rx: "3",
         fill: "transparent",
         "stroke-width": "1",
       },
@@ -58,11 +59,14 @@ export default {
 
     this.$bus.$on("TextEditor:change", (content, id) => {
       if (this.ifFocus && this.data.id == id) {
-        console.log(this.$refs, id);
         this.$store.commit("editContent", {
           data: this.data,
           content: content,
-          clientHeight: this.$refs.content.clientHeight,
+          clientHeight:
+            parseInt(this.$refs.content.clientHeight) >=
+            parseInt(this.styleDefault.height)
+              ? this.$refs.content.clientHeight
+              : this.styleDefault.height,
         });
       }
     });
@@ -81,16 +85,24 @@ export default {
   computed: {
     styleObject: function () {
       if (this.data.props.mouseclickposition) {
+        console.log(this.data.props.ctm.inverse());
+        var ictm = this.data.props.ctm.inverse();
+
+        var x =
+          this.data.props.mouseclickposition[0] -
+          parseInt(this.styleDefault.width) / 2;
+        var y =
+          this.data.props.mouseclickposition[1] -
+          parseInt(this.styleDefault.height) / 2;
+
+        var x1 = ictm.a * x + ictm.c * y + ictm.e;
+        var y1 = ictm.b * x + ictm.d * y + ictm.f;
+        console.log(x, y, x1, y1);
+
         return Object.assign(this.styleDefault, {
           color: "red",
-          x: `${
-            this.data.props.mouseclickposition[0] -
-            parseInt(this.styleDefault.width) / 2
-          }`,
-          y: `${
-            this.data.props.mouseclickposition[1] -
-            parseInt(this.styleDefault.height) / 2
-          }`,
+          x: `${x1}`,
+          y: `${y1}`,
         });
       } else {
         return this.styleDefault;
@@ -112,7 +124,9 @@ export default {
       console.log("here");
     },
   },
-  beforeDestroy: function () {},
+  beforeDestroy: function () {
+    this.$bus.$off("TextEditor:change");
+  },
 };
 </script>
 

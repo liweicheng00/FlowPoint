@@ -24,9 +24,10 @@ export default {
   },
   data() {
     return {
-      content: "<h2>Choose a block!</h2>",
+      content: "",
       focusId: null,
       editorOption: {
+        placeholder: "Select a element!",
         modules: {
           toolbar: ["bold", "italic", "underline", "strike"],
         },
@@ -46,6 +47,8 @@ export default {
     onEditorChange({ html }) {
       // this.content = html;
       // console.log("html", quill);
+      this.editorOption.placeholder = "Type something...";
+
       this.$bus.$emit("TextEditor:change", html, this.focusId);
       // this.$bus.$emit("TextEditor:change", quill.getText(), this.focusId);
       // this.$bus.$emit("TextEditor:change", quill.getContents(), this.focusId);

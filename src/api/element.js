@@ -2,7 +2,7 @@
 import store from "@/store/index.js";
 
 class Element {
-    constructor(type, props, event, parent) {
+    constructor(type, props, event, parent, ctm) {
         this.type = type
         this.props = props
         this.event = event
@@ -13,12 +13,14 @@ class Element {
 
         if (type == "block") {
 
-            this.content = "<p style='color: grey;'>請輸入</p>"
+            this.content = ""
+            console.log(ctm, ctm.inverse(), event)
             this.props = {
                 mouseclickposition: [
-                    event.offsetX + props.viewBox["min-x"],
-                    event.offsetY + props.viewBox["min-y"],
+                    event.offsetX,
+                    event.offsetY,
                 ],
+                ctm: ctm,
                 styleObject: {},
                 textObject: {}
             }
@@ -36,6 +38,7 @@ class Element {
                 offsetY: event.offsetY + props.viewBox["min-y"],
                 arrowstartPreview: props.arrowstartPreview,
                 arrowendPreview: null,
+                ctm: ctm
             }
 
             this.childs = []

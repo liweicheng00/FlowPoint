@@ -41,13 +41,13 @@ export default new Vuex.Store({
       state.self = state.self.parent
       state.self.mainPage = true
     },
-    addElement(state, payload) {
+    addElement(state, { type, props, event, parent, ctm }) {
       // console.log(payload.props.viewBox.startPoint)
       // console.log(payload.event.offsetX)
 
-      var element = new Element(payload.type, payload.props, payload.event, payload.parent)
+      var element = new Element(type, props, event, parent, ctm)
       state.self.childs.push(element);
-      if (payload.type == 'arrow') {
+      if (type == 'arrow') {
         state.arrowObject = element
       }
     },
