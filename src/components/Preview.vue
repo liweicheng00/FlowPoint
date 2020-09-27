@@ -25,7 +25,6 @@ export default {
     data: Object,
     parent: Object,
   },
-
   mounted: function () {},
   methods: {
     mousedownright(event, data) {
@@ -35,13 +34,13 @@ export default {
       this.$emit("mouseup-right", event, data);
     },
     mouseenter(event, data) {
+      console.log("mosue enter");
       this.$emit("mouseenter", event, data);
     },
     mouseleave(event, data) {
       this.$emit("mouseleave", event, data);
     },
     dblclick(event, data) {
-      console.log("here");
       this.$emit("dblclick", event, data);
     },
   },

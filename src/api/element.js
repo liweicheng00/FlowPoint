@@ -14,7 +14,6 @@ class Element {
         if (type == "block") {
 
             this.content = ""
-            console.log(ctm, ctm.inverse(), event)
             this.props = {
                 mouseclickposition: [
                     event.offsetX,

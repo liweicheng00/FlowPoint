@@ -4,6 +4,9 @@
   @mouseleave="$emit('mouseleave',$event,data)"
   @mousedown.right="$emit('mousedown-right',$event,data)"
   @mouseup.right="$emit('mouseup-right',$event,data)"
+  @mousedown.left="leftmousedownEvent"
+  @mouseup.left="leftmouseupEvent"
+  @mousemove="mousemoveEvent"
   @focus="onFocus($event)"
 >
   <rect
@@ -24,7 +27,7 @@
       <div ref="content" v-html="data.content" class="text"></div>
     </body>
   </foreignObject>
-  <!-- <text v-bind="textObject" @select.prevent>{{content}}</text> -->
+  <!-- <text :x="data.props.styleObject.x" :y="data.props.styleObject.y">{{data.props.styleObject.x}}</text> -->
 </g>
 </template>
 
@@ -40,6 +43,7 @@ export default {
   data: function () {
     return {
       ifFocus: false,
+      allowMove: false,
       styleDefault: {
         width: "100",
         height: "30",
@@ -50,6 +54,9 @@ export default {
       },
       textDefault: {},
     };
+  },
+  updated() {
+    console.log("update", this);
   },
   created: function () {
     this.$store.commit("initStyleObject", {
@@ -81,23 +88,28 @@ export default {
         this.ifFocus = false;
       }
     },
+    data: function () {
+      console.log("here");
+    },
   },
   computed: {
+    something() {
+      console.log("chinge");
+      return this.data.props.mouseclickposition;
+    },
     styleObject: function () {
       if (this.data.props.mouseclickposition) {
-        console.log(this.data.props.ctm.inverse());
         var ictm = this.data.props.ctm.inverse();
 
         var x =
           this.data.props.mouseclickposition[0] -
-          parseInt(this.styleDefault.width) / 2;
+          parseInt(this.styleDefault.width) / ictm.a / 2;
         var y =
           this.data.props.mouseclickposition[1] -
-          parseInt(this.styleDefault.height) / 2;
+          parseInt(this.styleDefault.height) / ictm.a / 2;
 
         var x1 = ictm.a * x + ictm.c * y + ictm.e;
         var y1 = ictm.b * x + ictm.d * y + ictm.f;
-        console.log(x, y, x1, y1);
 
         return Object.assign(this.styleDefault, {
           color: "red",
@@ -122,6 +134,33 @@ export default {
     },
     resizeBody() {
       console.log("here");
+    },
+    leftmousedownEvent(event) {
+      console.log("mosue down");
+
+      this.startMove(event);
+    },
+    leftmouseupEvent(event) {
+      this.endMove(event);
+    },
+    mousemoveEvent(event) {
+      event.preventDefault();
+      if (this.allowMove) {
+        this.move(event);
+      }
+    },
+    startMove() {
+      this.allowMove = true;
+    },
+    move(event) {
+      if (this.allowMove) {
+        this.$nextTick(() => {
+          this.$store.commit("moveBlock", { data: this.data, event: event });
+        });
+      }
+    },
+    endMove() {
+      this.allowMove = false;
     },
   },
   beforeDestroy: function () {

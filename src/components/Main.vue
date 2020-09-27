@@ -1,6 +1,7 @@
 <template>
   <div class="block" @click.self="clickEvent">
     <svg
+      class="Svg"
       ref="svg"
       id="block"
       version="2"
@@ -20,6 +21,9 @@
     >
       <g>
         <rect x="0" y="0" width="10" height="10" />
+        <rect x="100" y="0" width="10" height="10" />
+        <rect x="0" y="100" width="10" height="10" />
+        <rect x="100" y="100" width="10" height="10" />
         <Preview
           v-for="(child, index) in childs"
           :key="index"
@@ -271,11 +275,13 @@ export default {
       }
     },
     startPen(event) {
-      this.allowPen = true;
-      this.props.viewBox.startPoint = [
-        this.props.viewBox["min-x"] + event.offsetX,
-        this.props.viewBox["min-y"] + event.offsetY,
-      ];
+      if (event.target.classList.contains("Svg")) {
+        this.allowPen = true;
+        this.props.viewBox.startPoint = [
+          this.props.viewBox["min-x"] + event.offsetX,
+          this.props.viewBox["min-y"] + event.offsetY,
+        ];
+      }
     },
     endPen() {
       this.allowPen = false;
@@ -289,10 +295,10 @@ export default {
     zoom(event) {
       // todo not lower than zoro
       var w = this.props.viewBox.width + event.deltaY;
-      var h = this.props.viewBox.height + event.deltaY;
+      // var h = this.props.viewBox.height + event.deltaY;
 
       this.props.viewBox.width = w >= 0 ? w : 0;
-      this.props.viewBox.height = h >= 0 ? h : 0;
+      // this.props.viewBox.height = h >= 0 ? h : 0;
     },
     key_u() {
       console.log(this.done, this.undone);

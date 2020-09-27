@@ -126,6 +126,18 @@ export default new Vuex.Store({
     editContent(state, { data, content, clientHeight }) {
       data.props.styleObject.height = clientHeight
       data.content = content
+    },
+    moveBlock(state, { data, event }) {
+      // console.log(this._vm)
+      // console.log(data)
+      // console.log(data.props.mouseclickposition, [event.offsetX, event.offsetY])
+      data.props.mouseclickposition.splice(0, 1, event.offsetX)
+      data.props.mouseclickposition.splice(1, 1, event.offsetY)
+      // data.props.mouseclickposition[0] = event.offsetX
+      // data.props.mouseclickposition[1] = event.offsetY
+      // this._vm.$set(data.props.styleObject, "x", parseInt(data.props.styleObject.x) + 10)
+      data.props.styleObject.x = `${parseInt(data.props.styleObject.x) + 10}`
+
     }
 
 
