@@ -9,6 +9,7 @@ Vue.use(VuexUndoRedo, { ignoreMutations: ['newID', "setArrowPosition"] });
 export default new Vuex.Store({
   strict: "debug",
   state: {
+    svg: null,
     IdArray: [],
     FocusingElementId: null,
     alldata: {
@@ -28,6 +29,9 @@ export default new Vuex.Store({
 
   },
   mutations: {
+    getSVG(state, ref) {
+      state.svg = ref
+    },
     assignBeginingNode(state) {
       state.self = state.alldata
     },
@@ -41,11 +45,11 @@ export default new Vuex.Store({
       state.self = state.self.parent
       state.self.mainPage = true
     },
-    addElement(state, { type, props, event, parent, ctm }) {
+    addElement(state, { type, props, event, parent }) {
       // console.log(payload.props.viewBox.startPoint)
       // console.log(payload.event.offsetX)
 
-      var element = new Element(type, props, event, parent, ctm)
+      var element = new Element(type, props, event, parent)
       state.self.childs.push(element);
       if (type == 'arrow') {
         state.arrowObject = element
@@ -64,7 +68,7 @@ export default new Vuex.Store({
     endLink(state, arrowendPreview) {
       state.arrowObject.props.visable = true
       state.arrowObject.props.arrowendPreview = arrowendPreview;
-
+      arrowendPreview.arrows.end.push(state.arrowObject)
       state.arrowObject = null
     },
     cancelLink(state) {
@@ -127,16 +131,31 @@ export default new Vuex.Store({
       data.props.styleObject.height = clientHeight
       data.content = content
     },
-    moveBlock(state, { data, event }) {
+    setBlockPosition(state, { data, position }) {
+      data.arrows.start.forEach(element => {
+        element.props.offsetX += 1
+        element.props.offsetX -= 1
+      });
+      data.arrows.end.forEach(element => {
+        element.props.offsetX += 1
+        element.props.offsetX -= 1
+      });
+      data.props.styleObject.x = position.x
+      data.props.styleObject.y = position.y
+
+      // state.arrowObject.props.visable = true
+      // state.arrowObject.props.offsetX = payload.event.offsetX + payload.props.viewBox["min-x"] + 1;
+      // state.arrowObject.props.offsetY = payload.event.offsetY + payload.props.viewBox["min-y"] + 1;
+
       // console.log(this._vm)
       // console.log(data)
       // console.log(data.props.mouseclickposition, [event.offsetX, event.offsetY])
-      data.props.mouseclickposition.splice(0, 1, event.offsetX)
-      data.props.mouseclickposition.splice(1, 1, event.offsetY)
-      // data.props.mouseclickposition[0] = event.offsetX
-      // data.props.mouseclickposition[1] = event.offsetY
-      // this._vm.$set(data.props.styleObject, "x", parseInt(data.props.styleObject.x) + 10)
-      data.props.styleObject.x = `${parseInt(data.props.styleObject.x) + 10}`
+      // data.props.mouseclickposition.splice(0, 1, event.offsetX)
+      // data.props.mouseclickposition.splice(1, 1, event.offsetY)
+      // // data.props.mouseclickposition[0] = event.offsetX
+      // // data.props.mouseclickposition[1] = event.offsetY
+      // // this._vm.$set(data.props.styleObject, "x", parseInt(data.props.styleObject.x) + 10)
+      // data.props.styleObject.x = `${parseInt(data.props.styleObject.x) + 10}`
 
     }
 

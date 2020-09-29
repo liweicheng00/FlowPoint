@@ -2,7 +2,7 @@
 import store from "@/store/index.js";
 
 class Element {
-    constructor(type, props, event, parent, ctm) {
+    constructor(type, props, event, parent) {
         this.type = type
         this.props = props
         this.event = event
@@ -12,6 +12,7 @@ class Element {
         this.id = store.state.IdArray[store.state.IdArray.length - 1]
 
         if (type == "block") {
+            this.arrows = { start: [], end: [] }
 
             this.content = ""
             this.props = {
@@ -19,7 +20,6 @@ class Element {
                     event.offsetX,
                     event.offsetY,
                 ],
-                ctm: ctm,
                 styleObject: {},
                 textObject: {}
             }
@@ -37,8 +37,8 @@ class Element {
                 offsetY: event.offsetY + props.viewBox["min-y"],
                 arrowstartPreview: props.arrowstartPreview,
                 arrowendPreview: null,
-                ctm: ctm
             }
+            props.arrowstartPreview.arrows.start.push(this)
 
             this.childs = []
             this.parent = null

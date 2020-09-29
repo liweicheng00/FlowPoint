@@ -86,6 +86,7 @@ export default {
   },
   created() {
     // console.log(zoom);
+    this.$store.commit("getSVG", this.$refs);
     this.$bus.$on("tool:back", () => {
       this.backtoolclickEvent();
     });
@@ -168,7 +169,6 @@ export default {
         props: this.props,
         event: event,
         parent: this.self,
-        ctm: this.svg.getCTM(),
       });
     },
     leftmousedownEvent(event) {
@@ -265,7 +265,6 @@ export default {
           type: "arrow",
           props: this.props,
           event: event,
-          ctm: this.svg.getCTM(),
         });
       } else {
         this.$store.commit("setArrowPosition", {

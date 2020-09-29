@@ -14,11 +14,13 @@
     :id="data.id"
     @dblclick.self="$emit('dblclick', $event,data)"
     v-bind="data.props.styleObject"
+    :x="styleObject.x"
+    :y="styleObject.y"
     :class="{focus: ifFocus}"
   />
   <foreignObject
-    :x="data.props.styleObject.x"
-    :y="data.props.styleObject.y"
+    :x="styleObject.x"
+    :y="styleObject.y"
     :width="data.props.styleObject.width"
     :height="data.props.styleObject.height"
     pointer-events="none"
@@ -27,7 +29,7 @@
       <div ref="content" v-html="data.content" class="text"></div>
     </body>
   </foreignObject>
-  <!-- <text :x="data.props.styleObject.x" :y="data.props.styleObject.y">{{data.props.styleObject.x}}</text> -->
+  <!-- <text :x="data.props.styleObject.x" :y="data.props.styleObject.y">{{x}},{{y}}</text> -->
 </g>
 </template>
 
@@ -51,12 +53,11 @@ export default {
         rx: "3",
         fill: "transparent",
         "stroke-width": "1",
+        x: "0",
+        y: "0",
       },
       textDefault: {},
     };
-  },
-  updated() {
-    console.log("update", this);
   },
   created: function () {
     this.$store.commit("initStyleObject", {
@@ -88,26 +89,17 @@ export default {
         this.ifFocus = false;
       }
     },
-    data: function () {
-      console.log("here");
-    },
   },
   computed: {
-    something() {
-      console.log("chinge");
-      return this.data.props.mouseclickposition;
-    },
     styleObject: function () {
       if (this.data.props.mouseclickposition) {
-        var ictm = this.data.props.ctm.inverse();
-
+        var ictm = this.$store.state.svg.svg.getCTM().inverse();
         var x =
           this.data.props.mouseclickposition[0] -
           parseInt(this.styleDefault.width) / ictm.a / 2;
         var y =
           this.data.props.mouseclickposition[1] -
           parseInt(this.styleDefault.height) / ictm.a / 2;
-
         var x1 = ictm.a * x + ictm.c * y + ictm.e;
         var y1 = ictm.b * x + ictm.d * y + ictm.f;
 
@@ -154,9 +146,31 @@ export default {
     },
     move(event) {
       if (this.allowMove) {
-        this.$nextTick(() => {
-          this.$store.commit("moveBlock", { data: this.data, event: event });
+        var ictm = this.$store.state.svg.svg.getCTM().inverse();
+        var x = event.offsetX - parseInt(this.styleDefault.width) / ictm.a / 2;
+        var y = event.offsetY - parseInt(this.styleDefault.height) / ictm.a / 2;
+        var x1 = ictm.a * x + ictm.c * y + ictm.e;
+        var y1 = ictm.b * x + ictm.d * y + ictm.f;
+
+        // var dx = event.offsetX - this.data.props.mouseclickposition[0];
+        // var dy = event.offsetY - this.data.props.mouseclickposition[1];
+        // this.x1 = `${parseInt(this.x1) + dx}`;
+        // this.y1 = `${parseInt(this.y1) + dy}`;
+        // console.log("movings", x1, y1);
+
+        // this.x = `${x1}`;
+        // this.y = `${y1}`;
+        this.$store.commit("setBlockPosition", {
+          data: this.data,
+          position: { x: `${x1}`, y: `${y1}` },
         });
+        this.$set(this.styleObject, "x", `${x1}`);
+        this.$set(this.styleObject, "y", `${y1}`);
+        // this.$store.commit("moveBlock", { data: this.data, event: event });
+
+        // this.$nextTick(() => {
+        //   this.$store.commit("moveBlock", { data: this.data, event: event });
+        // });
       }
     },
     endMove() {
