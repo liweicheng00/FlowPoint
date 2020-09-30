@@ -1,15 +1,15 @@
 <template>
-  <Block
-    v-if="data.type=='block'"
-    :data="data"
-    :parent="parent"
+  <g
+    :class="classList"
     @dblclick="dblclick"
-    @mousedown-right="mousedownright"
-    @mouseup-right="mouseupright"
+    @mousedown.right="mousedownright"
+    @mouseup.right="mouseupright"
     @mouseenter="mouseenter"
     @mouseleave="mouseleave"
-  />
-  <Arrow v-else-if="data.type=='arrow'" :data="data" />
+  >
+    <Block v-if="data.type=='block'" :data="data" :parent="parent" />
+    <Arrow v-else-if="data.type=='arrow'" :data="data" />
+  </g>
 </template>
 
 <script>
@@ -26,22 +26,30 @@ export default {
     parent: Object,
   },
   mounted: function () {},
+  computed: {
+    classList() {
+      var c = {
+        Preview: true,
+      };
+      c[this.data.type] = true;
+      return c;
+    },
+  },
   methods: {
-    mousedownright(event, data) {
-      this.$emit("mousedown-right", event, data);
+    mousedownright(event) {
+      this.$emit("mousedown-right", event, this.data);
     },
-    mouseupright(event, data) {
-      this.$emit("mouseup-right", event, data);
+    mouseupright(event) {
+      this.$emit("mouseup-right", event, this.data);
     },
-    mouseenter(event, data) {
-      console.log("mosue enter");
-      this.$emit("mouseenter", event, data);
+    mouseenter(event) {
+      this.$emit("mouseenter", event, this.data);
     },
-    mouseleave(event, data) {
-      this.$emit("mouseleave", event, data);
+    mouseleave(event) {
+      this.$emit("mouseleave", event, this.data);
     },
-    dblclick(event, data) {
-      this.$emit("dblclick", event, data);
+    dblclick(event) {
+      this.$emit("dblclick", event, this.data);
     },
   },
   beforeDestroy: function () {},

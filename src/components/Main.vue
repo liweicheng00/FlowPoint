@@ -90,6 +90,10 @@ export default {
     this.$bus.$on("tool:back", () => {
       this.backtoolclickEvent();
     });
+    this.$bus.$on("changeSelf", () => {
+      console.log("init viewbox");
+      this.viewBox = [0, 0];
+    });
     this.$bus.$on("tool:save", () => {
       console.log(this.$refs);
       this.savetoolclickEvent(this.$refs.svg);
@@ -121,12 +125,19 @@ export default {
   },
 
   computed: {
-    viewBox() {
-      if (this.props.clientHeight) {
-        return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
-      } else {
-        return "0 0 0 0";
-      }
+    viewBox: {
+      get() {
+        if (this.props.clientHeight) {
+          return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
+        } else {
+          return "0 0 0 0";
+        }
+      },
+      set(newValue) {
+        console.log("set viewBox", newValue);
+        this.props.viewBox["min-x"] = newValue[0];
+        this.props.viewBox["min-y"] = newValue[1];
+      },
     },
     data() {
       return this.$store.state.alldata;
@@ -197,22 +208,26 @@ export default {
       this.endLink(event, data);
     },
     previewdblclickEvent(event, child) {
-      console.log("db click");
+      console.log("send changeSelf");
+      this.$bus.$emit("changeSelf");
+
       this.$store.commit("changeSelf", child);
     },
     previewmouseenterEvent(event, data) {
-      if (this.linkStatus) {
+      if (this.linkStatus && event.target.classList.contains("block")) {
         this.props.arrowendPreview = data;
       }
     },
     previewmouseleaveEvent() {
-      if (this.linkStatus) {
+      if (this.linkStatus && event.target.classList.contains("block")) {
         this.props.arrowendPreview = null;
       }
     },
     // Tool EventBus Event Methods
     backtoolclickEvent() {
       if (this.parent) {
+        console.log("send changeSelf");
+        this.$bus.$emit("changeSelf");
         this.$store.commit("gobackSelf");
       } else {
         // todo: disable button
@@ -245,7 +260,7 @@ export default {
       // };a
     },
     startLink(event, data) {
-      if (event.target.classList.contains("Preview")) {
+      if (event.target.classList.contains("block")) {
         if (!this.props.arrowstartPreview) {
           this.linkStatus = true;
           this.props.arrowstartPreview = data;

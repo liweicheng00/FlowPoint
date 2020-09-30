@@ -112,6 +112,8 @@ export default {
   },
   methods: {
     rectClick() {
+      console.log("send changeSelf");
+      this.$bus.$emit("changeSelf");
       this.$store.commit("changeSelf", this.data);
     },
     // calculateOrder(parentCoor, coorStructure) {

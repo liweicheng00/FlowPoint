@@ -36,11 +36,14 @@ export default new Vuex.Store({
       state.self = state.alldata
     },
     changeSelf(state, child) {
+      console.log("state.self change")
       state.self.mainPage = false
       state.self = child
       state.self.mainPage = true
     },
     gobackSelf(state) {
+      console.log("state.self go back")
+
       state.self.mainPage = false
       state.self = state.self.parent
       state.self.mainPage = true
@@ -54,6 +57,9 @@ export default new Vuex.Store({
       if (type == 'arrow') {
         state.arrowObject = element
       }
+    },
+    clearInitPosition(state, data) {
+      data.props.mouseclickposition = null
     },
     setArrowPosition(state, payload) {
       state.arrowObject.props.visable = true
@@ -142,21 +148,6 @@ export default new Vuex.Store({
       });
       data.props.styleObject.x = position.x
       data.props.styleObject.y = position.y
-
-      // state.arrowObject.props.visable = true
-      // state.arrowObject.props.offsetX = payload.event.offsetX + payload.props.viewBox["min-x"] + 1;
-      // state.arrowObject.props.offsetY = payload.event.offsetY + payload.props.viewBox["min-y"] + 1;
-
-      // console.log(this._vm)
-      // console.log(data)
-      // console.log(data.props.mouseclickposition, [event.offsetX, event.offsetY])
-      // data.props.mouseclickposition.splice(0, 1, event.offsetX)
-      // data.props.mouseclickposition.splice(1, 1, event.offsetY)
-      // // data.props.mouseclickposition[0] = event.offsetX
-      // // data.props.mouseclickposition[1] = event.offsetY
-      // // this._vm.$set(data.props.styleObject, "x", parseInt(data.props.styleObject.x) + 10)
-      // data.props.styleObject.x = `${parseInt(data.props.styleObject.x) + 10}`
-
     }
 
 

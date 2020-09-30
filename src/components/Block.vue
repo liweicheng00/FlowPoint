@@ -1,16 +1,12 @@
 <template>
 <g
-  @mouseenter="$emit('mouseenter',$event,data)"
-  @mouseleave="$emit('mouseleave',$event,data)"
-  @mousedown.right="$emit('mousedown-right',$event,data)"
-  @mouseup.right="$emit('mouseup-right',$event,data)"
   @mousedown.left="leftmousedownEvent"
   @mouseup.left="leftmouseupEvent"
   @mousemove="mousemoveEvent"
-  @focus="onFocus($event)"
+  @focus="onFocus"
 >
   <rect
-    class="Preview"
+    class="block"
     :id="data.id"
     @dblclick.self="$emit('dblclick', $event,data)"
     v-bind="data.props.styleObject"
@@ -93,6 +89,7 @@ export default {
   computed: {
     styleObject: function () {
       if (this.data.props.mouseclickposition) {
+        console.log("re calculate");
         var ictm = this.$store.state.svg.svg.getCTM().inverse();
         var x =
           this.data.props.mouseclickposition[0] -
@@ -102,14 +99,14 @@ export default {
           parseInt(this.styleDefault.height) / ictm.a / 2;
         var x1 = ictm.a * x + ictm.c * y + ictm.e;
         var y1 = ictm.b * x + ictm.d * y + ictm.f;
-
+        this.$store.commit("clearInitPosition", this.data);
         return Object.assign(this.styleDefault, {
           color: "red",
           x: `${x1}`,
           y: `${y1}`,
         });
       } else {
-        return this.styleDefault;
+        return this.data.props.styleObject;
       }
     },
     textObject: function () {
@@ -128,8 +125,6 @@ export default {
       console.log("here");
     },
     leftmousedownEvent(event) {
-      console.log("mosue down");
-
       this.startMove(event);
     },
     leftmouseupEvent(event) {
@@ -152,25 +147,12 @@ export default {
         var x1 = ictm.a * x + ictm.c * y + ictm.e;
         var y1 = ictm.b * x + ictm.d * y + ictm.f;
 
-        // var dx = event.offsetX - this.data.props.mouseclickposition[0];
-        // var dy = event.offsetY - this.data.props.mouseclickposition[1];
-        // this.x1 = `${parseInt(this.x1) + dx}`;
-        // this.y1 = `${parseInt(this.y1) + dy}`;
-        // console.log("movings", x1, y1);
-
-        // this.x = `${x1}`;
-        // this.y = `${y1}`;
         this.$store.commit("setBlockPosition", {
           data: this.data,
           position: { x: `${x1}`, y: `${y1}` },
         });
         this.$set(this.styleObject, "x", `${x1}`);
         this.$set(this.styleObject, "y", `${y1}`);
-        // this.$store.commit("moveBlock", { data: this.data, event: event });
-
-        // this.$nextTick(() => {
-        //   this.$store.commit("moveBlock", { data: this.data, event: event });
-        // });
       }
     },
     endMove() {
