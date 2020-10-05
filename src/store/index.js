@@ -10,6 +10,8 @@ export default new Vuex.Store({
   strict: "debug",
   state: {
     svg: null,
+    ctm: null,
+    ictm: null,
     IdArray: [],
     FocusingElementId: null,
     alldata: {
@@ -31,6 +33,12 @@ export default new Vuex.Store({
   mutations: {
     getSVG(state, ref) {
       state.svg = ref
+
+    },
+    setCTM(state) {
+      state.ctm = state.svg.svg.getCTM()
+      state.ictm = state.ctm.inverse()
+      // todo: It seems like somthong get wrong when wheel rollong too fast
     },
     assignBeginingNode(state) {
       state.self = state.alldata
@@ -58,13 +66,19 @@ export default new Vuex.Store({
         state.arrowObject = element
       }
     },
-    clearInitPosition(state, data) {
+    clearInitPosition(state, { data, style }) {
       data.props.mouseclickposition = null
+      data.props.styleObject = style
     },
     setArrowPosition(state, payload) {
       state.arrowObject.props.visable = true
-      state.arrowObject.props.offsetX = payload.event.offsetX + payload.props.viewBox["min-x"] + 1;
-      state.arrowObject.props.offsetY = payload.event.offsetY + payload.props.viewBox["min-y"] + 1;
+      // state.arrowObject.props.offsetX = payload.event.offsetX + payload.props.viewBox["min-x"] + 1;
+      // state.arrowObject.props.offsetY = payload.event.offsetY + payload.props.viewBox["min-y"] + 1;
+      // state.arrowObject.props.startX =  
+      // state.arrowObject.props.startY = 
+      state.arrowObject.props.offsetX = state.ictm.a * payload.event.offsetX + state.ictm.c * payload.event.offsetY + state.ictm.e;
+      state.arrowObject.props.offsetY = state.ictm.b * payload.event.offsetX + state.ictm.d * payload.event.offsetY + state.ictm.f;
+
       if (payload.props.arrowendPreview) {
         state.arrowObject.props.arrowendPreview = payload.props.arrowendPreview;
       } else {
@@ -74,10 +88,13 @@ export default new Vuex.Store({
     endLink(state, arrowendPreview) {
       state.arrowObject.props.visable = true
       state.arrowObject.props.arrowendPreview = arrowendPreview;
-      arrowendPreview.arrows.end.push(state.arrowObject)
+      if (arrowendPreview) {
+        arrowendPreview.arrows.end.push(state.arrowObject)
+      }
       state.arrowObject = null
     },
     cancelLink(state) {
+      console.log("cacel link")
       state.self.childs.pop()
     },
     emptyState() {
@@ -130,14 +147,12 @@ export default new Vuex.Store({
       state.NumOfChilds[level] -= 1
 
     },
-    initStyleObject(state, { data, styleObject }) {
-      Object.assign(data.props.styleObject, styleObject)
-    },
     editContent(state, { data, content, clientHeight }) {
       data.props.styleObject.height = clientHeight
       data.content = content
     },
     setBlockPosition(state, { data, position }) {
+
       data.arrows.start.forEach(element => {
         element.props.offsetX += 1
         element.props.offsetX -= 1

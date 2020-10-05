@@ -1,5 +1,5 @@
 <template>
-  <div class="block" @click.self="clickEvent">
+  <div class="block">
     <svg
       class="Svg"
       ref="svg"
@@ -10,6 +10,7 @@
       :width="props.clientWidth"
       :height="props.clientHeight"
       :viewBox="viewBox"
+      preserveAspectRatio="xMidYMid slice"
       @contextmenu.prevent
       @click="clickEvent"
       @dblclick.self="dblclickEvent"
@@ -86,7 +87,11 @@ export default {
   },
   created() {
     // console.log(zoom);
-    this.$store.commit("getSVG", this.$refs);
+    this.$nextTick(() => {
+      this.$store.commit("getSVG", this.$refs);
+      this.$store.commit("setCTM");
+    });
+
     this.$bus.$on("tool:back", () => {
       this.backtoolclickEvent();
     });
@@ -130,6 +135,7 @@ export default {
         if (this.props.clientHeight) {
           return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
         } else {
+          console.warn("Waring: No viewBox");
           return "0 0 0 0";
         }
       },
@@ -170,8 +176,9 @@ export default {
     },
     clickEvent(event) {
       if (this.linkStatus) {
-        this.endLink(event);
         this.$store.commit("cancelLink");
+
+        this.endLink(event);
       }
     },
     dblclickEvent(event) {
@@ -214,7 +221,11 @@ export default {
       this.$store.commit("changeSelf", child);
     },
     previewmouseenterEvent(event, data) {
-      if (this.linkStatus && event.target.classList.contains("block")) {
+      if (
+        this.linkStatus &&
+        data.id != this.props.arrowstartPreview.id &&
+        event.target.classList.contains("block")
+      ) {
         this.props.arrowendPreview = data;
       }
     },
@@ -305,14 +316,15 @@ export default {
         this.props.viewBox.startPoint[0] - event.offsetX;
       this.props.viewBox["min-y"] =
         this.props.viewBox.startPoint[1] - event.offsetY;
+      this.$store.commit("setCTM");
     },
     zoom(event) {
-      // todo not lower than zoro
       var w = this.props.viewBox.width + event.deltaY;
-      // var h = this.props.viewBox.height + event.deltaY;
+      var h = this.props.viewBox.height + event.deltaY;
 
       this.props.viewBox.width = w >= 0 ? w : 0;
-      // this.props.viewBox.height = h >= 0 ? h : 0;
+      this.props.viewBox.height = h >= 0 ? h : 0;
+      this.$store.commit("setCTM");
     },
     key_u() {
       console.log(this.done, this.undone);

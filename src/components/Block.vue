@@ -1,32 +1,32 @@
 <template>
-<g
-  @mousedown.left="leftmousedownEvent"
-  @mouseup.left="leftmouseupEvent"
-  @mousemove="mousemoveEvent"
-  @focus="onFocus"
->
-  <rect
-    class="block"
-    :id="data.id"
-    @dblclick.self="$emit('dblclick', $event,data)"
-    v-bind="data.props.styleObject"
-    :x="styleObject.x"
-    :y="styleObject.y"
-    :class="{focus: ifFocus}"
-  />
-  <foreignObject
-    :x="styleObject.x"
-    :y="styleObject.y"
-    :width="data.props.styleObject.width"
-    :height="data.props.styleObject.height"
-    pointer-events="none"
+  <g
+    @mousedown.left="leftmousedownEvent"
+    @mouseup.left="leftmouseupEvent"
+    @mousemove="mousemoveEvent"
+    @focus="onFocus"
   >
-    <body xmlns="http://www.w3.org/1999/xhtml">
-      <div ref="content" v-html="data.content" class="text"></div>
-    </body>
-  </foreignObject>
-  <!-- <text :x="data.props.styleObject.x" :y="data.props.styleObject.y">{{x}},{{y}}</text> -->
-</g>
+    <rect
+      class="block"
+      :id="data.id"
+      @dblclick.self="$emit('dblclick', $event, data)"
+      v-bind="data.props.styleObject"
+      :x="styleObject.x"
+      :y="styleObject.y"
+      :class="{ focus: ifFocus }"
+    />
+    <foreignObject
+      :x="styleObject.x"
+      :y="styleObject.y"
+      :width="data.props.styleObject.width"
+      :height="data.props.styleObject.height"
+      pointer-events="none"
+    >
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <div ref="content" v-html="data.content" class="text"></div>
+      </body>
+    </foreignObject>
+    <!-- <text :x="styleObject.x" :y="styleObject.y">{{styleObject.x}},{{styleObject.y}}</text> -->
+  </g>
 </template>
 
 <script>
@@ -56,11 +56,7 @@ export default {
     };
   },
   created: function () {
-    this.$store.commit("initStyleObject", {
-      data: this.data,
-      styleObject: this.styleObject,
-    });
-
+    // get content from TextEditor
     this.$bus.$on("TextEditor:change", (content, id) => {
       if (this.ifFocus && this.data.id == id) {
         this.$store.commit("editContent", {
@@ -77,9 +73,9 @@ export default {
   },
   watch: {
     focusingElementId: function (new_value) {
-      // pass content to TextEditor
       if (new_value == this.data.id) {
         this.ifFocus = true;
+        // pass content to TextEditor
         this.$bus.$emit("Block:focus", this.data.content, this.data.id);
       } else {
         this.ifFocus = false;
@@ -89,8 +85,7 @@ export default {
   computed: {
     styleObject: function () {
       if (this.data.props.mouseclickposition) {
-        console.log("re calculate");
-        var ictm = this.$store.state.svg.svg.getCTM().inverse();
+        var ictm = this.$store.state.ictm;
         var x =
           this.data.props.mouseclickposition[0] -
           parseInt(this.styleDefault.width) / ictm.a / 2;
@@ -99,12 +94,16 @@ export default {
           parseInt(this.styleDefault.height) / ictm.a / 2;
         var x1 = ictm.a * x + ictm.c * y + ictm.e;
         var y1 = ictm.b * x + ictm.d * y + ictm.f;
-        this.$store.commit("clearInitPosition", this.data);
-        return Object.assign(this.styleDefault, {
+        var style = Object.assign(this.styleDefault, {
           color: "red",
           x: `${x1}`,
           y: `${y1}`,
         });
+        this.$store.commit("clearInitPosition", {
+          data: this.data,
+          style: style,
+        });
+        return style;
       } else {
         return this.data.props.styleObject;
       }
@@ -141,7 +140,7 @@ export default {
     },
     move(event) {
       if (this.allowMove) {
-        var ictm = this.$store.state.svg.svg.getCTM().inverse();
+        var ictm = this.$store.state.ictm;
         var x = event.offsetX - parseInt(this.styleDefault.width) / ictm.a / 2;
         var y = event.offsetY - parseInt(this.styleDefault.height) / ictm.a / 2;
         var x1 = ictm.a * x + ictm.c * y + ictm.e;
@@ -151,8 +150,6 @@ export default {
           data: this.data,
           position: { x: `${x1}`, y: `${y1}` },
         });
-        this.$set(this.styleObject, "x", `${x1}`);
-        this.$set(this.styleObject, "y", `${y1}`);
       }
     },
     endMove() {

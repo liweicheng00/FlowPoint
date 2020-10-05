@@ -31,10 +31,10 @@ class Element {
             this.position = {}
             this.props = {
                 visable: false,
-                startX: event.offsetX + props.viewBox["min-x"],
-                startY: event.offsetY + props.viewBox["min-y"],
-                offsetX: event.offsetX + props.viewBox["min-x"],
-                offsetY: event.offsetY + props.viewBox["min-y"],
+                startX: null,
+                startY: null,
+                offsetX: null,
+                offsetY: null,
                 arrowstartPreview: props.arrowstartPreview,
                 arrowendPreview: null,
             }
