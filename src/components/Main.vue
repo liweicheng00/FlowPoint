@@ -21,10 +21,6 @@
       @wheel="wheelEvent"
     >
       <g>
-        <rect x="0" y="0" width="10" height="10" />
-        <rect x="100" y="0" width="10" height="10" />
-        <rect x="0" y="100" width="10" height="10" />
-        <rect x="100" y="100" width="10" height="10" />
         <Preview
           v-for="(child, index) in childs"
           :key="index"
