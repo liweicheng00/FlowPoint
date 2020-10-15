@@ -90,6 +90,8 @@ export default new Vuex.Store({
       state.arrowObject.props.arrowendPreview = arrowendPreview;
       if (arrowendPreview) {
         arrowendPreview.arrows.end.push(state.arrowObject)
+      } else {
+        this._mutations.cancelLink[0]()
       }
       state.arrowObject = null
     },
