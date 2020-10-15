@@ -8,7 +8,6 @@
     <rect
       class="block"
       :id="data.id"
-      @dblclick.self="$emit('dblclick', $event, data)"
       v-bind="data.props.styleObject"
       :x="styleObject.x"
       :y="styleObject.y"

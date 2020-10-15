@@ -7,8 +7,8 @@
     @mouseenter="mouseenter"
     @mouseleave="mouseleave"
   >
-    <Block v-if="data.type=='block'" :data="data" :parent="parent" />
-    <Arrow v-else-if="data.type=='arrow'" :data="data" />
+    <Block v-if="data.type == 'block'" :data="data" :parent="parent" />
+    <Arrow v-else-if="data.type == 'arrow'" :data="data" />
   </g>
 </template>
 

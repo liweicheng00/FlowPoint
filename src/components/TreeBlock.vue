@@ -1,10 +1,10 @@
 <template>
   <g v-if="visible">
-    <path :d="d" v-bind="pathObject" />
+    <path :d="d" v-bind="pathDefault" />
     <rect v-bind="styleObject" @click="rectClick" />
     <!-- <text v-bind="textObject">{{data.id}}</text> -->
     <TreeBlock
-      v-for="(child, index) in data.childs"
+      v-for="(child, index) in filtChilds"
       :key="index"
       :pkey="index"
       :parentCoor="coor"
@@ -53,6 +53,19 @@ export default {
     };
   },
   computed: {
+    coor() {
+      var coor = Array.from(this.parentCoor);
+      coor.push(this.pkey);
+      return coor;
+    },
+    l: function () {
+      return this.level + 1;
+    },
+    filtChilds() {
+      return this.data.childs.filter((child) => {
+        return child.type == "block";
+      });
+    },
     visible() {
       if (this.data.type == "arrow") {
         return false;
@@ -68,16 +81,8 @@ export default {
     },
     lastPoint() {
       var x = this.connectPoint[0] + parseInt(this.styleDefault.width);
-      var y = this.connectPoint[1];
+      var y = this.connectPoint[1] + parseFloat(this.styleDefault.height) / 2;
       return [x, y];
-    },
-    l: function () {
-      return this.level + 1;
-    },
-    coor() {
-      var coor = Array.from(this.parentCoor);
-      coor.push(this.pkey);
-      return coor;
     },
     styleObject: function () {
       return Object.assign(this.styleDefault, {
@@ -86,27 +91,18 @@ export default {
         y: `${this.connectPoint[1]}`,
       });
     },
-    pathObject: function () {
-      return Object.assign(this.pathDefault, {});
-    },
-    textObject: function () {
-      return Object.assign(this.textDefault, {
-        x: `${this.data.position.mouseclickposition[0]}`,
-        y: `${this.data.position.mouseclickposition[1]}`,
-      });
-    },
     d() {
       if (this.startPoint != "0,0") {
         var start = `${this.startPoint[0]},${this.startPoint[1]}`;
-        var end = `${this.connectPoint[0]},${this.connectPoint[1]}`;
+        var end = `${this.connectPoint[0]},${
+          this.connectPoint[1] + parseFloat(this.styleDefault.height) / 2
+        }`;
         return `M${start} L${end}`;
       } else {
         return "";
       }
     },
     alldata() {
-      console.log("here");
-      console.log(this.$store.state.alldata);
       return this.$store.state.alldata;
     },
   },

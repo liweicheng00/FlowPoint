@@ -26,6 +26,7 @@
           :key="index"
           :data="child"
           :parent="self"
+          @click="pclicktest"
           @dblclick="previewdblclickEvent"
           @mousedown-right="previewmousedownEvent"
           @mouseup-right="previewmouseupEvent"
@@ -61,7 +62,6 @@ export default {
       // childs: this.data.childs,
       // parent: this.data.parent,
       dom: {},
-      svg: null,
       linkStatus: false,
       arrowObject: null,
 
@@ -91,10 +91,6 @@ export default {
     this.$bus.$on("tool:back", () => {
       this.backtoolclickEvent();
     });
-    this.$bus.$on("changeSelf", () => {
-      console.log("init viewbox");
-      this.viewBox = [0, 0];
-    });
     this.$bus.$on("tool:save", () => {
       console.log(this.$refs);
       this.savetoolclickEvent(this.$refs.svg);
@@ -114,14 +110,7 @@ export default {
     });
   },
   mounted: function () {
-    var svg = document.getElementById("block");
-    this.svg = svg;
-
-    this.props.clientHeight = this.$el.clientHeight;
-    this.props.clientWidth = this.$el.clientWidth;
-    this.props.viewBox.height = this.props.clientHeight;
-    this.props.viewBox.width = this.props.clientWidth;
-
+    this.windowresizeEvent();
     this.$store.commit("assignBeginingNode");
   },
 
@@ -136,7 +125,6 @@ export default {
         }
       },
       set(newValue) {
-        console.log("set viewBox", newValue);
         this.props.viewBox["min-x"] = newValue[0];
         this.props.viewBox["min-y"] = newValue[1];
       },
@@ -156,14 +144,15 @@ export default {
   },
   watch: {
     allowZoom: function (newValue) {
-      console.log("change");
       if (!newValue) {
-        console.log(this.svg);
-        this.svg.on(".zoom", null);
+        this.$el.on(".zoom", null);
       }
     },
   },
   methods: {
+    pclicktest(event, data) {
+      console.log("test", event, data);
+    },
     windowresizeEvent() {
       this.props.clientHeight = this.$el.clientHeight;
       this.props.clientWidth = this.$el.clientWidth;
@@ -211,9 +200,8 @@ export default {
       this.endLink(event, data);
     },
     previewdblclickEvent(event, child) {
-      console.log("send changeSelf");
-      this.$bus.$emit("changeSelf");
-
+      console.log("here");
+      this.initViewbox();
       this.$store.commit("changeSelf", child);
     },
     previewmouseenterEvent(event, data) {
@@ -233,8 +221,7 @@ export default {
     // Tool EventBus Event Methods
     backtoolclickEvent() {
       if (this.parent) {
-        console.log("send changeSelf");
-        this.$bus.$emit("changeSelf");
+        this.initViewbox();
         this.$store.commit("gobackSelf");
       } else {
         // todo: disable button
@@ -257,14 +244,8 @@ export default {
       document.body.removeChild(downloadLink);
     },
     // Methods
-    getMousePosition() {
-      var CTM = this.svg.getScreenCTM();
-      // console.log(event.clientX, CTM.e, CTM.a);
-      console.log(CTM);
-      // return {
-      //   x: (event.clientX - CTM.e) / CTM.a,
-      //   y: (event.clientY - CTM.f) / CTM.d,
-      // };a
+    initViewbox() {
+      this.viewBox = [0, 0];
     },
     startLink(event, data) {
       if (event.target.classList.contains("block")) {
@@ -321,9 +302,6 @@ export default {
       this.props.viewBox.width = w >= 0 ? w : 0;
       this.props.viewBox.height = h >= 0 ? h : 0;
       this.$store.commit("setCTM");
-    },
-    key_u() {
-      console.log(this.done, this.undone);
     },
   },
 };
