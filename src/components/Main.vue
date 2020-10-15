@@ -26,10 +26,11 @@
           :key="index"
           :data="child"
           :parent="self"
-          @click="pclicktest"
           @dblclick="previewdblclickEvent"
           @mousedown-right="previewmousedownEvent"
           @mouseup-right="previewmouseupEvent"
+          @mouseup-left="previewmouseupEventL"
+          @mousedown-left="previewmousedownEventL"
           @mouseenter="previewmouseenterEvent"
           @mouseleave="previewmouseleaveEvent"
         />
@@ -58,9 +59,7 @@ export default {
     return {
       allowZoom: false,
       allowPen: false,
-      // self: this.data,
-      // childs: this.data.childs,
-      // parent: this.data.parent,
+      allowDrag: false,
       dom: {},
       linkStatus: false,
       arrowObject: null,
@@ -150,9 +149,6 @@ export default {
     },
   },
   methods: {
-    pclicktest(event, data) {
-      console.log("test", event, data);
-    },
     windowresizeEvent() {
       this.props.clientHeight = this.$el.clientHeight;
       this.props.clientWidth = this.$el.clientWidth;
@@ -186,6 +182,8 @@ export default {
         this.Link(event);
       } else if (this.allowPen) {
         this.pen(event);
+      } else if (this.allowDrag) {
+        this.drag(event, this.dragData);
       }
     },
     mouseleaveEvent() {},
@@ -193,6 +191,12 @@ export default {
       this.zoom(event);
     },
     // Preview Event Methods
+    previewmousedownEventL(event, data) {
+      this.startDrag(data);
+    },
+    previewmouseupEventL() {
+      this.endDrag();
+    },
     previewmousedownEvent(event, data) {
       this.startLink(event, data);
     },
@@ -302,6 +306,30 @@ export default {
       this.props.viewBox.width = w >= 0 ? w : 0;
       this.props.viewBox.height = h >= 0 ? h : 0;
       this.$store.commit("setCTM");
+    },
+    startDrag(data) {
+      this.allowDrag = true;
+      this.dragData = data;
+    },
+    drag(event, data) {
+      if (this.allowDrag) {
+        var ictm = this.$store.state.ictm;
+        var x =
+          event.offsetX - parseInt(data.props.styleObject.width) / ictm.a / 2;
+        var y =
+          event.offsetY - parseInt(data.props.styleObject.height) / ictm.a / 2;
+        var x1 = ictm.a * x + ictm.c * y + ictm.e;
+        var y1 = ictm.b * x + ictm.d * y + ictm.f;
+
+        this.$store.commit("setBlockPosition", {
+          data: data,
+          position: { x: `${x1}`, y: `${y1}` },
+        });
+      }
+    },
+    endDrag() {
+      this.allowDrag = false;
+      this.dragData = null;
     },
   },
 };

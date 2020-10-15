@@ -1,6 +1,8 @@
 <template>
   <g
     :class="classList"
+    @mousedown.left="mousedownleft"
+    @mouseup.left="mouseupleft"
     @dblclick="dblclick"
     @mousedown.right="mousedownright"
     @mouseup.right="mouseupright"
@@ -41,6 +43,12 @@ export default {
     },
     mouseupright(event) {
       this.$emit("mouseup-right", event, this.data);
+    },
+    mouseupleft(event) {
+      this.$emit("mouseup-left", event, this.data);
+    },
+    mousedownleft(event) {
+      this.$emit("mousedown-left", event, this.data);
     },
     mouseenter(event) {
       this.$emit("mouseenter", event, this.data);

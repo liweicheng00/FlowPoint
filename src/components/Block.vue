@@ -1,16 +1,9 @@
 <template>
-  <g
-    @mousedown.left="leftmousedownEvent"
-    @mouseup.left="leftmouseupEvent"
-    @mousemove="mousemoveEvent"
-    @focus="onFocus"
-  >
+  <g @focus="onFocus">
     <rect
       class="block"
       :id="data.id"
       v-bind="data.props.styleObject"
-      :x="styleObject.x"
-      :y="styleObject.y"
       :class="{ focus: ifFocus }"
     />
     <foreignObject
@@ -24,14 +17,10 @@
         <div ref="content" v-html="data.content" class="text"></div>
       </body>
     </foreignObject>
-    <!-- <text :x="styleObject.x" :y="styleObject.y">{{styleObject.x}},{{styleObject.y}}</text> -->
   </g>
 </template>
 
 <script>
-// import func from "../../vue-temp/vue-editor-bridge";
-// import { mapState } from "vuex";
-
 export default {
   props: {
     data: Object,
@@ -121,38 +110,6 @@ export default {
     },
     resizeBody() {
       console.log("here");
-    },
-    leftmousedownEvent(event) {
-      this.startMove(event);
-    },
-    leftmouseupEvent(event) {
-      this.endMove(event);
-    },
-    mousemoveEvent(event) {
-      event.preventDefault();
-      if (this.allowMove) {
-        this.move(event);
-      }
-    },
-    startMove() {
-      this.allowMove = true;
-    },
-    move(event) {
-      if (this.allowMove) {
-        var ictm = this.$store.state.ictm;
-        var x = event.offsetX - parseInt(this.styleDefault.width) / ictm.a / 2;
-        var y = event.offsetY - parseInt(this.styleDefault.height) / ictm.a / 2;
-        var x1 = ictm.a * x + ictm.c * y + ictm.e;
-        var y1 = ictm.b * x + ictm.d * y + ictm.f;
-
-        this.$store.commit("setBlockPosition", {
-          data: this.data,
-          position: { x: `${x1}`, y: `${y1}` },
-        });
-      }
-    },
-    endMove() {
-      this.allowMove = false;
     },
   },
   beforeDestroy: function () {
