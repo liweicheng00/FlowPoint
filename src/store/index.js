@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Element from "@/api/element.js";
 import VuexUndoRedo from "vuex-undo-redo";
-
+import gridAttach from "@/api/position.js"
 Vue.use(Vuex)
 Vue.use(VuexUndoRedo, { ignoreMutations: ['newID', "setArrowPosition"] });
 
@@ -34,6 +34,9 @@ export default new Vuex.Store({
     getSVG(state, ref) {
       state.svg = ref
 
+    },
+    clearSVG(state) {
+      state.svg = null
     },
     setCTM(state) {
       state.ctm = state.svg.svg.getCTM()
@@ -145,9 +148,12 @@ export default new Vuex.Store({
         state.NumOfChilds.push(1)
       }
     },
+
     reduceChildNum(state, level) {
       state.NumOfChilds[level] -= 1
-
+      if (!state.NumOfChilds[level]) {
+        state.NumOfChilds.splice(level, level)
+      }
     },
     editContent(state, { data, content, clientHeight }) {
       data.props.styleObject.height = clientHeight
@@ -163,8 +169,8 @@ export default new Vuex.Store({
         element.props.offsetX += 1
         element.props.offsetX -= 1
       });
-      data.props.styleObject.x = position.x
-      data.props.styleObject.y = position.y
+      data.props.styleObject.x = `${gridAttach(position.x)}`
+      data.props.styleObject.y = `${gridAttach(position.y)}`
     }
 
 

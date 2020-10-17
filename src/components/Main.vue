@@ -323,7 +323,7 @@ export default {
 
         this.$store.commit("setBlockPosition", {
           data: data,
-          position: { x: `${x1}`, y: `${y1}` },
+          position: { x: x1, y: y1 },
         });
       }
     },
@@ -331,6 +331,9 @@ export default {
       this.allowDrag = false;
       this.dragData = null;
     },
+  },
+  beforeDestroy() {
+    this.$store.commit("clearSVG");
   },
 };
 </script>

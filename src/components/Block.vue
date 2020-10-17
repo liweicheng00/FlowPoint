@@ -14,7 +14,9 @@
       pointer-events="none"
     >
       <body xmlns="http://www.w3.org/1999/xhtml">
-        <div ref="content" v-html="data.content" class="text"></div>
+        <div class="fo">
+          <div ref="content" v-html="data.content" :class="[fo_content]"></div>
+        </div>
       </body>
     </foreignObject>
   </g>
@@ -41,6 +43,7 @@ export default {
         y: "0",
       },
       textDefault: {},
+      fo_content: "",
     };
   },
   created: function () {
@@ -57,6 +60,10 @@ export default {
               : this.styleDefault.height,
         });
       }
+    });
+    this.$bus.$on("Style:change", (style) => {
+      this.fo_content = style.name;
+      console.log(style);
     });
   },
   watch: {
@@ -80,6 +87,7 @@ export default {
         var y =
           this.data.props.mouseclickposition[1] -
           parseInt(this.styleDefault.height) / ictm.a / 2;
+
         var x1 = ictm.a * x + ictm.c * y + ictm.e;
         var y1 = ictm.b * x + ictm.d * y + ictm.f;
         var style = Object.assign(this.styleDefault, {
@@ -111,6 +119,10 @@ export default {
     resizeBody() {
       console.log("here");
     },
+    gridAttach(value, width) {
+      var a = value % width;
+      return a > width / 2 ? value + (width - a) : value - a;
+    },
   },
   beforeDestroy: function () {
     this.$bus.$off("TextEditor:change");
@@ -134,8 +146,21 @@ body {
 .text {
   padding: 3px;
 }
-/* .default:focus {
-  background-color: Aqua;
-  border: solid 1px rgb(204, 137, 30);
-} */
+</style>
+<style>
+.fo {
+  padding: 5px;
+}
+.fo * {
+  margin: 0px;
+  padding: 0px;
+}
+.fo .test1 p {
+  padding: 5px;
+  font-size: 12px;
+}
+.fo .test2 p {
+  padding: 10px;
+  font-size: 14px;
+}
 </style>

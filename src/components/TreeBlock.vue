@@ -26,6 +26,7 @@ export default {
       pkey: this.pkey,
       parentCoor: this.parentCoor,
     });
+
     this.index = this.$store.state.NumOfChilds[this.l];
   },
   data: function () {
@@ -112,28 +113,6 @@ export default {
       this.$bus.$emit("changeSelf");
       this.$store.commit("changeSelf", this.data);
     },
-    // calculateOrder(parentCoor, coorStructure) {
-    // var i = 0;
-    // var a = function (ac, cu, i) {
-    //   i++;
-    //   if (parentCoor.length == i) {
-    //     ac = cu.reduce((au, cu, index) => {
-    //       if (index <= parentCoor[i]) {
-    //         ac = ac + cu.length;
-    //       }
-    //     }, 0);
-    //     return ac;
-    //   } else {
-    //     ac = cu.reduce((ac, cu, index) => {
-    //       if (index <= parentCoor[i]) {
-    //         ac = a(ac, cu, i);
-    //       }
-    //     });
-    //     return ac;
-    //   }
-    //   };
-    //   console.log(b, c, d);
-    // },
   },
   destroyed() {
     this.$store.commit("reduceChildNum", this.l);

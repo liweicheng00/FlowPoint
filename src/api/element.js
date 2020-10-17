@@ -1,5 +1,5 @@
-// import mousemove from "@/api/position.js";
 import store from "@/store/index.js";
+import gridAttach from "@/api/position.js"
 
 class Element {
     constructor(type, props, event, parent) {
@@ -13,12 +13,11 @@ class Element {
 
         if (type == "block") {
             this.arrows = { start: [], end: [] }
-
             this.content = ""
             this.props = {
                 mouseclickposition: [
-                    event.offsetX,
-                    event.offsetY,
+                    gridAttach(event.offsetX),
+                    gridAttach(event.offsetY),
                 ],
                 styleObject: {},
                 textObject: {}

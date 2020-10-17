@@ -1,9 +1,8 @@
-var mousemove = { event: null }
-
-window.addEventListener('mousemove', (event) => {
-
-    mousemove.event = event
-})
 
 
-export default mousemove
+const gridAttach = function (value, grid_pixel = 20) {
+    var a = value % grid_pixel;
+    return a > grid_pixel / 2 ? value + (grid_pixel - a) : value - a;
+}
+
+export default gridAttach 

@@ -1,0 +1,75 @@
+<template>
+  <div>
+    <b-container fluid>
+      <b-form-row>
+        <!-- <b-col> -->
+        <!-- <Tree /> -->
+        <!-- </b-col> -->
+        <b-col cols="8">
+          <Tool />
+          <Main />
+        </b-col>
+        <b-col>
+          <All />
+          <Demo />
+          <Style />
+          <TextEditor />
+        </b-col>
+      </b-form-row>
+      <!-- <Keyboard /> -->
+    </b-container>
+  </div>
+</template>
+
+<script>
+import Main from "@/components/Main.vue";
+import All from "@/components/All.vue";
+import Demo from "@/components/Demo.vue";
+// import Keyboard from "@/components/Keyboard.vue";
+// import Tree from "@/components/Tree.vue";
+import Style from "@/components/Style.vue";
+import Tool from "@/components/Tool.vue";
+import TextEditor from "@/components/TextEditor.vue";
+
+export default {
+  name: "EditFlow",
+  components: {
+    Main,
+    All,
+    Demo,
+    // Keyboard,
+    // Tree,
+    Style,
+    Tool,
+    TextEditor,
+  },
+
+  created() {
+    this.data = this.$store.state.alldata;
+  },
+};
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
+</style>
+
