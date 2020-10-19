@@ -1,42 +1,42 @@
 <template>
-  <div class="default">
-    <div
+  <div class="default S">
+    <StyleBlock
       v-for="(style, index) in styles"
       :key="index"
-      @click="changeStyle(index)"
-    >
-      {{ style.name }}
-    </div>
+      :layout_style="style"
+    />
   </div>
 </template>
 
 <script>
+import StyleBlock from "@/components/StyleBlock.vue";
+
 export default {
+  components: {
+    StyleBlock,
+  },
   data: function () {
     return {
       styles: [
         {
-          name: "test1",
+          name: "default_p",
+          content: "<div><p>put something graceful</p></div>",
           style: {
-            padding: "20px",
-            "font-size": 12,
+            div: { padding: "20px" },
+            p: { "font-size": "12px" },
           },
         },
         {
-          name: "test2",
+          name: "default_h_p",
+          content: "<div><h4>head</h4><p>put something meaningful</p></div>",
           style: {
-            padding: "40px",
-            "font-size": 24,
+            div: { padding: "10px" },
+            h: { "font-size": "20px" },
+            p: { "font-size": "20px" },
           },
         },
       ],
     };
-  },
-  methods: {
-    changeStyle(index) {
-      console.log(index);
-      this.$bus.$emit("Style:change", this.styles[index]);
-    },
   },
 };
 </script>
@@ -45,5 +45,8 @@ export default {
 .default {
   border: solid 1px rgb(205, 202, 197);
   border-radius: 3px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-content: flex-start;
 }
 </style>

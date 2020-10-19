@@ -14,8 +14,8 @@
       pointer-events="none"
     >
       <body xmlns="http://www.w3.org/1999/xhtml">
-        <div class="fo">
-          <div ref="content" v-html="data.content" :class="[fo_content]"></div>
+        <div ref="content" class="fo">
+          <div v-html="data.content" :class="[fo_content]"></div>
         </div>
       </body>
     </foreignObject>
@@ -53,11 +53,7 @@ export default {
         this.$store.commit("editContent", {
           data: this.data,
           content: content,
-          clientHeight:
-            parseInt(this.$refs.content.clientHeight) >=
-            parseInt(this.styleDefault.height)
-              ? this.$refs.content.clientHeight
-              : this.styleDefault.height,
+          ref: this.$refs.content,
         });
       }
     });
@@ -145,22 +141,5 @@ body {
 }
 .text {
   padding: 3px;
-}
-</style>
-<style>
-.fo {
-  padding: 5px;
-}
-.fo * {
-  margin: 0px;
-  padding: 0px;
-}
-.fo .test1 p {
-  padding: 5px;
-  font-size: 12px;
-}
-.fo .test2 p {
-  padding: 10px;
-  font-size: 14px;
 }
 </style>

@@ -35,7 +35,7 @@ export default {
   store,
 };
 </script>
-
+<style src="@/css/style.css"></style>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

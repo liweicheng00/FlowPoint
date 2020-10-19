@@ -155,9 +155,9 @@ export default new Vuex.Store({
         state.NumOfChilds.splice(level, level)
       }
     },
-    editContent(state, { data, content, clientHeight }) {
-      data.props.styleObject.height = clientHeight
+    editContent(state, { data, content, ref }) {
       data.content = content
+      data.props.styleObject.height = ref.clientHeight
     },
     setBlockPosition(state, { data, position }) {
 
