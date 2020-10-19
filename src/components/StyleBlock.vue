@@ -23,15 +23,15 @@ export default {
       css = css + "} ";
     }
     var head = document.head || document.getElementsByTagName("head")[0];
-    var style = document.createElement("style");
-    head.appendChild(style);
+    var styleElement = document.createElement("style");
+    head.appendChild(styleElement);
 
-    style.type = "text/css";
-    if (style.styleSheet) {
+    styleElement.type = "text/css";
+    if (styleElement.styleSheet) {
       // This is required for IE8 and below.
-      style.styleSheet.cssText = css;
+      styleElement.styleSheet.cssText = css;
     } else {
-      style.appendChild(document.createTextNode(css));
+      styleElement.appendChild(document.createTextNode(css));
     }
   },
   computed: {},
