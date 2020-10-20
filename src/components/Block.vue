@@ -81,6 +81,9 @@ export default {
         this.ifFocus = false;
       }
     },
+    data: function () {
+      console.log("here");
+    },
   },
   computed: {
     styleObject: function () {
