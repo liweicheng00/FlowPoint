@@ -1,7 +1,12 @@
 <template>
   <g v-if="visible">
     <path :d="d" v-bind="pathDefault" />
-    <rect v-bind="styleObject" @click="rectClick" />
+    <rect
+      v-bind="styleObject"
+      @click="rectClick"
+      @mouseenter.self="rectMouseenter"
+      @mouseleave.self="rectMouseleave"
+    />
     <!-- <text v-bind="textObject">{{data.id}}</text> -->
     <TreeBlock
       v-for="(child, index) in filtChilds"
@@ -112,6 +117,12 @@ export default {
       console.log("send changeSelf");
       this.$bus.$emit("changeSelf");
       this.$store.commit("changeSelf", this.data);
+    },
+    rectMouseenter() {
+      this.$bus.$emit("TreeBlock:mouseenter", this.data);
+    },
+    rectMouseleave() {
+      this.$bus.$emit("TreeBlock:mouseleave");
     },
   },
   destroyed() {

@@ -11,7 +11,7 @@
         </b-col>
         <b-col>
           <All />
-          <Demo />
+          <Preview />
           <Style />
           <TextEditor />
         </b-col>
@@ -24,7 +24,7 @@
 <script>
 import Main from "@/components/Main.vue";
 import All from "@/components/All.vue";
-import Demo from "@/components/Demo.vue";
+import Preview from "@/components/Preview.vue";
 // import Keyboard from "@/components/Keyboard.vue";
 // import Tree from "@/components/Tree.vue";
 import Style from "@/components/Style.vue";
@@ -36,7 +36,7 @@ export default {
   components: {
     Main,
     All,
-    Demo,
+    Preview,
     // Keyboard,
     // Tree,
     Style,
