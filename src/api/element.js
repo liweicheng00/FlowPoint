@@ -34,10 +34,10 @@ class Element {
                 startY: null,
                 offsetX: null,
                 offsetY: null,
-                arrowstartPreview: props.arrowstartPreview,
-                arrowendPreview: null,
+                arrowstartMiddle: props.arrowstartMiddle,
+                arrowendMiddle: null,
             }
-            props.arrowstartPreview.arrows.start.push(this)
+            props.arrowstartMiddle.arrows.start.push(this)
 
             this.childs = []
             this.parent = null

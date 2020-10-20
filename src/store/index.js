@@ -80,17 +80,17 @@ export default new Vuex.Store({
       state.arrowObject.props.offsetX = state.ictm.a * payload.event.offsetX + state.ictm.c * payload.event.offsetY + state.ictm.e;
       state.arrowObject.props.offsetY = state.ictm.b * payload.event.offsetX + state.ictm.d * payload.event.offsetY + state.ictm.f;
 
-      if (payload.props.arrowendPreview) {
-        state.arrowObject.props.arrowendPreview = payload.props.arrowendPreview;
+      if (payload.props.arrowendMiddle) {
+        state.arrowObject.props.arrowendMiddle = payload.props.arrowendMiddle;
       } else {
-        state.arrowObject.props.arrowendPreview = null;
+        state.arrowObject.props.arrowendMiddle = null;
       }
     },
-    endLink(state, arrowendPreview) {
+    endLink(state, arrowendMiddle) {
       state.arrowObject.props.visable = true
-      state.arrowObject.props.arrowendPreview = arrowendPreview;
-      if (arrowendPreview) {
-        arrowendPreview.arrows.end.push(state.arrowObject)
+      state.arrowObject.props.arrowendMiddle = arrowendMiddle;
+      if (arrowendMiddle) {
+        arrowendMiddle.arrows.end.push(state.arrowObject)
       } else {
         this._mutations.cancelLink[0]()
       }

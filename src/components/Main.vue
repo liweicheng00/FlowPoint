@@ -21,18 +21,18 @@
       @wheel="wheelEvent"
     >
       <g>
-        <Preview
+        <Middle
           v-for="(child, index) in childs"
           :key="index"
           :data="child"
           :parent="self"
-          @dblclick="previewdblclickEvent"
-          @mousedown-right="previewmousedownEvent"
-          @mouseup-right="previewmouseupEvent"
-          @mouseup-left="previewmouseupEventL"
-          @mousedown-left="previewmousedownEventL"
-          @mouseenter="previewmouseenterEvent"
-          @mouseleave="previewmouseleaveEvent"
+          @dblclick="middledblclickEvent"
+          @mousedown-right="middlemousedownEvent"
+          @mouseup-right="middlemouseupEvent"
+          @mouseup-left="middlemouseupEventL"
+          @mousedown-left="middlemousedownEventL"
+          @mouseenter="middlemouseenterEvent"
+          @mouseleave="middlemouseleaveEvent"
         />
       </g>
     </svg>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import Preview from "@/components/Preview.vue";
+import Middle from "@/components/Middle.vue";
 // import _ from "lodash";
 // import Element from "@/api/element.js";
 // import vueUndoRedo from "vue-undo-redo";
@@ -49,7 +49,7 @@ import Preview from "@/components/Preview.vue";
 // import { mapGetters } from "vuex";
 export default {
   components: {
-    Preview,
+    Middle,
   },
   // mixins: [vueUndoRedo],
   props: {
@@ -75,8 +75,8 @@ export default {
           height: null,
           startPoint: [0, 0],
         },
-        arrowstartPreview: null,
-        arrowendPreview: null,
+        arrowstartMiddle: null,
+        arrowendMiddle: null,
       },
     };
   },
@@ -190,35 +190,35 @@ export default {
     wheelEvent(event) {
       this.zoom(event);
     },
-    // Preview Event Methods
-    previewmousedownEventL(event, data) {
+    // Middle Event Methods
+    middlemousedownEventL(event, data) {
       this.startDrag(data);
     },
-    previewmouseupEventL() {
+    middlemouseupEventL() {
       this.endDrag();
     },
-    previewmousedownEvent(event, data) {
+    middlemousedownEvent(event, data) {
       this.startLink(event, data);
     },
-    previewmouseupEvent(event, data) {
+    middlemouseupEvent(event, data) {
       this.endLink(event, data);
     },
-    previewdblclickEvent(event, child) {
+    middledblclickEvent(event, child) {
       this.initViewbox();
       this.$store.commit("changeSelf", child);
     },
-    previewmouseenterEvent(event, data) {
+    middlemouseenterEvent(event, data) {
       if (
         this.linkStatus &&
-        data.id != this.props.arrowstartPreview.id &&
+        data.id != this.props.arrowstartMiddle.id &&
         event.target.classList.contains("block")
       ) {
-        this.props.arrowendPreview = data;
+        this.props.arrowendMiddle = data;
       }
     },
-    previewmouseleaveEvent() {
+    middlemouseleaveEvent() {
       if (this.linkStatus && event.target.classList.contains("block")) {
-        this.props.arrowendPreview = null;
+        this.props.arrowendMiddle = null;
       }
     },
     // Tool EventBus Event Methods
@@ -252,17 +252,17 @@ export default {
     },
     startLink(event, data) {
       if (event.target.classList.contains("block")) {
-        if (!this.props.arrowstartPreview) {
+        if (!this.props.arrowstartMiddle) {
           this.linkStatus = true;
-          this.props.arrowstartPreview = data;
+          this.props.arrowstartMiddle = data;
         }
       }
     },
     endLink() {
       this.linkStatus = false;
-      this.$store.commit("endLink", this.props.arrowendPreview);
-      this.props.arrowstartPreview = null;
-      this.props.arrowendPreview = null;
+      this.$store.commit("endLink", this.props.arrowendMiddle);
+      this.props.arrowstartMiddle = null;
+      this.props.arrowendMiddle = null;
     },
     Link(event) {
       event.preventDefault();

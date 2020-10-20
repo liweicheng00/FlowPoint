@@ -31,7 +31,7 @@ export default {
   computed: {
     classList() {
       var c = {
-        Preview: true,
+        Middle: true,
       };
       c[this.data.type] = true;
       return c;

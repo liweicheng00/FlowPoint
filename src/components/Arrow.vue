@@ -33,27 +33,25 @@ export default {
       if (!this.data.props.visable) {
         return [0, 0];
       } else {
-        if (this.data.props.arrowstartPreview) {
+        if (this.data.props.arrowstartMiddle) {
           var x1;
           var y1 =
-            parseInt(this.data.props.arrowstartPreview.props.styleObject.y) +
+            parseInt(this.data.props.arrowstartMiddle.props.styleObject.y) +
             parseInt(
-              this.data.props.arrowstartPreview.props.styleObject.height
+              this.data.props.arrowstartMiddle.props.styleObject.height
             ) /
               2;
           if (
             this.data.props.offsetX >
-            parseInt(this.data.props.arrowstartPreview.props.styleObject.x)
+            parseInt(this.data.props.arrowstartMiddle.props.styleObject.x)
           ) {
             x1 =
-              parseInt(this.data.props.arrowstartPreview.props.styleObject.x) +
+              parseInt(this.data.props.arrowstartMiddle.props.styleObject.x) +
               parseInt(
-                this.data.props.arrowstartPreview.props.styleObject.width
+                this.data.props.arrowstartMiddle.props.styleObject.width
               );
           } else {
-            x1 = parseInt(
-              this.data.props.arrowstartPreview.props.styleObject.x
-            );
+            x1 = parseInt(this.data.props.arrowstartMiddle.props.styleObject.x);
           }
           return [x1, y1];
         } else {
@@ -69,15 +67,15 @@ export default {
         return [0, 0];
       } else {
         var x2, y2;
-        if (!this.data.props.arrowendPreview) {
+        if (!this.data.props.arrowendMiddle) {
           x2 = this.data.props.offsetX;
           y2 = this.data.props.offsetY;
           return [x2, y2];
         } else {
-          x2 = this.data.props.arrowendPreview.props.styleObject.x;
+          x2 = this.data.props.arrowendMiddle.props.styleObject.x;
           y2 =
-            parseInt(this.data.props.arrowendPreview.props.styleObject.y) +
-            parseInt(this.data.props.arrowendPreview.props.styleObject.height) /
+            parseInt(this.data.props.arrowendMiddle.props.styleObject.y) +
+            parseInt(this.data.props.arrowendMiddle.props.styleObject.height) /
               2;
           return [x2, y2];
         }
@@ -153,11 +151,11 @@ export default {
       // var start = new Date().getTime();
       points = {
         x1:
-          parseInt(props.arrowstartPreview.props.styleObject.x) +
-          parseInt(props.arrowstartPreview.props.styleObject.width),
+          parseInt(props.arrowstartMiddle.props.styleObject.x) +
+          parseInt(props.arrowstartMiddle.props.styleObject.width),
         y1:
-          parseInt(props.arrowstartPreview.props.styleObject.y) +
-          parseInt(props.arrowstartPreview.props.styleObject.height) / 2,
+          parseInt(props.arrowstartMiddle.props.styleObject.y) +
+          parseInt(props.arrowstartMiddle.props.styleObject.height) / 2,
         x2: props.offsetX,
         y2: props.offsetY,
       };
@@ -165,18 +163,18 @@ export default {
       // var end = new Date().getTime();
       // console.log(end - start);
       // if (
-      //   props.offsetX > parseInt(props.arrowstartPreview.props.styleObject.x)
+      //   props.offsetX > parseInt(props.arrowstartMiddle.props.styleObject.x)
       // ) {
       //   points.x1 =
-      //     parseInt(props.arrowstartPreview.props.styleObject.x) +
-      //     parseInt(props.arrowstartPreview.props.styleObject.width);
+      //     parseInt(props.arrowstartMiddle.props.styleObject.x) +
+      //     parseInt(props.arrowstartMiddle.props.styleObject.width);
       // } else {
-      //   points.x1 = parseInt(props.arrowstartPreview.props.styleObject.x);
+      //   points.x1 = parseInt(props.arrowstartMiddle.props.styleObject.x);
       // }
 
-      if (props.arrowendPreview) {
-        points.x2 = props.arrowendPreview.props.styleObject.x;
-        points.y2 = props.arrowendPreview.props.styleObject.y;
+      if (props.arrowendMiddle) {
+        points.x2 = props.arrowendMiddle.props.styleObject.x;
+        points.y2 = props.arrowendMiddle.props.styleObject.y;
         this.endSection = this.setNodePosition(
           [points.x1, points.y1],
           [points.x2, points.y2],
@@ -185,31 +183,31 @@ export default {
         switch (this.endSection) {
           case 1:
             points.x2 =
-              parseInt(props.arrowendPreview.props.styleObject.x) +
-              parseInt(props.arrowendPreview.props.styleObject.width);
+              parseInt(props.arrowendMiddle.props.styleObject.x) +
+              parseInt(props.arrowendMiddle.props.styleObject.width);
             points.y2 =
-              parseInt(props.arrowendPreview.props.styleObject.y) +
-              parseInt(props.arrowendPreview.props.styleObject.height) / 2;
+              parseInt(props.arrowendMiddle.props.styleObject.y) +
+              parseInt(props.arrowendMiddle.props.styleObject.height) / 2;
             break;
           case 2:
             points.x2 =
-              parseInt(props.arrowendPreview.props.styleObject.x) +
-              parseInt(props.arrowendPreview.props.styleObject.width) / 2;
-            points.y2 = props.arrowendPreview.props.styleObject.y;
+              parseInt(props.arrowendMiddle.props.styleObject.x) +
+              parseInt(props.arrowendMiddle.props.styleObject.width) / 2;
+            points.y2 = props.arrowendMiddle.props.styleObject.y;
             break;
           case 3:
-            points.x2 = props.arrowendPreview.props.styleObject.x;
+            points.x2 = props.arrowendMiddle.props.styleObject.x;
             points.y2 =
-              parseInt(props.arrowendPreview.props.styleObject.y) +
-              parseInt(props.arrowendPreview.props.styleObject.height) / 2;
+              parseInt(props.arrowendMiddle.props.styleObject.y) +
+              parseInt(props.arrowendMiddle.props.styleObject.height) / 2;
             break;
           case 4:
             points.x2 =
-              parseInt(props.arrowendPreview.props.styleObject.x) +
-              parseInt(props.arrowendPreview.props.styleObject.width) / 2;
+              parseInt(props.arrowendMiddle.props.styleObject.x) +
+              parseInt(props.arrowendMiddle.props.styleObject.width) / 2;
             points.y2 =
-              parseInt(props.arrowendPreview.props.styleObject.y) +
-              parseInt(props.arrowendPreview.props.styleObject.height);
+              parseInt(props.arrowendMiddle.props.styleObject.y) +
+              parseInt(props.arrowendMiddle.props.styleObject.height);
             break;
         }
       }
@@ -222,31 +220,31 @@ export default {
       switch (this.startSection) {
         case 1:
           points.x1 =
-            parseInt(props.arrowstartPreview.props.styleObject.x) +
-            parseInt(props.arrowstartPreview.props.styleObject.width);
+            parseInt(props.arrowstartMiddle.props.styleObject.x) +
+            parseInt(props.arrowstartMiddle.props.styleObject.width);
           points.y1 =
-            parseInt(props.arrowstartPreview.props.styleObject.y) +
-            parseInt(props.arrowstartPreview.props.styleObject.height) / 2;
+            parseInt(props.arrowstartMiddle.props.styleObject.y) +
+            parseInt(props.arrowstartMiddle.props.styleObject.height) / 2;
           break;
         case 2:
           points.x1 =
-            parseInt(props.arrowstartPreview.props.styleObject.x) +
-            parseInt(props.arrowstartPreview.props.styleObject.width) / 2;
-          points.y1 = parseInt(props.arrowstartPreview.props.styleObject.y);
+            parseInt(props.arrowstartMiddle.props.styleObject.x) +
+            parseInt(props.arrowstartMiddle.props.styleObject.width) / 2;
+          points.y1 = parseInt(props.arrowstartMiddle.props.styleObject.y);
           break;
         case 3:
-          points.x1 = parseInt(props.arrowstartPreview.props.styleObject.x);
+          points.x1 = parseInt(props.arrowstartMiddle.props.styleObject.x);
           points.y1 =
-            parseInt(props.arrowstartPreview.props.styleObject.y) +
-            parseInt(props.arrowstartPreview.props.styleObject.height) / 2;
+            parseInt(props.arrowstartMiddle.props.styleObject.y) +
+            parseInt(props.arrowstartMiddle.props.styleObject.height) / 2;
           break;
         case 4:
           points.x1 =
-            parseInt(props.arrowstartPreview.props.styleObject.x) +
-            parseInt(props.arrowstartPreview.props.styleObject.width) / 2;
+            parseInt(props.arrowstartMiddle.props.styleObject.x) +
+            parseInt(props.arrowstartMiddle.props.styleObject.width) / 2;
           points.y1 =
-            parseInt(props.arrowstartPreview.props.styleObject.y) +
-            parseInt(props.arrowstartPreview.props.styleObject.height);
+            parseInt(props.arrowstartMiddle.props.styleObject.y) +
+            parseInt(props.arrowstartMiddle.props.styleObject.height);
           break;
       }
 
