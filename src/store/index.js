@@ -37,7 +37,6 @@ export default new Vuex.Store({
   mutations: {
     getSVG(state, ref) {
       state.svg = ref
-
     },
     clearSVG(state) {
       state.svg = null
@@ -45,7 +44,7 @@ export default new Vuex.Store({
     setCTM(state) {
       state.ctm = state.svg.svg.getCTM()
       state.ictm = state.ctm.inverse()
-      // todo: It seems like somthong get wrong when wheel rollong too fast
+      // todo: It seems like somthing getting wrong when wheel rollong too fast
     },
     assignBeginingNode(state) {
       state.self = state.alldata
@@ -78,10 +77,6 @@ export default new Vuex.Store({
     },
     setArrowPosition(state, payload) {
       state.arrowObject.props.visable = true
-      // state.arrowObject.props.offsetX = payload.event.offsetX + payload.props.viewBox["min-x"] + 1;
-      // state.arrowObject.props.offsetY = payload.event.offsetY + payload.props.viewBox["min-y"] + 1;
-      // state.arrowObject.props.startX =  
-      // state.arrowObject.props.startY = 
       state.arrowObject.props.offsetX = state.ictm.a * payload.event.offsetX + state.ictm.c * payload.event.offsetY + state.ictm.e;
       state.arrowObject.props.offsetY = state.ictm.b * payload.event.offsetX + state.ictm.d * payload.event.offsetY + state.ictm.f;
 
@@ -137,6 +132,7 @@ export default new Vuex.Store({
       console.log("change focus", ElementId)
       state.FocusingElementId = ElementId
     },
+
     addChildNum(state, level) {
       var t = level.parentCoor.reduce((ac, cur) => {
         return ac[cur]
