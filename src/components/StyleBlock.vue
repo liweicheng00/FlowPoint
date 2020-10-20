@@ -53,6 +53,6 @@ export default {
   height: 100px;
 }
 .default:hover {
-  border: solid 2px orange;
+  border: solid 1px orange;
 }
 </style>

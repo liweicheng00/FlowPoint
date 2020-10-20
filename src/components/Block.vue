@@ -53,14 +53,22 @@ export default {
         this.$store.commit("editContent", {
           data: this.data,
           content: content,
-          ref: this.$refs.content,
         });
       }
     });
     this.$bus.$on("Style:change", (style) => {
-      this.fo_content = style.name;
-      console.log(style);
+      if (this.ifFocus) {
+        this.fo_content = style.name;
+      }
     });
+  },
+  updated() {
+    if (this.data.content != "") {
+      this.$store.commit("resetBlockHeight", {
+        data: this.data,
+        ref: this.$refs.content,
+      });
+    }
   },
   watch: {
     focusingElementId: function (new_value) {

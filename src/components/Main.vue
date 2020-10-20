@@ -204,7 +204,6 @@ export default {
       this.endLink(event, data);
     },
     previewdblclickEvent(event, child) {
-      console.log("here");
       this.initViewbox();
       this.$store.commit("changeSelf", child);
     },

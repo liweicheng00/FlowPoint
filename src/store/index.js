@@ -20,7 +20,11 @@ export default new Vuex.Store({
       position: {},
       props: {},
       childs: [],
+      mainPage: true,
       parent: null,
+      arrows: { start: [], end: [] },
+      content: ""
+
     },
     self: {},
     arrowObject: null,
@@ -47,7 +51,6 @@ export default new Vuex.Store({
       state.self = state.alldata
     },
     changeSelf(state, child) {
-      console.log("state.self change")
       state.self.mainPage = false
       state.self = child
       state.self.mainPage = true
@@ -155,8 +158,11 @@ export default new Vuex.Store({
         state.NumOfChilds.splice(level, level)
       }
     },
-    editContent(state, { data, content, ref }) {
+    editContent(state, { data, content }) {
       data.content = content
+      // data.props.styleObject.height = ref.clientHeight
+    },
+    resetBlockHeight(state, { data, ref }) {
       data.props.styleObject.height = ref.clientHeight
     },
     setBlockPosition(state, { data, position }) {

@@ -58,12 +58,22 @@ export default {
         width: "20",
         height: "6",
         stroke: "black",
-        fill: "transparent",
+        fill: "green",
         "stroke-width": "1",
         x: 10,
         y: 10,
       },
     };
+  },
+  watch: {
+    mainPage(new_value) {
+      console.log(new_value);
+      if (new_value) {
+        this.initBlockProps.fill = "green";
+      } else {
+        this.initBlockProps.fill = "transparent";
+      }
+    },
   },
   computed: {
     filtChilds() {
@@ -73,6 +83,9 @@ export default {
     },
     alldata() {
       return this.$store.state.alldata;
+    },
+    mainPage() {
+      return this.$store.state.alldata.mainPage;
     },
     lastPoint() {
       return [
@@ -85,6 +98,7 @@ export default {
     window.addEventListener("resize", () => {
       this.windowresizeEvent();
     });
+    console.log(this.alldata);
   },
   mounted() {
     // console.log(this.$refs);
