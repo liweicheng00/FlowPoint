@@ -11,8 +11,10 @@
       @mousemove="mousemoveEvent"
     >
       <g ref="g">
+        <rect v-bind="initBlockProps" @click="rectClick" />
+
         <TreeBlock
-          v-for="(child, index) in alldata.childs"
+          v-for="(child, index) in filtChilds"
           :key="index"
           :pkey="index"
           :parentCoor="[]"
@@ -39,7 +41,7 @@ export default {
     return {
       l: 0,
       showMag: false,
-      lastPoint: [0, 0],
+      // lastPoint: [10, 10],
       mouse: [],
       props: {
         clientHeight: null,
@@ -52,17 +54,51 @@ export default {
           startPoint: [0, 0],
         },
       },
+      initBlockProps: {
+        width: "20",
+        height: "6",
+        stroke: "black",
+        fill: "green",
+        "stroke-width": "1",
+        x: 10,
+        y: 10,
+      },
     };
   },
+  watch: {
+    mainPage(new_value) {
+      console.log(new_value);
+      if (new_value) {
+        this.initBlockProps.fill = "green";
+      } else {
+        this.initBlockProps.fill = "transparent";
+      }
+    },
+  },
   computed: {
+    filtChilds() {
+      return this.alldata.childs.filter((child) => {
+        return child.type == "block";
+      });
+    },
     alldata() {
       return this.$store.state.alldata;
+    },
+    mainPage() {
+      return this.$store.state.alldata.mainPage;
+    },
+    lastPoint() {
+      return [
+        this.initBlockProps.x + parseFloat(this.initBlockProps.width),
+        this.initBlockProps.y + parseFloat(this.initBlockProps.height) / 2,
+      ];
     },
   },
   created() {
     window.addEventListener("resize", () => {
       this.windowresizeEvent();
     });
+    console.log(this.alldata);
   },
   mounted() {
     // console.log(this.$refs);
@@ -89,6 +125,11 @@ export default {
     },
     setshowMag() {
       this.showMag = this.showMag ? false : true;
+    },
+    rectClick() {
+      console.log("send changeSelf");
+      this.$bus.$emit("changeSelf");
+      this.$store.commit("changeSelf", this.alldata);
     },
   },
 };

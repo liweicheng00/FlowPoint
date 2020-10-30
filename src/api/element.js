@@ -1,8 +1,8 @@
-// import mousemove from "@/api/position.js";
 import store from "@/store/index.js";
+import gridAttach from "@/api/position.js"
 
 class Element {
-    constructor(type, props, event, parent, ctm) {
+    constructor(type, props, event, parent) {
         this.type = type
         this.props = props
         this.event = event
@@ -12,15 +12,13 @@ class Element {
         this.id = store.state.IdArray[store.state.IdArray.length - 1]
 
         if (type == "block") {
-
+            this.arrows = { start: [], end: [] }
             this.content = ""
-            console.log(ctm, ctm.inverse(), event)
             this.props = {
                 mouseclickposition: [
-                    event.offsetX,
-                    event.offsetY,
+                    gridAttach(event.offsetX),
+                    gridAttach(event.offsetY),
                 ],
-                ctm: ctm,
                 styleObject: {},
                 textObject: {}
             }
@@ -32,14 +30,14 @@ class Element {
             this.position = {}
             this.props = {
                 visable: false,
-                startX: event.offsetX + props.viewBox["min-x"],
-                startY: event.offsetY + props.viewBox["min-y"],
-                offsetX: event.offsetX + props.viewBox["min-x"],
-                offsetY: event.offsetY + props.viewBox["min-y"],
-                arrowstartPreview: props.arrowstartPreview,
-                arrowendPreview: null,
-                ctm: ctm
+                startX: null,
+                startY: null,
+                offsetX: null,
+                offsetY: null,
+                arrowstartMiddle: props.arrowstartMiddle,
+                arrowendMiddle: null,
             }
+            props.arrowstartMiddle.arrows.start.push(this)
 
             this.childs = []
             this.parent = null

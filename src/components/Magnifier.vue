@@ -61,6 +61,9 @@ export default {
       this.props.clientWidth = this.$el.clientWidth;
     },
   },
+  beforeDestroy: function () {
+    this.$bus.$off("all:refs");
+  },
 };
 </script>
 

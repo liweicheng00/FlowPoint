@@ -1,6 +1,7 @@
 <template>
-  <div class="block" @click.self="clickEvent">
+  <div class="block">
     <svg
+      class="Svg"
       ref="svg"
       id="block"
       version="2"
@@ -9,6 +10,7 @@
       :width="props.clientWidth"
       :height="props.clientHeight"
       :viewBox="viewBox"
+      preserveAspectRatio="xMidYMid slice"
       @contextmenu.prevent
       @click="clickEvent"
       @dblclick.self="dblclickEvent"
@@ -19,17 +21,18 @@
       @wheel="wheelEvent"
     >
       <g>
-        <rect x="0" y="0" width="10" height="10" />
-        <Preview
+        <Middle
           v-for="(child, index) in childs"
           :key="index"
           :data="child"
           :parent="self"
-          @dblclick="previewdblclickEvent"
-          @mousedown-right="previewmousedownEvent"
-          @mouseup-right="previewmouseupEvent"
-          @mouseenter="previewmouseenterEvent"
-          @mouseleave="previewmouseleaveEvent"
+          @dblclick="middledblclickEvent"
+          @mousedown-right="middlemousedownEvent"
+          @mouseup-right="middlemouseupEvent"
+          @mouseup-left="middlemouseupEventL"
+          @mousedown-left="middlemousedownEventL"
+          @mouseenter="middlemouseenterEvent"
+          @mouseleave="middlemouseleaveEvent"
         />
       </g>
     </svg>
@@ -37,7 +40,7 @@
 </template>
 
 <script>
-import Preview from "@/components/Preview.vue";
+import Middle from "@/components/Middle.vue";
 // import _ from "lodash";
 // import Element from "@/api/element.js";
 // import vueUndoRedo from "vue-undo-redo";
@@ -46,7 +49,7 @@ import Preview from "@/components/Preview.vue";
 // import { mapGetters } from "vuex";
 export default {
   components: {
-    Preview,
+    Middle,
   },
   // mixins: [vueUndoRedo],
   props: {
@@ -56,11 +59,8 @@ export default {
     return {
       allowZoom: false,
       allowPen: false,
-      // self: this.data,
-      // childs: this.data.childs,
-      // parent: this.data.parent,
+      allowDrag: false,
       dom: {},
-      svg: null,
       linkStatus: false,
       arrowObject: null,
 
@@ -75,13 +75,18 @@ export default {
           height: null,
           startPoint: [0, 0],
         },
-        arrowstartPreview: null,
-        arrowendPreview: null,
+        arrowstartMiddle: null,
+        arrowendMiddle: null,
       },
     };
   },
   created() {
     // console.log(zoom);
+    this.$nextTick(() => {
+      this.$store.commit("getSVG", this.$refs);
+      this.$store.commit("setCTM");
+    });
+
     this.$bus.$on("tool:back", () => {
       this.backtoolclickEvent();
     });
@@ -104,24 +109,24 @@ export default {
     });
   },
   mounted: function () {
-    var svg = document.getElementById("block");
-    this.svg = svg;
-
-    this.props.clientHeight = this.$el.clientHeight;
-    this.props.clientWidth = this.$el.clientWidth;
-    this.props.viewBox.height = this.props.clientHeight;
-    this.props.viewBox.width = this.props.clientWidth;
-
+    this.windowresizeEvent();
     this.$store.commit("assignBeginingNode");
   },
 
   computed: {
-    viewBox() {
-      if (this.props.clientHeight) {
-        return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
-      } else {
-        return "0 0 0 0";
-      }
+    viewBox: {
+      get() {
+        if (this.props.clientHeight) {
+          return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
+        } else {
+          console.warn("Waring: No viewBox");
+          return "0 0 0 0";
+        }
+      },
+      set(newValue) {
+        this.props.viewBox["min-x"] = newValue[0];
+        this.props.viewBox["min-y"] = newValue[1];
+      },
     },
     data() {
       return this.$store.state.alldata;
@@ -138,10 +143,8 @@ export default {
   },
   watch: {
     allowZoom: function (newValue) {
-      console.log("change");
       if (!newValue) {
-        console.log(this.svg);
-        this.svg.on(".zoom", null);
+        this.$el.on(".zoom", null);
       }
     },
   },
@@ -154,8 +157,9 @@ export default {
     },
     clickEvent(event) {
       if (this.linkStatus) {
-        this.endLink(event);
         this.$store.commit("cancelLink");
+
+        this.endLink(event);
       }
     },
     dblclickEvent(event) {
@@ -164,7 +168,6 @@ export default {
         props: this.props,
         event: event,
         parent: this.self,
-        ctm: this.svg.getCTM(),
       });
     },
     leftmousedownEvent(event) {
@@ -179,36 +182,49 @@ export default {
         this.Link(event);
       } else if (this.allowPen) {
         this.pen(event);
+      } else if (this.allowDrag) {
+        this.drag(event, this.dragData);
       }
     },
     mouseleaveEvent() {},
     wheelEvent(event) {
       this.zoom(event);
     },
-    // Preview Event Methods
-    previewmousedownEvent(event, data) {
+    // Middle Event Methods
+    middlemousedownEventL(event, data) {
+      this.startDrag(data);
+    },
+    middlemouseupEventL() {
+      this.endDrag();
+    },
+    middlemousedownEvent(event, data) {
       this.startLink(event, data);
     },
-    previewmouseupEvent(event, data) {
+    middlemouseupEvent(event, data) {
       this.endLink(event, data);
     },
-    previewdblclickEvent(event, child) {
-      console.log("db click");
+    middledblclickEvent(event, child) {
+      this.initViewbox();
       this.$store.commit("changeSelf", child);
     },
-    previewmouseenterEvent(event, data) {
-      if (this.linkStatus) {
-        this.props.arrowendPreview = data;
+    middlemouseenterEvent(event, data) {
+      if (
+        this.linkStatus &&
+        data.id != this.props.arrowstartMiddle.id &&
+        event.target.classList.contains("block")
+      ) {
+        this.props.arrowendMiddle = data;
       }
     },
-    previewmouseleaveEvent() {
-      if (this.linkStatus) {
-        this.props.arrowendPreview = null;
+    middlemouseleaveEvent() {
+      if (this.linkStatus && event.target.classList.contains("block")) {
+        this.props.arrowendMiddle = null;
       }
     },
     // Tool EventBus Event Methods
     backtoolclickEvent() {
       if (this.parent) {
+        this.initViewbox();
         this.$store.commit("gobackSelf");
       } else {
         // todo: disable button
@@ -231,28 +247,22 @@ export default {
       document.body.removeChild(downloadLink);
     },
     // Methods
-    getMousePosition() {
-      var CTM = this.svg.getScreenCTM();
-      // console.log(event.clientX, CTM.e, CTM.a);
-      console.log(CTM);
-      // return {
-      //   x: (event.clientX - CTM.e) / CTM.a,
-      //   y: (event.clientY - CTM.f) / CTM.d,
-      // };a
+    initViewbox() {
+      this.viewBox = [0, 0];
     },
     startLink(event, data) {
-      if (event.target.classList.contains("Preview")) {
-        if (!this.props.arrowstartPreview) {
+      if (event.target.classList.contains("block")) {
+        if (!this.props.arrowstartMiddle) {
           this.linkStatus = true;
-          this.props.arrowstartPreview = data;
+          this.props.arrowstartMiddle = data;
         }
       }
     },
     endLink() {
       this.linkStatus = false;
-      this.$store.commit("endLink", this.props.arrowendPreview);
-      this.props.arrowstartPreview = null;
-      this.props.arrowendPreview = null;
+      this.$store.commit("endLink", this.props.arrowendMiddle);
+      this.props.arrowstartMiddle = null;
+      this.props.arrowendMiddle = null;
     },
     Link(event) {
       event.preventDefault();
@@ -261,7 +271,6 @@ export default {
           type: "arrow",
           props: this.props,
           event: event,
-          ctm: this.svg.getCTM(),
         });
       } else {
         this.$store.commit("setArrowPosition", {
@@ -271,11 +280,13 @@ export default {
       }
     },
     startPen(event) {
-      this.allowPen = true;
-      this.props.viewBox.startPoint = [
-        this.props.viewBox["min-x"] + event.offsetX,
-        this.props.viewBox["min-y"] + event.offsetY,
-      ];
+      if (event.target.classList.contains("Svg")) {
+        this.allowPen = true;
+        this.props.viewBox.startPoint = [
+          this.props.viewBox["min-x"] + event.offsetX,
+          this.props.viewBox["min-y"] + event.offsetY,
+        ];
+      }
     },
     endPen() {
       this.allowPen = false;
@@ -285,18 +296,43 @@ export default {
         this.props.viewBox.startPoint[0] - event.offsetX;
       this.props.viewBox["min-y"] =
         this.props.viewBox.startPoint[1] - event.offsetY;
+      this.$store.commit("setCTM");
     },
     zoom(event) {
-      // todo not lower than zoro
       var w = this.props.viewBox.width + event.deltaY;
       var h = this.props.viewBox.height + event.deltaY;
 
       this.props.viewBox.width = w >= 0 ? w : 0;
       this.props.viewBox.height = h >= 0 ? h : 0;
+      this.$store.commit("setCTM");
     },
-    key_u() {
-      console.log(this.done, this.undone);
+    startDrag(data) {
+      this.allowDrag = true;
+      this.dragData = data;
     },
+    drag(event, data) {
+      if (this.allowDrag) {
+        var ictm = this.$store.state.ictm;
+        var x =
+          event.offsetX - parseInt(data.props.styleObject.width) / ictm.a / 2;
+        var y =
+          event.offsetY - parseInt(data.props.styleObject.height) / ictm.a / 2;
+        var x1 = ictm.a * x + ictm.c * y + ictm.e;
+        var y1 = ictm.b * x + ictm.d * y + ictm.f;
+
+        this.$store.commit("setBlockPosition", {
+          data: data,
+          position: { x: x1, y: y1 },
+        });
+      }
+    },
+    endDrag() {
+      this.allowDrag = false;
+      this.dragData = null;
+    },
+  },
+  beforeDestroy() {
+    this.$store.commit("clearSVG");
   },
 };
 </script>
