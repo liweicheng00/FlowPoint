@@ -1,10 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Element from "@/api/element.js";
-import VuexUndoRedo from "vuex-undo-redo";
 import gridAttach from "@/api/position.js"
 Vue.use(Vuex)
-Vue.use(VuexUndoRedo, { ignoreMutations: ['newID', "setArrowPosition"] });
 
 export default new Vuex.Store({
   strict: "debug",
