@@ -61,6 +61,7 @@ export default {
         this.fo_content = style.name;
       }
     });
+    this.onFocus();
   },
   updated() {
     if (this.data.content != "") {
@@ -74,8 +75,6 @@ export default {
     focusingElementId: function (new_value) {
       if (new_value == this.data.id) {
         this.ifFocus = true;
-        // pass content to TextEditor
-        this.$bus.$emit("Block:focus", this.data.content, this.data.id);
       } else {
         this.ifFocus = false;
       }
@@ -122,6 +121,7 @@ export default {
   methods: {
     onFocus() {
       this.$store.commit("changeFocusingElement", this.data.id);
+      this.$bus.$emit("Block:focus", this.data.content, this.data.id);
     },
     resizeBody() {
       console.log("here");

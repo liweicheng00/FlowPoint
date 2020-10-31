@@ -38,6 +38,7 @@ export default {
     this.$bus.$on("Block:focus", (content, id) => {
       this.content = content;
       this.focusId = id;
+      this.editor.focus();
     });
   },
   methods: {
