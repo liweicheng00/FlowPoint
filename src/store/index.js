@@ -11,6 +11,7 @@ export default new Vuex.Store({
     ctm: null,
     ictm: null,
     IdArray: [],
+    initViewbox: [0, 0],
     FocusingElementId: null,
     alldata: {
       id: "1",
@@ -43,6 +44,10 @@ export default new Vuex.Store({
       state.ctm = state.svg.svg.getCTM()
       state.ictm = state.ctm.inverse()
       // todo: It seems like somthing getting wrong when wheel rollong too fast
+    },
+    setInitViewbox(state, box) {
+      console.log("here", box)
+      state.initViewbox = box
     },
     assignBeginingNode(state) {
       state.self = state.alldata

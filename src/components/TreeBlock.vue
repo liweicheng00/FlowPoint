@@ -1,6 +1,6 @@
 <template>
-  <g v-if="visible">
-    <path :d="d" v-bind="pathDefault" />
+  <g>
+    <path v-if="!isBegin" :d="arrowPath" v-bind="pathDefault" />
     <rect
       v-bind="styleObject"
       @click="rectClick"
@@ -24,7 +24,22 @@
 export default {
   name: "TreeBlock",
 
-  props: ["data", "level", "startPoint", "pkey", "parentCoor"],
+  props: {
+    data: Object,
+    level: Number,
+    startPoint: {
+      type: Array,
+      default: () => {
+        return [0, 0];
+      },
+    },
+    pkey: Number,
+    parentCoor: Array,
+    isBegin: {
+      type: Boolean,
+      default: false,
+    },
+  },
   created() {
     this.$store.commit("addChildNum", {
       l: this.l,
@@ -36,6 +51,7 @@ export default {
   },
   data: function () {
     return {
+      beginBlock: false,
       defaultSpace: 10,
       index: null,
       ifFocus: false,
@@ -72,13 +88,7 @@ export default {
         return child.type == "block";
       });
     },
-    visible() {
-      if (this.data.type == "arrow") {
-        return false;
-      } else {
-        return true;
-      }
-    },
+
     connectPoint() {
       return [
         this.startPoint[0] + this.defaultSpace,
@@ -97,7 +107,7 @@ export default {
         y: `${this.connectPoint[1]}`,
       });
     },
-    d() {
+    arrowPath() {
       if (this.startPoint != "0,0") {
         var start = `${this.startPoint[0]},${this.startPoint[1]}`;
         var end = `${this.connectPoint[0]},${
@@ -107,9 +117,6 @@ export default {
       } else {
         return "";
       }
-    },
-    alldata() {
-      return this.$store.state.alldata;
     },
   },
   methods: {

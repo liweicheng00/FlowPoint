@@ -1,5 +1,9 @@
 <template>
-  <div class="default" @mouseenter="setshowMag" @mouseleave="setshowMag">
+  <div
+    class="default"
+    @mouseenter="toggleMagnifierShow"
+    @mouseleave="toggleMagnifierShow"
+  >
     <svg
       ref="all"
       id="all"
@@ -11,20 +15,16 @@
       @mousemove="mousemoveEvent"
     >
       <g ref="g">
-        <rect v-bind="initBlockProps" @click="rectClick" />
-
         <TreeBlock
-          v-for="(child, index) in filtChilds"
-          :key="index"
-          :pkey="index"
+          :isBegin="true"
+          :pkey="0"
           :parentCoor="[]"
-          :data="child"
+          :data="alldata"
           :level="l"
-          :startPoint="lastPoint"
         />
       </g>
     </svg>
-    <Magnifier v-show="showMag" :mouse="mouse" />
+    <Magnifier v-show="isMagnifierShow" :mouse="mouse" />
   </div>
 </template>
 
@@ -40,8 +40,7 @@ export default {
   data: function () {
     return {
       l: 0,
-      showMag: false,
-      // lastPoint: [10, 10],
+      isMagnifierShow: false,
       mouse: [],
       props: {
         clientHeight: null,
@@ -54,27 +53,9 @@ export default {
           startPoint: [0, 0],
         },
       },
-      initBlockProps: {
-        width: "20",
-        height: "6",
-        stroke: "black",
-        fill: "green",
-        "stroke-width": "1",
-        x: 10,
-        y: 10,
-      },
     };
   },
-  watch: {
-    mainPage(new_value) {
-      console.log(new_value);
-      if (new_value) {
-        this.initBlockProps.fill = "green";
-      } else {
-        this.initBlockProps.fill = "transparent";
-      }
-    },
-  },
+  watch: {},
   computed: {
     filtChilds() {
       return this.alldata.childs.filter((child) => {
@@ -84,31 +65,13 @@ export default {
     alldata() {
       return this.$store.state.alldata;
     },
-    mainPage() {
-      return this.$store.state.alldata.mainPage;
-    },
-    lastPoint() {
-      return [
-        this.initBlockProps.x + parseFloat(this.initBlockProps.width),
-        this.initBlockProps.y + parseFloat(this.initBlockProps.height) / 2,
-      ];
-    },
   },
   created() {
     window.addEventListener("resize", () => {
       this.windowresizeEvent();
     });
-    console.log(this.alldata);
   },
-  mounted() {
-    // console.log(this.$refs);
-    // var node = this.$refs.all;
-    // console.log(node);
-    // var node1 = this.$refs.all.cloneNode(true);
-    // console.log(node1);
-    // this.$refs.ddd.append(node1);
-    // this.mag = this.$refs.all;
-  },
+  mounted() {},
   beforeUpdate() {},
   updated() {
     this.$bus.$emit("all:refs", this.$refs.g.cloneNode(true));
@@ -123,13 +86,8 @@ export default {
     mousemoveEvent(event) {
       this.mouse = [event.offsetX, event.offsetY];
     },
-    setshowMag() {
-      this.showMag = this.showMag ? false : true;
-    },
-    rectClick() {
-      console.log("send changeSelf");
-      this.$bus.$emit("changeSelf");
-      this.$store.commit("changeSelf", this.alldata);
+    toggleMagnifierShow() {
+      this.isMagnifierShow = this.isMagnifierShow ? false : true;
     },
   },
 };
