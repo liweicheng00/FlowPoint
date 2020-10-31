@@ -46,7 +46,6 @@ export default new Vuex.Store({
       // todo: It seems like somthing getting wrong when wheel rollong too fast
     },
     setInitViewbox(state, box) {
-      console.log("here", box)
       state.initViewbox = box
     },
     assignBeginingNode(state) {

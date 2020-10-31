@@ -42,7 +42,6 @@ export default {
       return `0 0 ${this.initViewbox[0]} ${this.initViewbox[1]}`;
     },
     initViewbox() {
-      console.log(this.$store.initViewbox);
       return this.$store.state.initViewbox;
     },
     childs() {
