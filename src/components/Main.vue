@@ -119,7 +119,6 @@ export default {
         if (this.props.clientHeight) {
           return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
         } else {
-          console.warn("Waring: No viewBox");
           return "0 0 0 0";
         }
       },
@@ -154,6 +153,10 @@ export default {
       this.props.clientWidth = this.$el.clientWidth;
       this.props.viewBox.height = this.props.clientHeight;
       this.props.viewBox.width = this.props.clientWidth;
+      this.$store.commit("setInitViewbox", [
+        this.props.clientWidth,
+        this.props.clientHeight,
+      ]);
     },
     clickEvent(event) {
       if (this.linkStatus) {

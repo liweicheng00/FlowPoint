@@ -5,7 +5,7 @@
       version="2"
       baseProfile="full"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="[0 0 300 300]"
+      :viewBox="viewBox"
     >
       <g>
         <Middle v-for="(child, index) in childs" :key="index" :data="child" />
@@ -23,7 +23,7 @@ export default {
   },
   data: function () {
     return {
-      childs: [],
+      data: {},
       props: {
         clientHeight: null,
         clientWidth: null,
@@ -38,19 +38,15 @@ export default {
     };
   },
   computed: {
-    viewBox: {
-      get() {
-        if (this.props.clientHeight) {
-          return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
-        } else {
-          console.warn("Waring: No viewBox");
-          return "0 0 0 0";
-        }
-      },
-      set(newValue) {
-        this.props.viewBox["min-x"] = newValue[0];
-        this.props.viewBox["min-y"] = newValue[1];
-      },
+    viewBox() {
+      return `0 0 ${this.initViewbox[0]} ${this.initViewbox[1]}`;
+    },
+    initViewbox() {
+      console.log(this.$store.initViewbox);
+      return this.$store.state.initViewbox;
+    },
+    childs() {
+      return this.data.childs;
     },
   },
   created() {
@@ -58,13 +54,10 @@ export default {
       this.windowresizeEvent();
     });
     this.$bus.$on("TreeBlock:mouseenter", (data) => {
-      console.log(data);
-
-      this.childs = data;
-      console.log(this.childs);
+      this.data = data;
     });
     this.$bus.$on("TreeBlock:mouseleave", () => {
-      // this.childs = [];
+      // this.data = {};
       // console.log(this.childs);
     });
     // Listen on mouse enter event for TreeBlock.vue
