@@ -51,6 +51,8 @@ export default new Vuex.Store({
     assignBeginingNode(state) {
       state.self = state.alldata
     },
+
+
     changeSelf(state, child) {
       state.self.mainPage = false
       state.self = child
