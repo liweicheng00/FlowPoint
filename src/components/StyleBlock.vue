@@ -47,10 +47,16 @@ export default {
 <style scoped>
 .default {
   margin: 5px;
+  padding: 2px;
   border: solid 1px black;
   border-radius: 3px;
   width: 100px;
   height: 100px;
+  font-size: 0.5rem;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: flex-start;
 }
 .default:hover {
   border: solid 1px orange;

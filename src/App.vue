@@ -1,24 +1,58 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Flow</router-link>|
-      <router-link to="/EditStyle">Edit Module</router-link>
-      <!-- <GoogleLogin
-        :params="params"
-        :renderParams="renderParams"
-        :onSuccess="onSuccess"
-        >Login</GoogleLogin
-      >
-      <div class="g-signin2" data-onsuccess="onSignIn">sdfsd</div>
+    <b-navbar toggleable="sm" type="light" variant="warning">
+      <b-navbar-brand href="#" tag="h1">
+        <img src="./img/flowchart.png" class="icon-size" alt="FlowPoint" />
+        FlowPoint
+
+        <!-- <b-nav-text tag="h1">FlowPoint</b-nav-text> -->
+      </b-navbar-brand>
+
+      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+      <b-collapse id="nav-collapse" is-nav>
+        <b-navbar-nav>
+          <b-nav-item href="#" to="/"> Flow </b-nav-item>
+          <b-nav-item href="#" to="EditStyle">Edit Module </b-nav-item>
+        </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item>
+            <b-button size="sm" v-b-modal="'login'">Login</b-button>
+          </b-nav-item>
+          <b-nav-item>
+            <b-button size="sm">Logout</b-button>
+          </b-nav-item>
+        </b-navbar-nav>
+      </b-collapse>
+    </b-navbar>
+    <!-- The modal -->
+    <b-modal ref="login" id="login" title="Login" hide-footer>
+      <div class="d-block text-center">
+        <GoogleLogin
+          :params="params"
+          :renderParams="renderParams"
+          :onSuccess="onSuccess"
+          >Login</GoogleLogin
+        >
+      </div>
+    </b-modal>
+    <!-- <div class="g-signin2" data-onsuccess="onSignIn">sdfsd</div>
       <GoogleLogin
         :params="params"
         :renderParams="renderParams"
         :logoutButton="true"
         >Logout</GoogleLogin
       > -->
+    <div class="view">
+      <router-view></router-view>
     </div>
     <div>
-      <router-view></router-view>
+      Icons made by
+      <a href="https://www.flaticon.com/authors/freepik" title="Freepik"
+        >Freepik</a
+      >
+      from
+      <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
     </div>
   </div>
 </template>
@@ -26,7 +60,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import store from "@/store/index.js";
-// import GoogleLogin from "vue-google-login";
+import GoogleLogin from "vue-google-login";
 
 Vue.use(Vuex);
 
@@ -47,7 +81,7 @@ Vue.prototype.$bus = new Vue();
 export default {
   name: "app",
   components: {
-    // GoogleLogin,
+    GoogleLogin,
   },
   data() {
     return {
@@ -69,7 +103,9 @@ export default {
   methods: {
     onSuccess(googleUser) {
       console.log(googleUser);
-
+      console.log(this.$refs);
+      this.$refs["login"].hide();
+      console.log("should be closed");
       // This only gets the user information: id, name, imageUrl and email
       console.log(googleUser.getBasicProfile());
     },
@@ -85,7 +121,15 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
-
+.icon-size {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}
+.view {
+  padding: 10pt;
+}
+/* 
 #nav {
   padding: 30px;
 }
@@ -97,5 +141,5 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #42b983;
-}
+} */
 </style>

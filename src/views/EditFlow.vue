@@ -2,9 +2,6 @@
   <div>
     <b-container fluid>
       <b-form-row>
-        <!-- <b-col> -->
-        <!-- <Tree /> -->
-        <!-- </b-col> -->
         <b-col cols="8">
           <Tool />
           <Main />
@@ -16,7 +13,6 @@
           <TextEditor />
         </b-col>
       </b-form-row>
-      <!-- <Keyboard /> -->
     </b-container>
   </div>
 </template>

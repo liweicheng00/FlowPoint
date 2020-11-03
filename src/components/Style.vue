@@ -1,5 +1,5 @@
 <template>
-  <div class="default">
+  <div class="overflow-x">
     <StyleBlock
       v-for="(style, index) in styles"
       :key="index"
@@ -53,6 +53,24 @@ export default {
             p: { "font-size": "1em", "text-align": "left" },
           },
         },
+        {
+          name: "default_h_p",
+          content: "<div><h2>head</h2><p>put something meaningful</p></div>",
+          style: {
+            div: { padding: "5%", "justify-content": "flex-start" },
+            h2: { "font-size": "2em", "text-align": "left" },
+            p: { "font-size": "1em", "text-align": "left" },
+          },
+        },
+        {
+          name: "default_h_p",
+          content: "<div><h2>head</h2><p>put something meaningful</p></div>",
+          style: {
+            div: { padding: "5%", "justify-content": "flex-start" },
+            h2: { "font-size": "2em", "text-align": "left" },
+            p: { "font-size": "1em", "text-align": "left" },
+          },
+        },
       ],
     };
   },
@@ -60,13 +78,11 @@ export default {
 </script>
 
 <style scoped>
-.default {
+.overflow-x {
   border: solid 1px rgb(205, 202, 197);
   border-radius: 3px;
-  font-size: 0.5rem;
   display: flex;
   flex-wrap: nowrap;
-  justify-content: center;
   align-content: flex-start;
   overflow-x: scroll;
 }
