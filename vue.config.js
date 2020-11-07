@@ -6,5 +6,5 @@ module.exports = {
             // mutate for development...
         }
     },
-    publicPath: '/templates/dist'
+    // publicPath: '/templates/dist'
 }
