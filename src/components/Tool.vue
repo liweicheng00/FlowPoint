@@ -7,12 +7,12 @@
       <b-button @click="saveclickEvent">
         <v-icon name="save"></v-icon>
       </b-button>
-      <b-button @click="undoclickEvent">
+      <!-- <b-button @click="undoclickEvent">
         <v-icon name="undo"></v-icon>
       </b-button>
       <b-button @click="redoclickEvent">
         <v-icon name="redo"></v-icon>
-      </b-button>
+      </b-button> -->
     </b-button-group>
   </div>
 </template>

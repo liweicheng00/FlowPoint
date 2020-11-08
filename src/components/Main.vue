@@ -142,7 +142,7 @@ export default {
     },
     clickEvent(event) {
       if (this.linkStatus) {
-        this.$store.commit("cancelLink");
+        // this.$store.commit("cancelLink");
         this.endLink(event);
       }
     },

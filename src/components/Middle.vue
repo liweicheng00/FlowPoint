@@ -1,5 +1,6 @@
 <template>
   <g
+    ref="g"
     :class="classList"
     @mousedown.left="mousedownleft"
     @mouseup.left="mouseupleft"
@@ -8,6 +9,9 @@
     @mouseup.right="mouseupright"
     @mouseenter="mouseenter"
     @mouseleave="mouseleave"
+    @keyup.delete="deleteKey"
+    @keyup.enter="enterKey"
+    @focus="onFocus"
   >
     <Block v-if="data.type == 'block'" :data="data" :parent="parent" />
     <Arrow v-else-if="data.type == 'arrow'" :data="data" />
@@ -27,7 +31,13 @@ export default {
     data: Object,
     parent: Object,
   },
-  mounted: function () {},
+  mounted: function () {
+    console.log(this.$refs);
+    if (this.data.type == "block") {
+      this.$refs.g.focus();
+    }
+  },
+  created() {},
   computed: {
     classList() {
       var c = {
@@ -58,6 +68,19 @@ export default {
     },
     dblclick(event) {
       this.$emit("dblclick", event, this.data);
+    },
+    deleteKey(event) {
+      console.log(event);
+      console.log(this.data);
+      this.$store.commit("deleteMiddle", this.data);
+    },
+    enterKey() {
+      this.$bus.$emit("Block:enter", this.data.content, this.data.id);
+    },
+    onFocus(event) {
+      console.log(event);
+      this.$store.commit("changeFocusingElement", this.data.id);
+      this.$bus.$emit("Block:focus", this.data.content, this.data.id);
     },
   },
   beforeDestroy: function () {},

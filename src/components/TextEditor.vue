@@ -36,6 +36,13 @@ export default {
   },
   created: function () {
     this.$bus.$on("Block:focus", (content, id) => {
+      console.log("focus");
+      this.content = content;
+      this.focusId = id;
+    });
+    this.$bus.$on("Block:enter", (content, id) => {
+      console.log("enter");
+
       this.content = content;
       this.focusId = id;
       this.editor.focus();

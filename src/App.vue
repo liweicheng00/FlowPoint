@@ -83,6 +83,10 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 
+import axios from "axios";
+import VueAxios from "vue-axios";
+Vue.use(VueAxios, axios);
+
 import "vue-awesome/icons";
 import Icon from "vue-awesome/components/Icon";
 Vue.component("v-icon", Icon);

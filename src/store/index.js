@@ -177,6 +177,27 @@ export default new Vuex.Store({
       });
       data.props.styleObject.x = `${gridAttach(position.x)}`
       data.props.styleObject.y = `${gridAttach(position.y)}`
+    },
+    deleteMiddle(state, data) {
+      let ids = []
+      ids.push(data.id)
+      if (data.type == "block") {
+        data.arrows.start.forEach(item => {
+          ids.push(item.id)
+        })
+        data.arrows.end.forEach(item => {
+          ids.push(item.id)
+        })
+      }
+
+      console.log(ids)
+
+      var a = state.self.childs.filter(item => {
+        if (!ids.includes(item.id)) {
+          return item
+        }
+      });
+      state.self.childs = a
     }
 
 

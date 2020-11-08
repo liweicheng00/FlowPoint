@@ -1,11 +1,6 @@
 <template>
-  <g @focus="onFocus">
-    <rect
-      class="block"
-      :id="data.id"
-      v-bind="data.props.styleObject"
-      :class="{ focus: ifFocus }"
-    />
+  <g>
+    <rect class="block" :id="data.id" v-bind="data.props.styleObject" />
     <foreignObject
       :x="styleObject.x"
       :y="styleObject.y"
@@ -61,7 +56,7 @@ export default {
         this.fo_content = style.name;
       }
     });
-    this.onFocus();
+    // this.onFocus();
   },
   updated() {
     if (this.data.content != "") {
@@ -119,10 +114,10 @@ export default {
   },
   mounted: function () {},
   methods: {
-    onFocus() {
-      this.$store.commit("changeFocusingElement", this.data.id);
-      this.$bus.$emit("Block:focus", this.data.content, this.data.id);
-    },
+    // onFocus() {
+    //   this.$store.commit("changeFocusingElement", this.data.id);
+    //   this.$bus.$emit("Block:focus", this.data.content, this.data.id);
+    // },
     resizeBody() {
       console.log("here");
     },
