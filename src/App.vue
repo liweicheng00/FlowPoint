@@ -17,23 +17,27 @@
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item>
-            <b-button size="sm" v-b-modal="'login'">Login</b-button>
+            <b-button v-if="!signed" size="sm" v-b-modal="'login'">
+              Login
+            </b-button>
+            <div v-else>Wellcome {{ basicProfile.tV }}!</div>
           </b-nav-item>
           <b-nav-item>
-            <b-button size="sm">Logout</b-button>
+            <b-button size="sm" @click="signOut">LogOut</b-button>
           </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
     <!-- The modal -->
     <b-modal ref="login" id="login" title="Login" hide-footer>
-      <div class="d-block text-center">
+      <div class="login-content">
         <GoogleLogin
           :params="params"
           :renderParams="renderParams"
           :onSuccess="onSuccess"
           >Login</GoogleLogin
         >
+        <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div> -->
       </div>
     </b-modal>
     <!-- <div class="g-signin2" data-onsuccess="onSignIn">sdfsd</div>
@@ -60,7 +64,14 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import store from "@/store/index.js";
+
+const CLIENT_ID =
+  "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com";
 import GoogleLogin from "vue-google-login";
+import { LoaderPlugin } from "vue-google-login";
+Vue.use(LoaderPlugin, {
+  client_id: CLIENT_ID,
+});
 
 Vue.use(Vuex);
 
@@ -86,6 +97,8 @@ export default {
   data() {
     return {
       // client_id is the only required property but you can add several more params, full list down bellow on the Auth api section
+      signed: false,
+      basicProfile: null,
       params: {
         client_id:
           "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com",
@@ -102,12 +115,24 @@ export default {
   mounted() {},
   methods: {
     onSuccess(googleUser) {
-      console.log(googleUser);
-      console.log(this.$refs);
+      // console.log(googleUser);
       this.$refs["login"].hide();
-      console.log("should be closed");
       // This only gets the user information: id, name, imageUrl and email
-      console.log(googleUser.getBasicProfile());
+      this.basicProfile = googleUser.getBasicProfile();
+      Vue.GoogleAuth.then((auth2) => {
+        this.signed = auth2.isSignedIn.get();
+      });
+    },
+    signOut() {
+      Vue.GoogleAuth.then((auth2) => {
+        auth2.signOut();
+        this.signed = auth2.isSignedIn.get();
+      });
+    },
+    isSigned() {
+      Vue.GoogleAuth.then((auth2) => {
+        this.signed = auth2.isSignedIn.get();
+      });
     },
   },
 };
@@ -128,6 +153,10 @@ export default {
 }
 .view {
   padding: 10pt;
+}
+.login-content {
+  display: flex;
+  justify-content: center;
 }
 /* 
 #nav {
