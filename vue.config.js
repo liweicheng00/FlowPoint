@@ -6,5 +6,8 @@ module.exports = {
             // mutate for development...
         }
     },
+    devServer: {
+        proxy: "http://192.168.1.104:5000"
+    }
     // publicPath: '/templates/dist'
 }

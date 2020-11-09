@@ -44,7 +44,10 @@ export default {
   created: function () {
     // get content from TextEditor
     this.$bus.$on("TextEditor:change", (content, id) => {
+      console.log("get event");
+
       if (this.ifFocus && this.data.id == id) {
+        console.log("commit");
         this.$store.commit("editContent", {
           data: this.data,
           content: content,

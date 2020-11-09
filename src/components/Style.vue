@@ -10,69 +10,24 @@
 
 <script>
 import StyleBlock from "@/components/StyleBlock.vue";
-
+import { mapActions, mapState } from "vuex";
 export default {
   components: {
     StyleBlock,
   },
+  created() {
+    this.getBlockStyles();
+  },
   data: function () {
-    return {
-      styles: [
-        {
-          name: "default_p",
-          content: "<div><p>put something graceful</p></div>",
-          style: {
-            div: { padding: "5%", "justify-content": "flex-start" },
-            p: { "font-size": "1.6em", "text-align": "left" },
-          },
-        },
-        {
-          name: "default_h_p",
-          content: "<div><h2>head</h2><p>put something meaningful</p></div>",
-          style: {
-            div: { padding: "5%", "justify-content": "flex-start" },
-            h2: { "font-size": "2em", "text-align": "left" },
-            p: { "font-size": "1em", "text-align": "left" },
-          },
-        },
-        {
-          name: "default_h_p",
-          content: "<div><h2>head</h2><p>put something meaningful</p></div>",
-          style: {
-            div: { padding: "5%", "justify-content": "flex-start" },
-            h2: { "font-size": "2em", "text-align": "left" },
-            p: { "font-size": "1em", "text-align": "left" },
-          },
-        },
-        {
-          name: "default_h_p",
-          content: "<div><h2>head</h2><p>put something meaningful</p></div>",
-          style: {
-            div: { padding: "5%", "justify-content": "flex-start" },
-            h2: { "font-size": "2em", "text-align": "left" },
-            p: { "font-size": "1em", "text-align": "left" },
-          },
-        },
-        {
-          name: "default_h_p",
-          content: "<div><h2>head</h2><p>put something meaningful</p></div>",
-          style: {
-            div: { padding: "5%", "justify-content": "flex-start" },
-            h2: { "font-size": "2em", "text-align": "left" },
-            p: { "font-size": "1em", "text-align": "left" },
-          },
-        },
-        {
-          name: "default_h_p",
-          content: "<div><h2>head</h2><p>put something meaningful</p></div>",
-          style: {
-            div: { padding: "5%", "justify-content": "flex-start" },
-            h2: { "font-size": "2em", "text-align": "left" },
-            p: { "font-size": "1em", "text-align": "left" },
-          },
-        },
-      ],
-    };
+    return {};
+  },
+  computed: {
+    ...mapState("styles", {
+      styles: (state) => state.blockStyles,
+    }),
+  },
+  methods: {
+    ...mapActions("styles", ["getBlockStyles"]),
   },
 };
 </script>

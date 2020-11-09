@@ -62,8 +62,11 @@
 </template>
 <script>
 import Vue from "vue";
-import Vuex from "vuex";
 import store from "@/store/index.js";
+
+import axios from "axios";
+import VueAxios from "vue-axios";
+Vue.use(VueAxios, axios);
 
 const CLIENT_ID =
   "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com";
@@ -73,8 +76,6 @@ Vue.use(LoaderPlugin, {
   client_id: CLIENT_ID,
 });
 
-Vue.use(Vuex);
-
 import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -82,10 +83,6 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
-
-import axios from "axios";
-import VueAxios from "vue-axios";
-Vue.use(VueAxios, axios);
 
 import "vue-awesome/icons";
 import Icon from "vue-awesome/components/Icon";

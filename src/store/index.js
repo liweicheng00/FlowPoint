@@ -2,9 +2,13 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Element from "@/api/element.js";
 import gridAttach from "@/api/position.js"
+import styles from "./modules/styles"
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  modules: {
+    styles: styles
+  },
   strict: "debug",
   state: {
     svg: null,
@@ -204,6 +208,5 @@ export default new Vuex.Store({
   },
   actions: {
   },
-  modules: {
-  }
+
 })
