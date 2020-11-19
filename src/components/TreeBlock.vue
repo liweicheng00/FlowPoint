@@ -41,13 +41,13 @@ export default {
     },
   },
   created() {
-    this.$store.commit("addChildNum", {
+    this.$store.commit("editor/addChildNum", {
       l: this.l,
       pkey: this.pkey,
       parentCoor: this.parentCoor,
     });
 
-    this.index = this.$store.state.NumOfChilds[this.l];
+    this.index = this.$store.state.editor.NumOfChilds[this.l];
   },
   data: function () {
     return {
@@ -123,7 +123,7 @@ export default {
     rectClick() {
       console.log("send changeSelf");
       this.$bus.$emit("changeSelf");
-      this.$store.commit("changeSelf", this.data);
+      this.$store.commit("editor/changeSelf", this.data);
     },
     rectMouseenter() {
       this.$bus.$emit("TreeBlock:mouseenter", this.data);
@@ -133,7 +133,7 @@ export default {
     },
   },
   destroyed() {
-    this.$store.commit("reduceChildNum", this.l);
+    this.$store.commit("editor/reduceChildNum", this.l);
   },
 };
 </script>

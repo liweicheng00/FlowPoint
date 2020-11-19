@@ -1,0 +1,57 @@
+[
+    {
+        "_id": {
+            "$oid": "5fa8abe8468520300fb2eeac"
+        },
+        "name": "default_p1",
+        "content": "<div><p>put something graceful</p></div>",
+        "style": {
+            "div": {
+                "padding": "5%",
+                "justify-content": "flex-start"
+            },
+            "p": {
+                "font-size": "2em",
+                "text-align": "left"
+            }
+        }
+    },
+    {
+        "_id": {
+            "$oid": "5fa8abe8468520300fb2eead"
+        },
+        "name": "default_p2",
+        "content": "<div><p>put something meaningful</p></div>",
+        "style": {
+            "div": {
+                "padding": "5%",
+                "justify-content": "flex-start"
+            },
+            "p": {
+                "font-size": "1em",
+                "text-align": "left"
+            }
+        }
+    },
+    {
+        "_id": {
+            "$oid": "5fa8abe8468520300fb2eeae"
+        },
+        "name": "default_h_p",
+        "content": "<div><h2>head</h2><p>put something meaningful</p></div>",
+        "style": {
+            "div": {
+                "padding": "5%",
+                "justify-content": "flex-start"
+            },
+            "h2": {
+                "font-size": "2em",
+                "text-align": "left"
+            },
+            "p": {
+                "font-size": "1em",
+                "text-align": "left"
+            }
+        }
+    }
+]

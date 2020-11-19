@@ -72,14 +72,14 @@ export default {
     deleteKey(event) {
       console.log(event);
       console.log(this.data);
-      this.$store.commit("deleteMiddle", this.data);
+      this.$store.commit("editor/deleteMiddle", this.data);
     },
     enterKey() {
       this.$bus.$emit("Block:enter", this.data.content, this.data.id);
     },
     onFocus(event) {
       console.log(event);
-      this.$store.commit("changeFocusingElement", this.data.id);
+      this.$store.commit("editor/changeFocusingElement", this.data.id);
       this.$bus.$emit("Block:focus", this.data.content, this.data.id);
     },
   },

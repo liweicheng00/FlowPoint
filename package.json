@@ -26,7 +26,6 @@
     "vue-google-login": "^2.0.5",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.2.0",
-    "vue-undo-redo-stack": "^1.0.0",
     "vuex": "^3.4.0",
     "vuex-undo-redo": "^1.1.4"
   },

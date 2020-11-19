@@ -41,7 +41,7 @@ export default {
   },
 
   created() {
-    this.data = this.$store.state.alldata;
+    this.data = this.$store.state.editor.alldata;
   },
 };
 </script>

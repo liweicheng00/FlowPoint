@@ -44,11 +44,8 @@ export default {
   created: function () {
     // get content from TextEditor
     this.$bus.$on("TextEditor:change", (content, id) => {
-      console.log("get event");
-
       if (this.ifFocus && this.data.id == id) {
-        console.log("commit");
-        this.$store.commit("editContent", {
+        this.$store.commit("editor/editContent", {
           data: this.data,
           content: content,
         });
@@ -63,7 +60,7 @@ export default {
   },
   updated() {
     if (this.data.content != "") {
-      this.$store.commit("resetBlockHeight", {
+      this.$store.commit("editor/resetBlockHeight", {
         data: this.data,
         ref: this.$refs.content,
       });
@@ -84,7 +81,9 @@ export default {
   computed: {
     styleObject: function () {
       if (this.data.props.mouseclickposition) {
-        var ictm = this.$store.state.ictm;
+        this.$store.commit("editor/setCTM");
+
+        var ictm = this.$store.state.editor.ictm;
         var x =
           this.data.props.mouseclickposition[0] -
           parseInt(this.styleDefault.width) / ictm.a / 2;
@@ -99,7 +98,7 @@ export default {
           x: `${x1}`,
           y: `${y1}`,
         });
-        this.$store.commit("clearInitPosition", {
+        this.$store.commit("editor/clearInitPosition", {
           data: this.data,
           style: style,
         });
@@ -112,7 +111,7 @@ export default {
       return Object.assign(this.textDefault, {});
     },
     focusingElementId: function () {
-      return this.$store.state.FocusingElementId;
+      return this.$store.state.editor.FocusingElementId;
     },
   },
   mounted: function () {},

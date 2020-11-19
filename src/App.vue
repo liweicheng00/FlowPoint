@@ -4,8 +4,6 @@
       <b-navbar-brand href="#" tag="h1">
         <img src="./img/flowchart.png" class="icon-size" alt="FlowPoint" />
         FlowPoint
-
-        <!-- <b-nav-text tag="h1">FlowPoint</b-nav-text> -->
       </b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -14,6 +12,7 @@
         <b-navbar-nav>
           <b-nav-item href="#" to="/"> Flow </b-nav-item>
           <b-nav-item href="#" to="EditStyle">Edit Module </b-nav-item>
+          <b-nav-item href="#" to="EditStyle">About</b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item>
@@ -35,18 +34,12 @@
           :params="params"
           :renderParams="renderParams"
           :onSuccess="onSuccess"
+          :onCurrentUser="onCurrentUser"
           >Login</GoogleLogin
         >
-        <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div> -->
       </div>
     </b-modal>
-    <!-- <div class="g-signin2" data-onsuccess="onSignIn">sdfsd</div>
-      <GoogleLogin
-        :params="params"
-        :renderParams="renderParams"
-        :logoutButton="true"
-        >Logout</GoogleLogin
-      > -->
+
     <div class="view">
       <router-view></router-view>
     </div>
@@ -68,13 +61,17 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 Vue.use(VueAxios, axios);
 
-const CLIENT_ID =
-  "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com";
+// const CLIENT_ID =
+//   "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com";
 import GoogleLogin from "vue-google-login";
-import { LoaderPlugin } from "vue-google-login";
-Vue.use(LoaderPlugin, {
-  client_id: CLIENT_ID,
-});
+// import { LoaderPlugin } from "vue-google-login";
+// Vue.use(LoaderPlugin, {
+//   client_id: CLIENT_ID,
+// });
+// Vue.GoogleAuth.then((auth2) => {
+//   console.log(auth2.isSignedIn.get());
+//   console.log(auth2.currentUser.get());
+// });
 
 import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 
@@ -89,6 +86,7 @@ import Icon from "vue-awesome/components/Icon";
 Vue.component("v-icon", Icon);
 
 Vue.prototype.$bus = new Vue();
+import { mapActions } from "vuex";
 
 export default {
   name: "app",
@@ -113,15 +111,25 @@ export default {
     };
   },
   store,
+  created() {},
   mounted() {},
   methods: {
+    ...mapActions("styles", ["userLogin"]),
     onSuccess(googleUser) {
       // console.log(googleUser);
+      var id_token = googleUser.getAuthResponse().id_token;
+      console.log(id_token);
       this.$refs["login"].hide();
       // This only gets the user information: id, name, imageUrl and email
       this.basicProfile = googleUser.getBasicProfile();
       Vue.GoogleAuth.then((auth2) => {
         this.signed = auth2.isSignedIn.get();
+      });
+
+      this.userLogin({
+        login_type: "google",
+        userInfo: this.basicProfile,
+        id_token,
       });
     },
     signOut() {
@@ -133,6 +141,18 @@ export default {
     isSigned() {
       Vue.GoogleAuth.then((auth2) => {
         this.signed = auth2.isSignedIn.get();
+        console.log(this.isSigned);
+      });
+    },
+    onCurrentUser(googleUser) {
+      console.log(googleUser);
+      this.basicProfile = googleUser.getBasicProfile();
+      var id_token = googleUser.getAuthResponse().id_token;
+
+      this.userLogin({
+        login_type: "google",
+        userInfo: this.basicProfile,
+        id_token,
       });
     },
   },
@@ -159,17 +179,4 @@ export default {
   display: flex;
   justify-content: center;
 }
-/* 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-} */
 </style>

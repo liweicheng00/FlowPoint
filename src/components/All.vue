@@ -63,7 +63,7 @@ export default {
       });
     },
     alldata() {
-      return this.$store.state.alldata;
+      return this.$store.state.editor.alldata;
     },
   },
   created() {

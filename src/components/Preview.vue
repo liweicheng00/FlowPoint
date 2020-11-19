@@ -42,7 +42,7 @@ export default {
       return `0 0 ${this.initViewbox[0]} ${this.initViewbox[1]}`;
     },
     initViewbox() {
-      return this.$store.state.initViewbox;
+      return this.$store.state.editor.initViewbox;
     },
     childs() {
       return this.data.childs;

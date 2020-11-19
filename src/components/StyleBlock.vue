@@ -14,14 +14,7 @@ export default {
     return {};
   },
   created() {
-    var css = "";
-    for (var tag in this.layout_style.style) {
-      css = css + `.${this.layout_style.name} ${tag} {`;
-      for (var style in this.layout_style.style[tag]) {
-        css = css + `${style}: ${this.layout_style.style[tag][style]};`;
-      }
-      css = css + "} ";
-    }
+    var css = this.layout_style.style;
     var head = document.head || document.getElementsByTagName("head")[0];
     var styleElement = document.createElement("style");
     head.appendChild(styleElement);

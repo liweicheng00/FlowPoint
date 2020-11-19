@@ -7,7 +7,7 @@ module.exports = {
         }
     },
     devServer: {
-        proxy: "http://192.168.1.104:5000"
+        proxy: "http://192.168.1.109:5000"
     }
     // publicPath: '/templates/dist'
 }

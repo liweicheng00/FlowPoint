@@ -1,16 +1,17 @@
-import store from "@/store/index.js";
+// import store from "@/store/index.js";
 import gridAttach from "@/api/position.js"
 
 class Element {
-    constructor(type, props, event, parent) {
+    constructor(type, { event, parent = null, arrowStartMiddle = null }) {
         this.type = type
-        this.props = props
         this.event = event
         this.mainPage = false
-        store.commit("newID")
+        this.parent = parent
 
-        this.id = store.state.IdArray[store.state.IdArray.length - 1]
+        // store.commit("newID")
 
+        // this.id = store.state.IdArray[store.state.IdArray.length - 1]
+        this.id = this._uuid()
         if (type == "block") {
             this.arrows = { start: [], end: [] }
             this.content = ""
@@ -23,7 +24,6 @@ class Element {
                 textObject: {}
             }
             this.childs = []
-            this.parent = parent
         }
         else if (type == "arrow") {
 
@@ -34,15 +34,26 @@ class Element {
                 startY: null,
                 offsetX: null,
                 offsetY: null,
-                arrowstartMiddle: props.arrowstartMiddle,
+                arrowstartMiddle: arrowStartMiddle,
+                // arrowstartMiddle: props.arrowstartMiddle,
                 arrowendMiddle: null,
             }
-            props.arrowstartMiddle.arrows.start.push(this)
+            arrowStartMiddle.arrows.start.push(this)
 
             this.childs = []
-            this.parent = null
         }
 
+    }
+    _uuid() {
+        var d = Date.now();
+        if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+            d += performance.now(); //use high-precision timer if available
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
     }
 }
 
