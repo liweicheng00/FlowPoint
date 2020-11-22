@@ -4,14 +4,17 @@ import axios from "axios"
 
 // shape: [{ id, quantity }]
 const state = () => ({
-    blockStyles: [],
-    personalInfo: {}
+    styles: [],
+    userInfo: {
+        info: {},
+        filesName: []
+    }
 })
 
 // getters
 const getters = {
-    defaultBlockStyles: state => {
-        return state.blockStyles
+    getDefaultStyles: state => {
+        return state.styles
     }
 }
 
@@ -24,24 +27,29 @@ const actions = {
             login_type: login_type
         }).then((res) => {
             console.log(res)
-            commit('getPersonalInfo', { userInfo: res.data })
+            commit('setUserInfo', { userInfo: res.data })
 
         }).catch(error => {
             console.log(error)
 
         })
-        // commit personalInfo
     },
-    getUserData() {
-        // files
-        // common use style
+    getUserFile() {
+        // commit alldata
+        // commit addStyles
     },
     saveFile({ rootState }) {
+        let fileName = fileName ? fileName : "undefined"
+        if (fileId) {
+            // upload with fileId
+        } else {
+            // upload and get fileId
+        }
+
         console.log(rootState.editor.alldata)
         let { ...uploadData } = rootState.editor.alldata
         console.log(uploadData)
         console.log(uploadData.childs === rootState.editor.alldata.childs)
-        // console.log(JSON.stringify(rootState.editor.alldata))
     },
     getBlockStyles({ commit }) {
         axios.get("api/styles", { timeout: 3000 }).then((res) => {
@@ -128,9 +136,12 @@ const mutations = {
         // state.blockStyles = styles
         state.blockStyles = state.blockStyles.concat(styles)
     },
-    getPersonalInfo(state, { userInfo }) {
-        state.personalInfo = userInfo
+    setUserInfo(state, { userInfo }) {
+        state.userInfo = userInfo
 
+    },
+    clearUserInfo() {
+        // logout
     }
 
 }

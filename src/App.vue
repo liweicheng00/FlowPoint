@@ -19,10 +19,10 @@
             <b-button v-if="!signed" size="sm" v-b-modal="'login'">
               Login
             </b-button>
-            <div v-else>Wellcome {{ basicProfile.tV }}!</div>
+            <div v-else>Wellcome {{ basicProfile.Ad }}!</div>
           </b-nav-item>
           <b-nav-item>
-            <b-button size="sm" @click="signOut">LogOut</b-button>
+            <b-button v-if="signed" size="sm" @click="signOut">LogOut</b-button>
           </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
@@ -61,13 +61,13 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 Vue.use(VueAxios, axios);
 
-// const CLIENT_ID =
-//   "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com";
-import GoogleLogin from "vue-google-login";
+const CLIENT_ID =
+  "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com";
+import { GoogleLogin, LoaderPlugin } from "vue-google-login";
 // import { LoaderPlugin } from "vue-google-login";
-// Vue.use(LoaderPlugin, {
-//   client_id: CLIENT_ID,
-// });
+Vue.use(LoaderPlugin, {
+  client_id: CLIENT_ID,
+});
 // Vue.GoogleAuth.then((auth2) => {
 //   console.log(auth2.isSignedIn.get());
 //   console.log(auth2.currentUser.get());
@@ -99,8 +99,8 @@ export default {
       signed: false,
       basicProfile: null,
       params: {
-        client_id:
-          "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com",
+        // client_id:
+        //   "422430406019-4knnkh10lgpftp3a7hhi3cd17ljdnat2.apps.googleusercontent.com",
       },
       // only needed if you want to render the button with the google ui
       renderParams: {
@@ -116,15 +116,13 @@ export default {
   methods: {
     ...mapActions("styles", ["userLogin"]),
     onSuccess(googleUser) {
-      // console.log(googleUser);
+      console.log(googleUser);
       var id_token = googleUser.getAuthResponse().id_token;
-      console.log(id_token);
       this.$refs["login"].hide();
       // This only gets the user information: id, name, imageUrl and email
       this.basicProfile = googleUser.getBasicProfile();
-      Vue.GoogleAuth.then((auth2) => {
-        this.signed = auth2.isSignedIn.get();
-      });
+
+      this.signed = googleUser.isSignedIn();
 
       this.userLogin({
         login_type: "google",
@@ -133,20 +131,18 @@ export default {
       });
     },
     signOut() {
+      // todo: alert to save
       Vue.GoogleAuth.then((auth2) => {
-        auth2.signOut();
-        this.signed = auth2.isSignedIn.get();
-      });
-    },
-    isSigned() {
-      Vue.GoogleAuth.then((auth2) => {
-        this.signed = auth2.isSignedIn.get();
-        console.log(this.isSigned);
+        auth2.signOut().then(() => {
+          this.signed = auth2.isSignedIn.get();
+        });
       });
     },
     onCurrentUser(googleUser) {
-      console.log(googleUser);
       this.basicProfile = googleUser.getBasicProfile();
+      this.signed = googleUser.isSignedIn();
+      this.$refs["login"].hide();
+
       var id_token = googleUser.getAuthResponse().id_token;
 
       this.userLogin({

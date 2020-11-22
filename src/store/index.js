@@ -2,13 +2,13 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 // import Element from "@/api/element.js";
 // import gridAttach from "@/api/position.js"
-import styles from "./modules/styles"
+import user from "./modules/user"
 import editor from "./modules/editor"
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    styles: styles,
+    user: user,
     editor: editor
   },
   strict: "debug",
