@@ -2,6 +2,9 @@
   <div>
     <b-container fluid>
       <b-form-row>
+        <b-col cols="1">
+          <FileTree />
+        </b-col>
         <b-col cols="8">
           <Tool />
           <Main />
@@ -26,6 +29,7 @@ import Preview from "@/components/Preview.vue";
 import Style from "@/components/Style.vue";
 import Tool from "@/components/Tool.vue";
 import TextEditor from "@/components/TextEditor.vue";
+import FileTree from "@/components/FileTree.vue";
 
 export default {
   name: "EditFlow",
@@ -38,6 +42,7 @@ export default {
     Style,
     Tool,
     TextEditor,
+    FileTree,
   },
 
   created() {

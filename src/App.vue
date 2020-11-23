@@ -114,7 +114,7 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    ...mapActions("styles", ["userLogin"]),
+    ...mapActions("user", ["userLogin"]),
     onSuccess(googleUser) {
       console.log(googleUser);
       var id_token = googleUser.getAuthResponse().id_token;

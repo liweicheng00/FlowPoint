@@ -22,12 +22,12 @@ export default {
     return {};
   },
   computed: {
-    ...mapState("styles", {
-      styles: (state) => state.blockStyles,
+    ...mapState("user", {
+      styles: (state) => state.styles,
     }),
   },
   methods: {
-    ...mapActions("styles", ["getBlockStyles"]),
+    ...mapActions("user", ["getBlockStyles"]),
   },
 };
 </script>

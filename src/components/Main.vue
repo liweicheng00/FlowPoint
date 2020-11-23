@@ -42,7 +42,7 @@
 <script>
 import Middle from "@/components/Middle.vue";
 import OperateSVG from "@/api/svg.js";
-import { mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
   components: {
@@ -96,6 +96,8 @@ export default {
     },
     ...mapState("editor", {
       self: (state) => state.self,
+      fileName: (state) => state.fileName,
+      fileId: (state) => state.fileId,
     }),
     // self() {
     //   return this.$store.state.editor.self;
@@ -109,19 +111,23 @@ export default {
   },
   created() {
     this.initViewbox();
-    // setInterval(() => this.$store.dispatch("styles/saveFile"), 3000);
 
     // console.log(zoom);
     // this.$nextTick(() => {
     //   // this.$store.commit("getSVG", this.$refs);
     //   // this.$store.commit("setCTM");
     // });
-
+    this.$bus.$on("global:new file", () => {
+      this.callSaveFile();
+    });
     this.$bus.$on("tool:back", () => {
       this.backtoolclickEvent();
     });
-    this.$bus.$on("tool:save", () => {
+    this.$bus.$on("tool:download", () => {
       this.savetoolclickEvent(this.$refs.svg);
+    });
+    this.$bus.$on("tool:save", () => {
+      this.callSaveFile();
     });
     this.$bus.$on("tool:undo", () => {
       this.undo();
@@ -133,6 +139,12 @@ export default {
     window.addEventListener("resize", () => {
       this.windowresizeEvent();
     });
+    // callsaveFile when close window
+    // window.addEventListener("beforeunload", (event) => {
+    //   event.preventDefault();
+    //   event.returnValue = "";
+    //   console.log("eher");
+    // });
 
     this.$store.subscribe((mutation) => {
       console.log(mutation);
@@ -168,7 +180,9 @@ export default {
     //   )
     // );
   },
-
+  updated() {
+    this.saveFile();
+  },
   methods: {
     ...mapMutations("editor", [
       "emptyState",
@@ -192,6 +206,24 @@ export default {
       "resetBlockHeight",
       "clearInitPosition",
     ]),
+    ...mapActions("user", ["saveFile"]),
+    ...mapMutations("editor", [
+      "clearAllData",
+      "setFileName",
+      "clearFileName",
+      "clearSaveTime",
+    ]),
+    callSaveFile() {
+      console.log("callSaveFile");
+
+      if (!this.fileName) {
+        // edit fileName
+        let fileName = prompt("File name", "undefined");
+        console.log(fileName);
+        this.setFileName(fileName);
+        this.saveFile();
+      }
+    },
     redo() {
       let commit = this.undone.pop();
       this.newMutation = false;
@@ -316,7 +348,7 @@ export default {
     },
     savetoolclickEvent(svgEl) {
       new OperateSVG(svgEl, {
-        styles: this.$store.state.styles.blockStyles,
+        styles: this.$store.state.user.blockStyles,
       }).save();
     },
     // Methods

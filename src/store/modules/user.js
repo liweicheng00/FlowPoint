@@ -33,23 +33,61 @@ const actions = {
             console.log(error)
 
         })
+
     },
-    getUserFile() {
+    getUserFile({ commit }, data) {
         // commit alldata
+        commit("editor/clearAllData", null, { root: true })
+        commit("editor/setAllData", data, { root: true })
+        commit("editor/clearFileName", null, { root: true })
+        commit("addStyle", data)
+
         // commit addStyles
     },
-    saveFile({ rootState }) {
-        let fileName = fileName ? fileName : "undefined"
-        if (fileId) {
-            // upload with fileId
+    saveFile({ commit, state, rootState }) {
+        console.log("user/saveFile")
+        console.log(rootState)
+        let fileName = rootState.editor.fileName ? rootState.editor.fileName : null
+        let fileId = rootState.editor.fileId ? rootState.editor.fileId : null
+        console.log("rootState fileName:", fileName, "fileId:", fileId)
+        console.log("allData", rootState.editor.alldata)
+        let { ...uploadData } = rootState.editor.alldata
+        uploadData.file_id = fileId
+        uploadData.file_name = fileName
+        uploadData.user_id = state.userInfo.info.userId || "None"
+        uploadData.styles = []
+        if (fileId || fileName) {
+            if (fileId) {
+                // upload with fileId
+                axios.put("api/file", uploadData).then(res => {
+                    console.log("saveFile complete", res)
+                    commit("editor/setSaveTime", null, { root: true })
+
+                }).catch(error => {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                })
+            } else {
+                // upload and get fileId
+                // uploadData.fileId = "None"
+                axios.put("api/file", uploadData).then(res => {
+                    console.log("saveFile complete", res)
+                    commit("editor/setFileId", null, { root: true })
+                    commit("editor/setSaveTime", null, { root: true })
+
+                }).catch(error => {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                })
+            }
         } else {
-            // upload and get fileId
+            console.log("saveFile: Nothing to save!")
         }
 
-        console.log(rootState.editor.alldata)
-        let { ...uploadData } = rootState.editor.alldata
-        console.log(uploadData)
-        console.log(uploadData.childs === rootState.editor.alldata.childs)
+
+
     },
     getBlockStyles({ commit }) {
         axios.get("api/styles", { timeout: 3000 }).then((res) => {
@@ -57,6 +95,8 @@ const actions = {
             console.log(JSON.stringify(res.data))
         }).catch(error => {
             console.log(error)
+
+        }).then(function () {
             let f = [
                 {
                     "_id": {
@@ -134,7 +174,7 @@ const mutations = {
             item.style = css
         }))
         // state.blockStyles = styles
-        state.blockStyles = state.blockStyles.concat(styles)
+        state.styles = state.styles.concat(styles)
     },
     setUserInfo(state, { userInfo }) {
         state.userInfo = userInfo
@@ -142,7 +182,8 @@ const mutations = {
     },
     clearUserInfo() {
         // logout
-    }
+    },
+
 
 }
 

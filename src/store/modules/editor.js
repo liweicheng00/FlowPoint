@@ -3,10 +3,13 @@ import Element from "@/api/element.js";
 import gridAttach from "@/api/position.js"
 
 const state = () => ({
+    fileName: null,
+    fileId: null,
+    saveTime: null,
     svg: null,
     ctm: null,
     ictm: null,
-    IdArray: [],
+    // IdArray: [],
     initViewbox: [0, 0],
     FocusingElementId: null,
     alldata: {
@@ -159,7 +162,6 @@ const mutations = {
     },
     // todo:delete
     addChildNum(state, level) {
-        console.log(state, level)
         var t = level.parentCoor.reduce((ac, cur) => {
             return ac[cur]
         }, state.coor)
@@ -229,6 +231,29 @@ const mutations = {
         data.props.mouseclickposition = null
         data.props.styleObject = style
     },
+    setFileId() {
+        console.log("setFileId")
+    },
+    clearFileId() {
+        console.log("clearFileId")
+    },
+    setFileName(state, fileName) {
+        state.fileName = fileName
+        console.log("setFileName", state.fileName)
+    },
+    clearFileName() {
+        console.log("clearFileName")
+    },
+    setAllData() {
+        console.log("setAllData")
+    },
+    clearAllData() {
+        console.log("clearAllData")
+    },
+    setSaveTime(state) {
+        state.saveTime = new Date
+        console.log("setSaveTime", state.saveTime)
+    }
 }
 
 
