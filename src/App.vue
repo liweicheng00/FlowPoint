@@ -114,7 +114,7 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    ...mapActions("user", ["userLogin"]),
+    ...mapActions("user", ["userLogin", "userLogout"]),
     onSuccess(googleUser) {
       console.log(googleUser);
       var id_token = googleUser.getAuthResponse().id_token;
@@ -135,6 +135,7 @@ export default {
       Vue.GoogleAuth.then((auth2) => {
         auth2.signOut().then(() => {
           this.signed = auth2.isSignedIn.get();
+          this.userLogout();
         });
       });
     },
@@ -144,7 +145,7 @@ export default {
       this.$refs["login"].hide();
 
       var id_token = googleUser.getAuthResponse().id_token;
-
+      console.log("onCurrentUser");
       this.userLogin({
         login_type: "google",
         userInfo: this.basicProfile,

@@ -7,7 +7,7 @@ const state = () => ({
     styles: [],
     userInfo: {
         info: {},
-        filesName: []
+        filesInfo: []
     }
 })
 
@@ -15,7 +15,8 @@ const state = () => ({
 const getters = {
     getDefaultStyles: state => {
         return state.styles
-    }
+    },
+    getUserId: state => state.userInfo.info.userId
 }
 
 // actions
@@ -35,26 +36,33 @@ const actions = {
         })
 
     },
-    getUserFile({ commit }, data) {
+    userLogout({ commit }) {
+        commit("clearUserInfo")
+    },
+    getUserFile({ commit, getters }, fileId) {
+        console.log({ file_id: [fileId], user_id: getters.getUserId })
+        axios.post("api/file", { file_id: [fileId], user_id: getters.getUserId }).then(res => {
+            commit("editor/clearAllData", null, { root: true })
+            commit("editor/setAllData", res.data.data.data, { root: true })
+            commit("addStyles", res.data.styles)
+        }).catch(error => {
+            console.log(error)
+        })
         // commit alldata
-        commit("editor/clearAllData", null, { root: true })
-        commit("editor/setAllData", data, { root: true })
-        commit("editor/clearFileName", null, { root: true })
-        commit("addStyle", data)
+
 
         // commit addStyles
     },
     saveFile({ commit, state, rootState }) {
         console.log("user/saveFile")
-        console.log(rootState)
         let fileName = rootState.editor.fileName ? rootState.editor.fileName : null
         let fileId = rootState.editor.fileId ? rootState.editor.fileId : null
         console.log("rootState fileName:", fileName, "fileId:", fileId)
-        console.log("allData", rootState.editor.alldata)
-        let { ...uploadData } = rootState.editor.alldata
+        let uploadData = {}
+        uploadData.data = rootState.editor.alldata.parseJson()
         uploadData.file_id = fileId
         uploadData.file_name = fileName
-        uploadData.user_id = state.userInfo.info.userId || "None"
+        uploadData.user_id = state.userInfo.info.userId || null
         uploadData.styles = []
         if (fileId || fileName) {
             if (fileId) {
@@ -75,11 +83,11 @@ const actions = {
                     console.log("saveFile complete", res)
                     commit("editor/setFileId", null, { root: true })
                     commit("editor/setSaveTime", null, { root: true })
+                    commit("addFilesInfo", res.data.file_info)
 
                 }).catch(error => {
-                    console.log(error.response.data);
-                    console.log(error.response.status);
-                    console.log(error.response.headers);
+                    console.log(error)
+
                 })
             }
         } else {
@@ -177,11 +185,17 @@ const mutations = {
         state.styles = state.styles.concat(styles)
     },
     setUserInfo(state, { userInfo }) {
-        state.userInfo = userInfo
+        state.userInfo.info = { userId: userInfo.user_id, userName: userInfo.username }
+        state.userInfo.filesInfo = userInfo.files_name
 
     },
-    clearUserInfo() {
-        // logout
+    addFilesInfo(state, filesInfo) {
+        state.userInfo.filesInfo.unshift(filesInfo)
+    },
+
+    clearUserInfo(state) {
+        state.userInfo.info = {}
+        state.userInfo.filesInfo = []
     },
 
 

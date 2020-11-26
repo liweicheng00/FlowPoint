@@ -6,7 +6,8 @@ import mixin from './mixin'
 
 Vue.config.productionTip = false
 Vue.mixin(mixin)
-
+document.cookie = 'cookie1=value1; SameSite=Lax';
+document.cookie = 'cookie2=value2; SameSite=None; Secure';
 new Vue({
   router,
   store,

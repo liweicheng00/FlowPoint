@@ -12,18 +12,18 @@ const state = () => ({
     // IdArray: [],
     initViewbox: [0, 0],
     FocusingElementId: null,
-    alldata: {
-        id: "1",
-        type: "block",
-        position: {},
-        props: {},
-        childs: [],
-        mainPage: true,
-        parent: null,
-        arrows: { start: [], end: [] },
-        content: ""
+    // alldata: {
+    //     id: "1",
+    //     type: "block",
+    //     props: {},
+    //     childs: [],
+    //     mainPage: true,
+    //     parent: null,
+    //     arrows: { start: [], end: [] },
+    //     content: ""
 
-    },
+    // },
+    alldata: new Element("block", {}),
     self: {},
     arrowObject: null,
     NumOfChilds: [0],
@@ -55,7 +55,6 @@ const mutations = {
             alldata: {
                 id: "1",
                 type: "block",
-                position: {},
                 props: {},
                 childs: [],
                 mainPage: true,
@@ -241,13 +240,14 @@ const mutations = {
         state.fileName = fileName
         console.log("setFileName", state.fileName)
     },
-    clearFileName() {
-        console.log("clearFileName")
+    setAllData(state, alldata) {
+
+        state.alldata = new Element(null, {}, alldata)
     },
-    setAllData() {
-        console.log("setAllData")
-    },
-    clearAllData() {
+    clearAllData(state) {
+        state.alldata = new Element("block", {})
+        state.self = state.alldata
+        state.self.mainPage = true
         console.log("clearAllData")
     },
     setSaveTime(state) {

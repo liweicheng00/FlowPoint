@@ -36,6 +36,7 @@
         />
       </g>
     </svg>
+    <p>Save time:{{ saveTime }}</p>
   </div>
 </template>
 
@@ -98,6 +99,7 @@ export default {
       self: (state) => state.self,
       fileName: (state) => state.fileName,
       fileId: (state) => state.fileId,
+      saveTime: (state) => state.saveTime,
     }),
     // self() {
     //   return this.$store.state.editor.self;
@@ -181,7 +183,7 @@ export default {
     // );
   },
   updated() {
-    this.saveFile();
+    // this.saveFile();
   },
   methods: {
     ...mapMutations("editor", [
@@ -210,7 +212,6 @@ export default {
     ...mapMutations("editor", [
       "clearAllData",
       "setFileName",
-      "clearFileName",
       "clearSaveTime",
     ]),
     callSaveFile() {
@@ -218,9 +219,11 @@ export default {
 
       if (!this.fileName) {
         // edit fileName
-        let fileName = prompt("File name", "undefined");
+        let fileName = prompt("File name: ", "undefined");
         console.log(fileName);
         this.setFileName(fileName);
+        this.saveFile();
+      } else {
         this.saveFile();
       }
     },
@@ -478,5 +481,10 @@ export default {
   border: solid 1px rgb(205, 202, 197);
   height: 500px;
   position: relative;
+}
+p {
+  text-align: left;
+  font-size: 0.2rem;
+  color: grey;
 }
 </style>
