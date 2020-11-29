@@ -28,59 +28,59 @@ export default {
     };
   },
   computed: {
-    startPoint() {
-      console.log("startPoint");
-      if (!this.data.props.visable) {
-        return [0, 0];
-      } else {
-        if (this.data.props.arrowstartMiddle) {
-          var x1;
-          var y1 =
-            parseInt(this.data.props.arrowstartMiddle.props.styleObject.y) +
-            parseInt(
-              this.data.props.arrowstartMiddle.props.styleObject.height
-            ) /
-              2;
-          if (
-            this.data.props.offsetX >
-            parseInt(this.data.props.arrowstartMiddle.props.styleObject.x)
-          ) {
-            x1 =
-              parseInt(this.data.props.arrowstartMiddle.props.styleObject.x) +
-              parseInt(
-                this.data.props.arrowstartMiddle.props.styleObject.width
-              );
-          } else {
-            x1 = parseInt(this.data.props.arrowstartMiddle.props.styleObject.x);
-          }
-          return [x1, y1];
-        } else {
-          console.warn("something wrong!");
-          return [0, 0];
-        }
-      }
-    },
-    endPoint() {
-      console.log("endPoint");
+    // startPoint() {
+    //   console.log("startPoint");
+    //   if (!this.data.props.visable) {
+    //     return [0, 0];
+    //   } else {
+    //     if (this.data.props.arrowstartMiddle) {
+    //       var x1;
+    //       var y1 =
+    //         parseInt(this.data.props.arrowstartMiddle.props.styleObject.y) +
+    //         parseInt(
+    //           this.data.props.arrowstartMiddle.props.styleObject.height
+    //         ) /
+    //           2;
+    //       if (
+    //         this.data.props.offsetX >
+    //         parseInt(this.data.props.arrowstartMiddle.props.styleObject.x)
+    //       ) {
+    //         x1 =
+    //           parseInt(this.data.props.arrowstartMiddle.props.styleObject.x) +
+    //           parseInt(
+    //             this.data.props.arrowstartMiddle.props.styleObject.width
+    //           );
+    //       } else {
+    //         x1 = parseInt(this.data.props.arrowstartMiddle.props.styleObject.x);
+    //       }
+    //       return [x1, y1];
+    //     } else {
+    //       console.warn("something wrong!");
+    //       return [0, 0];
+    //     }
+    //   }
+    // },
+    // endPoint() {
+    //   console.log("endPoint");
 
-      if (!this.data.props.visable) {
-        return [0, 0];
-      } else {
-        var x2, y2;
-        if (!this.data.props.arrowendMiddle) {
-          x2 = this.data.props.offsetX;
-          y2 = this.data.props.offsetY;
-          return [x2, y2];
-        } else {
-          x2 = this.data.props.arrowendMiddle.props.styleObject.x;
-          y2 =
-            parseInt(this.data.props.arrowendMiddle.props.styleObject.y) +
-            parseInt(this.data.props.arrowendMiddle.props.styleObject.height) /
-              2;
-          return [x2, y2];
-        }
-      }
-    },
+    //   if (!this.data.props.visable) {
+    //     return [0, 0];
+    //   } else {
+    //     var x2, y2;
+    //     if (!this.data.props.arrowendMiddle) {
+    //       x2 = this.data.props.offsetX;
+    //       y2 = this.data.props.offsetY;
+    //       return [x2, y2];
+    //     } else {
+    //       x2 = this.data.props.arrowendMiddle.props.styleObject.x;
+    //       y2 =
+    //         parseInt(this.data.props.arrowendMiddle.props.styleObject.y) +
+    //         parseInt(this.data.props.arrowendMiddle.props.styleObject.height) /
+    //           2;
+    //       return [x2, y2];
+    //     }
+    //   }
+    // },
     d() {
       var points = this.pathCalculate(this.data.props);
       var M = `${points.x1},${points.y1}`;
@@ -159,18 +159,6 @@ export default {
         x2: props.offsetX,
         y2: props.offsetY,
       };
-
-      // var end = new Date().getTime();
-      // console.log(end - start);
-      // if (
-      //   props.offsetX > parseInt(props.arrowstartMiddle.props.styleObject.x)
-      // ) {
-      //   points.x1 =
-      //     parseInt(props.arrowstartMiddle.props.styleObject.x) +
-      //     parseInt(props.arrowstartMiddle.props.styleObject.width);
-      // } else {
-      //   points.x1 = parseInt(props.arrowstartMiddle.props.styleObject.x);
-      // }
 
       if (props.arrowendMiddle) {
         points.x2 = props.arrowendMiddle.props.styleObject.x;

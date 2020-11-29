@@ -36,7 +36,6 @@ export default {
   },
   created: function () {
     this.$bus.$on("Block:focus", (content, id) => {
-      console.log("focus");
       this.content = content;
       this.focusId = id;
     });

@@ -121,6 +121,9 @@ export default {
     // });
     this.$bus.$on("global:new file", () => {
       this.callSaveFile();
+      this.clearFileName();
+      this.clearFileId();
+      this.clearAllData();
     });
     this.$bus.$on("tool:back", () => {
       this.backtoolclickEvent();
@@ -149,7 +152,6 @@ export default {
     // });
 
     this.$store.subscribe((mutation) => {
-      console.log(mutation);
       let ignoreMutations = [
         `editor/${this.EMPTY_STATE}`,
         "editor/setArrowPosition",
@@ -191,7 +193,7 @@ export default {
       "getSVG",
       "clearSVG",
       "setCTM",
-      "setInitViewbox",
+      // "setInitViewbox",
       "setBeginData",
       "changeSelf",
       "gobackSelf",
@@ -212,6 +214,8 @@ export default {
     ...mapMutations("editor", [
       "clearAllData",
       "setFileName",
+      "clearFileName",
+      "clearFileId",
       "clearSaveTime",
     ]),
     callSaveFile() {

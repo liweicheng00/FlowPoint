@@ -27,7 +27,6 @@ const actions = {
             token: id_token,
             login_type: login_type
         }).then((res) => {
-            console.log(res)
             commit('setUserInfo', { userInfo: res.data })
 
         }).catch(error => {
@@ -40,10 +39,14 @@ const actions = {
         commit("clearUserInfo")
     },
     getUserFile({ commit, getters }, fileId) {
-        console.log({ file_id: [fileId], user_id: getters.getUserId })
+        console.log(`dispatch getUserFile: File id: ${fileId}, User id: ${getters.getUserId}`)
         axios.post("api/file", { file_id: [fileId], user_id: getters.getUserId }).then(res => {
+            // console.log(res)
             commit("editor/clearAllData", null, { root: true })
             commit("editor/setAllData", res.data.data.data, { root: true })
+            commit("editor/setFileId", res.data.data["_id"]["$oid"], { root: true })
+            commit("editor/setFileName", res.data.data.file_name, { root: true })
+
             commit("addStyles", res.data.styles)
         }).catch(error => {
             console.log(error)
@@ -54,16 +57,17 @@ const actions = {
         // commit addStyles
     },
     saveFile({ commit, state, rootState }) {
-        console.log("user/saveFile")
         let fileName = rootState.editor.fileName ? rootState.editor.fileName : null
         let fileId = rootState.editor.fileId ? rootState.editor.fileId : null
-        console.log("rootState fileName:", fileName, "fileId:", fileId)
+
         let uploadData = {}
         uploadData.data = rootState.editor.alldata.parseJson()
         uploadData.file_id = fileId
         uploadData.file_name = fileName
         uploadData.user_id = state.userInfo.info.userId || null
         uploadData.styles = []
+        console.log("dispatch user/saveFile: fileName:", fileName, "fileId:", fileId, "data:", uploadData)
+
         if (fileId || fileName) {
             if (fileId) {
                 // upload with fileId
@@ -81,7 +85,7 @@ const actions = {
                 // uploadData.fileId = "None"
                 axios.put("api/file", uploadData).then(res => {
                     console.log("saveFile complete", res)
-                    commit("editor/setFileId", null, { root: true })
+                    commit("editor/setFileId", res.data.file_info.file_id, { root: true })
                     commit("editor/setSaveTime", null, { root: true })
                     commit("addFilesInfo", res.data.file_info)
 
@@ -100,7 +104,6 @@ const actions = {
     getBlockStyles({ commit }) {
         axios.get("api/styles", { timeout: 3000 }).then((res) => {
             commit("addStyles", res.data)
-            console.log(JSON.stringify(res.data))
         }).catch(error => {
             console.log(error)
 
@@ -140,27 +143,7 @@ const actions = {
                         }
                     }
                 },
-                {
-                    "_id": {
-                        "$oid": "5fa8abe8468520300fb2eeae"
-                    },
-                    "name": "default_h_p",
-                    "content": "<div><h2>head</h2><p>put something meaningful</p></div>",
-                    "style": {
-                        "div": {
-                            "padding": "5%",
-                            "justify-content": "flex-start"
-                        },
-                        "h2": {
-                            "font-size": "2em",
-                            "text-align": "left"
-                        },
-                        "p": {
-                            "font-size": "1em",
-                            "text-align": "left"
-                        }
-                    }
-                }
+
             ]
             commit("addStyles", f)
         });

@@ -29,10 +29,11 @@ export default {
     }),
   },
   methods: {
-    ...mapActions("user", ["getUserFile"]),
+    ...mapActions("user", ["getUserFile", "saveFile"]),
     run(fileInfo) {
       console.log(fileInfo);
       this.activeId = fileInfo.file_id;
+      this.saveFile();
       this.getUserFile(fileInfo.file_id);
     },
   },

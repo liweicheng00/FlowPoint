@@ -32,7 +32,6 @@ export default {
     parent: Object,
   },
   mounted: function () {
-    console.log(this.$refs);
     if (this.data.type == "block") {
       this.$refs.g.focus();
     }
@@ -77,8 +76,7 @@ export default {
     enterKey() {
       this.$bus.$emit("Block:enter", this.data.content, this.data.id);
     },
-    onFocus(event) {
-      console.log(event);
+    onFocus() {
       this.$store.commit("editor/changeFocusingElement", this.data.id);
       this.$bus.$emit("Block:focus", this.data.content, this.data.id);
     },

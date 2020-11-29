@@ -87,14 +87,15 @@ const mutations = {
         state.ictm = state.ctm.inverse()
         // todo: It seems like somthing getting wrong when wheel rollong too fast
     },
-    setInitViewbox(state, box) {
-        state.initViewbox = box
-    },
+    // setInitViewbox(state, box) {
+    //     state.initViewbox = box
+    // },
     setBeginData(state, all_data) {
         if (all_data) {
             state.alldata = all_data
         }
         state.self = state.alldata
+        state.self.mainPage = true
     },
 
 
@@ -124,16 +125,13 @@ const mutations = {
 
         state.arrowObject.props.arrowendMiddle = arrowEndMiddle;
 
-        // if (arrowEndMiddle) {
-        //   state.arrowObject.props.arrowendMiddle = arrowEndMiddle;
-        // } else {
-        //   state.arrowObject.props.arrowendMiddle = null;
-        // }
     },
     stopLink(state, arrowEndMiddle) {
         state.arrowObject.props.visable = true
         state.arrowObject.props.arrowendMiddle = arrowEndMiddle;
-        arrowEndMiddle.arrows.end.push(state.arrowObject)
+        if (state.arrowObject) {
+            arrowEndMiddle.arrows.end.push(state.arrowObject)
+        }
         state.arrowObject = null
     },
     cancelLink(state) {
@@ -156,7 +154,6 @@ const mutations = {
     //   }
     // },
     changeFocusingElement(state, ElementId) {
-        console.log("Focus on id:", ElementId)
         state.FocusingElementId = ElementId
     },
     // todo:delete
@@ -230,25 +227,34 @@ const mutations = {
         data.props.mouseclickposition = null
         data.props.styleObject = style
     },
-    setFileId() {
-        console.log("setFileId")
+    setFileId(state, fileId) {
+        state.fileId = fileId
     },
-    clearFileId() {
+    clearFileId(state) {
+        state.fileId = null
         console.log("clearFileId")
     },
     setFileName(state, fileName) {
         state.fileName = fileName
         console.log("setFileName", state.fileName)
     },
-    setAllData(state, alldata) {
+    clearFileName(state) {
+        state.fileName = null
+        console.log("clearFileName")
+    },
 
+    setAllData(state, alldata) {
+        console.log("set all data", alldata)
         state.alldata = new Element(null, {}, alldata)
+        state.self = state.alldata.elementMap.mainPage ? state.alldata.elementMap.mainPage : state.alldata
+        // state.self.mainPage = true
+        console.log("parsed all data", state.self)
     },
     clearAllData(state) {
         state.alldata = new Element("block", {})
         state.self = state.alldata
         state.self.mainPage = true
-        console.log("clearAllData")
+        console.log("create new file")
     },
     setSaveTime(state) {
         state.saveTime = new Date

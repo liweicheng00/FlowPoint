@@ -2,20 +2,22 @@
 import gridAttach from "@/api/position.js"
 import _ from "lodash"
 
-// let elementMap = {}
+let elementMap = {}
 class Element {
     constructor(type, { event = null, parent = null, arrowStartMiddle = null }, obj) {
         if (obj) {
-            this._createCircular(obj)
+            this._parseElement(obj)
+            elementMap[this.id] = this
+            if (this.mainPage) {
+                elementMap.mainPage = this
+            }
+            this.elementMap = elementMap
+            this._createCircular()
         } else {
             this.type = type
             this.event = event
             this.mainPage = false
             this.parent = parent
-
-            // store.commit("newID")
-
-            // this.id = store.state.IdArray[store.state.IdArray.length - 1]
             this.id = this._uuid()
         }
 
@@ -36,12 +38,9 @@ class Element {
 
             this.props = {
                 visable: false,
-                startX: null,
-                startY: null,
                 offsetX: null,
                 offsetY: null,
                 arrowstartMiddle: arrowStartMiddle,
-                // arrowstartMiddle: props.arrowstartMiddle,
                 arrowendMiddle: null,
             }
             arrowStartMiddle.arrows.start.push(this)
@@ -62,28 +61,30 @@ class Element {
         });
     }
     parseJson() {
-        let a = this._avoidCircular(this)
-        console.log(a)
-        return a
+        return this._avoidCircular(this)
     }
     _avoidCircular(ele) {
 
         return _.transform(ele, (result, value, key) => {
             if (key == "parent") return
+            if (key == "elementMap") return
             if (["arrowendMiddle", "arrowstartMiddle"].indexOf(key) != -1) {
                 result[key] = value ? value.id : null
                 return
             }
             if (["start", "end"].indexOf(key) != -1) {
-                result[key] = value.map(element => element.id)
+
+                result[key] = value.map(element => {
+                    if (element) {
+                        return element.id
+                    }
+                })
                 return
             }
             if (key == "childs") {
                 result[key] = value.map(element => {
                     return this._avoidCircular(element)
                 })
-                console.log(result[key])
-
                 return
             }
             if (_.isArray(value)) {
@@ -95,14 +96,27 @@ class Element {
             result[key] = _.isObject(value) ? this._avoidCircular(value) : value
         }, {})
     }
-    _createCircular(obj) {
-        obj.childs.map(element => {
+    _parseElement(obj) {
+        obj.childs = obj.childs.map(element => {
             return new Element(null, {}, element)
         })
-        console.log(obj.childs)
         Object.assign(this, obj)
-        // idMap[obj.id] = this
+    }
+    _createCircular() {
+        this.childs.forEach(ele => {
+            ele.parent = this
 
+            if (ele.type == 'block') {
+                ele.arrows.start = ele.arrows.start.map(ele => elementMap[ele])
+                ele.arrows.end = ele.arrows.end.map(ele => elementMap[ele])
+
+            }
+            if (ele.type == "arrow") {
+                ele.props.arrowstartMiddle = ele.props.arrowstartMiddle ? elementMap[ele.props.arrowstartMiddle] : null
+                ele.props.arrowendMiddle = ele.props.arrowendMiddle ? elementMap[ele.props.arrowendMiddle] : null
+
+            }
+        })
     }
 }
 
