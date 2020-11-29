@@ -1,5 +1,5 @@
-const SVG_INITIAL_HEIGHT = 500
-const SVG_INITIAL_WIDTH = 500
+const SVG_INITIAL_HEIGHT = 1000
+const SVG_INITIAL_WIDTH = 1000
 const EMPTY_STATE = 'emptyState';
 
 
