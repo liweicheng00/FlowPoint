@@ -117,6 +117,8 @@ const actions = {
                     "content": "<div><p>put something graceful</p></div>",
                     "style": {
                         "div": {
+                            "background-color": "beige",
+                            "border-radius": "5px",
                             "padding": "5%",
                             "justify-content": "flex-start"
                         },

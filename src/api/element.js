@@ -37,15 +37,164 @@ class Element {
         else if (type == "arrow") {
 
             this.props = {
-                visable: false,
-                offsetX: null,
-                offsetY: null,
-                arrowstartMiddle: arrowStartMiddle,
-                arrowendMiddle: null,
+                endSection: 3,
+                startSection: 1,
+                points: {
+                    x1: 0,
+                    y1: 0,
+                    x2: 0,
+                    y2: 0,
+                },
+                // visable: false,
+                // offsetX: null,
+                // offsetY: null,
+                arrowStartMiddle: arrowStartMiddle,
+                arrowEndMiddle: null,
             }
             arrowStartMiddle.arrows.start.push(this)
 
             this.childs = []
+        }
+
+    }
+    _setNodePosition(mouse, node, section) {
+        switch (section) {
+            case 1:
+                if (mouse[0] - node[0] < 0) {
+                    if (mouse[1] - node[1] >= 0) {
+                        return 4;
+                    } else {
+                        return 2;
+                    }
+                } else {
+                    return 1;
+                }
+            case 2:
+                if (mouse[1] - node[1] >= 0) {
+                    if (mouse[0] - node[0] >= 0) {
+                        return 1;
+                    } else {
+                        return 3;
+                    }
+                } else {
+                    return 2;
+                }
+            case 3:
+                if (mouse[0] - node[0] >= 0) {
+                    if (mouse[1] - node[1] >= 0) {
+                        return 4;
+                    } else {
+                        return 2;
+                    }
+                } else {
+                    return 3;
+                }
+            case 4:
+                if (mouse[1] - node[1] < 0) {
+                    if (mouse[0] - node[0] >= 0) {
+                        return 1;
+                    } else {
+                        return 3;
+                    }
+                } else {
+                    return 4;
+                }
+        }
+    }
+    calculateArrowPoints(event = null, arrowEndMiddle = null, ictm) {
+        if (this.type != "arrow") {
+            console.error("Can't use this method on this type of element.")
+            return
+        }
+        // console.log(event, arrowEndMiddle)
+        // this.props.offsetX = ictm.a * event.offsetX + ictm.c * event.offsetY + ictm.e;
+        // this.props.offsetY = ictm.b * event.offsetX + ictm.d * event.offsetY + ictm.f;
+        this.props.arrowEndMiddle = arrowEndMiddle ? arrowEndMiddle : this.props.arrowEndMiddle;
+        if (event) {
+            this.props.points.x2 = ictm.a * event.offsetX + ictm.c * event.offsetY + ictm.e;
+            this.props.points.y2 = ictm.b * event.offsetX + ictm.d * event.offsetY + ictm.f;
+        }
+
+        // this.props.points.x1 = parseInt(this.props.arrowStartMiddle.props.styleObject.x) +
+        //     parseInt(this.props.arrowStartMiddle.props.styleObject.width)
+        // this.props.points.y1 = parseInt(this.props.arrowStartMiddle.props.styleObject.y) +
+        //     parseInt(this.props.arrowStartMiddle.props.styleObject.height) / 2
+
+        if (this.props.arrowEndMiddle) {
+            this.props.points.x2 = this.props.arrowEndMiddle.props.styleObject.x;
+            this.props.points.y2 = this.props.arrowEndMiddle.props.styleObject.y;
+            this.props.endSection = this._setNodePosition(
+                [this.props.points.x1, this.props.points.y1],
+                [this.props.points.x2, this.props.points.y2],
+                this.props.endSection
+            );
+            switch (this.props.endSection) {
+                case 1:
+                    this.props.points.x2 =
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.x) +
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.width);
+                    this.props.points.y2 =
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.y) +
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.height) / 2;
+                    break;
+                case 2:
+                    this.props.points.x2 =
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.x) +
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.width) / 2;
+                    this.props.points.y2 = this.props.arrowEndMiddle.props.styleObject.y;
+                    break;
+                case 3:
+                    this.props.points.x2 = this.props.arrowEndMiddle.props.styleObject.x;
+                    this.props.points.y2 =
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.y) +
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.height) / 2;
+                    break;
+                case 4:
+                    this.props.points.x2 =
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.x) +
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.width) / 2;
+                    this.props.points.y2 =
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.y) +
+                        parseInt(this.props.arrowEndMiddle.props.styleObject.height);
+                    break;
+            }
+        }
+        this.props.startSection = this._setNodePosition(
+            [this.props.points.x2, this.props.points.y2],
+            [this.props.points.x1, this.props.points.y1],
+            this.props.startSection
+        );
+        if (this.props.arrowStartMiddle) {
+            switch (this.props.startSection) {
+                case 1:
+                    this.props.points.x1 =
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.x) +
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.width);
+                    this.props.points.y1 =
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.y) +
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.height) / 2;
+                    break;
+                case 2:
+                    this.props.points.x1 =
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.x) +
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.width) / 2;
+                    this.props.points.y1 = parseInt(this.props.arrowStartMiddle.props.styleObject.y);
+                    break;
+                case 3:
+                    this.props.points.x1 = parseInt(this.props.arrowStartMiddle.props.styleObject.x);
+                    this.props.points.y1 =
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.y) +
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.height) / 2;
+                    break;
+                case 4:
+                    this.props.points.x1 =
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.x) +
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.width) / 2;
+                    this.props.points.y1 =
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.y) +
+                        parseInt(this.props.arrowStartMiddle.props.styleObject.height);
+                    break;
+            }
         }
 
     }
@@ -68,7 +217,7 @@ class Element {
         return _.transform(ele, (result, value, key) => {
             if (key == "parent") return
             if (key == "elementMap") return
-            if (["arrowendMiddle", "arrowstartMiddle"].indexOf(key) != -1) {
+            if (["arrowEndMiddle", "arrowStartMiddle"].indexOf(key) != -1) {
                 result[key] = value ? value.id : null
                 return
             }
@@ -112,12 +261,24 @@ class Element {
 
             }
             if (ele.type == "arrow") {
-                ele.props.arrowstartMiddle = ele.props.arrowstartMiddle ? elementMap[ele.props.arrowstartMiddle] : null
-                ele.props.arrowendMiddle = ele.props.arrowendMiddle ? elementMap[ele.props.arrowendMiddle] : null
+                ele.props.arrowStartMiddle = ele.props.arrowStartMiddle ? elementMap[ele.props.arrowStartMiddle] : null
+                ele.props.arrowEndMiddle = ele.props.arrowEndMiddle ? elementMap[ele.props.arrowEndMiddle] : null
 
             }
         })
     }
 }
+// class Block extends Element {
+//     constructor(type, { event = null, parent = null, arrowStartMiddle = null }, obj) {
+//         super()
 
+//         this.type = "block"
+//     }
+// }
+// class Arroe extends Element {
+//     constructor(type, { event = null, parent = null, arrowStartMiddle = null }, obj) {
+//         super()
+//         this.type = "arrow"
+//     }
+// }
 export default Element

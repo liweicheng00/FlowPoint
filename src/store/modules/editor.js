@@ -119,16 +119,10 @@ const mutations = {
     },
 
     setArrowPosition(state, { event, arrowEndMiddle }) {
-        state.arrowObject.props.visable = true
-        state.arrowObject.props.offsetX = state.ictm.a * event.offsetX + state.ictm.c * event.offsetY + state.ictm.e;
-        state.arrowObject.props.offsetY = state.ictm.b * event.offsetX + state.ictm.d * event.offsetY + state.ictm.f;
-
-        state.arrowObject.props.arrowendMiddle = arrowEndMiddle;
-
+        state.arrowObject.calculateArrowPoints(event, arrowEndMiddle, state.ictm)
     },
     stopLink(state, arrowEndMiddle) {
-        state.arrowObject.props.visable = true
-        state.arrowObject.props.arrowendMiddle = arrowEndMiddle;
+        state.arrowObject.props.arrowEndMiddle = arrowEndMiddle;
         if (state.arrowObject) {
             arrowEndMiddle.arrows.end.push(state.arrowObject)
         }
@@ -141,18 +135,6 @@ const mutations = {
         state.self.childs.pop()
     },
 
-    // newID(state) {
-    //   var id
-    //   if (state.IdArray.length != 0) {
-    //     var num = parseInt(state.IdArray[state.IdArray.length - 1].split('_')[1])
-    //     id = "cpn_" + (num + 1)
-    //     state.IdArray.push(id)
-
-    //   } else {
-    //     id = "cpn_0"
-    //     state.IdArray.push(id)
-    //   }
-    // },
     changeFocusingElement(state, ElementId) {
         state.FocusingElementId = ElementId
     },
@@ -183,12 +165,10 @@ const mutations = {
     setBlockPosition(state, { dragData, position }) {
 
         dragData.arrows.start.forEach(element => {
-            element.props.offsetX += 1
-            element.props.offsetX -= 1
+            element.calculateArrowPoints()
         });
         dragData.arrows.end.forEach(element => {
-            element.props.offsetX += 1
-            element.props.offsetX -= 1
+            element.calculateArrowPoints()
         });
         dragData.props.styleObject.x = `${gridAttach(position.x)}`
         dragData.props.styleObject.y = `${gridAttach(position.y)}`
@@ -227,6 +207,9 @@ const mutations = {
         data.props.mouseclickposition = null
         data.props.styleObject = style
     },
+
+
+
     setFileId(state, fileId) {
         state.fileId = fileId
     },

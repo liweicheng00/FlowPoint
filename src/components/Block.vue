@@ -9,8 +9,8 @@
       pointer-events="none"
     >
       <body xmlns="http://www.w3.org/1999/xhtml">
-        <div ref="content" class="fo">
-          <div v-html="data.content" :class="[fo_content]"></div>
+        <div ref="content" class="fo" :class="[fo_content]">
+          <div v-html="data.content"></div>
         </div>
       </body>
     </foreignObject>

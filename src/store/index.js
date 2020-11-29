@@ -114,17 +114,17 @@ export default new Vuex.Store({
   //     state.arrowObject.props.offsetX = state.ictm.a * event.offsetX + state.ictm.c * event.offsetY + state.ictm.e;
   //     state.arrowObject.props.offsetY = state.ictm.b * event.offsetX + state.ictm.d * event.offsetY + state.ictm.f;
 
-  //     state.arrowObject.props.arrowendMiddle = arrowEndMiddle;
+  //     state.arrowObject.props.arrowEndMiddle = arrowEndMiddle;
 
   //     // if (arrowEndMiddle) {
-  //     //   state.arrowObject.props.arrowendMiddle = arrowEndMiddle;
+  //     //   state.arrowObject.props.arrowEndMiddle = arrowEndMiddle;
   //     // } else {
-  //     //   state.arrowObject.props.arrowendMiddle = null;
+  //     //   state.arrowObject.props.arrowEndMiddle = null;
   //     // }
   //   },
   //   endLink(state, arrowEndMiddle) {
   //     state.arrowObject.props.visable = true
-  //     state.arrowObject.props.arrowendMiddle = arrowEndMiddle;
+  //     state.arrowObject.props.arrowEndMiddle = arrowEndMiddle;
   //     arrowEndMiddle.arrows.end.push(state.arrowObject)
   //     state.arrowObject = null
   //   },
