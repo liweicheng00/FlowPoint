@@ -1,5 +1,8 @@
 # flow
 
+## Demo
+https://flowpoint.herokuapp.com/
+
 ## Project setup
 ```
 npm install
