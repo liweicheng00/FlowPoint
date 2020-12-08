@@ -1,7 +1,6 @@
 
-import Element from "@/api/element.js";
-import gridAttach from "@/api/position.js"
-
+import { Element, Block, Arrow } from "@/api/element.js";
+// import gridAttach from "@/api/position.js"
 const state = () => ({
     fileName: null,
     fileId: null,
@@ -9,21 +8,8 @@ const state = () => ({
     svg: null,
     ctm: null,
     ictm: null,
-    // IdArray: [],
-    initViewbox: [0, 0],
     FocusingElementId: null,
-    // alldata: {
-    //     id: "1",
-    //     type: "block",
-    //     props: {},
-    //     childs: [],
-    //     mainPage: true,
-    //     parent: null,
-    //     arrows: { start: [], end: [] },
-    //     content: ""
-
-    // },
-    alldata: new Element("block", {}),
+    alldata: new Block(),
     self: {},
     arrowObject: null,
     NumOfChilds: [0],
@@ -50,7 +36,6 @@ const mutations = {
             ctm: null,
             ictm: null,
             // IdArray: [],
-            initViewbox: [0, 0],
             FocusingElementId: null,
             alldata: {
                 id: "1",
@@ -87,9 +72,16 @@ const mutations = {
         state.ictm = state.ctm.inverse()
         // todo: It seems like somthing getting wrong when wheel rollong too fast
     },
-    // setInitViewbox(state, box) {
-    //     state.initViewbox = box
-    // },
+    setViewBox(state, { type, event }) {
+        if (type == "pen") {
+            state.self.viewBox.minX -= event.movementX
+            state.self.viewBox.minY -= event.movementY
+        } else if (type == "zoom") {
+            state.self.viewBox.width = (state.self.viewBox.width + event.deltaY >= 0) ? state.self.viewBox.width + event.deltaY : 0;
+            state.self.viewBox.height = (state.self.viewBox.height + event.deltaY >= 0) ? state.self.viewBox.height + event.deltaY : 0
+        }
+    },
+
     setBeginData(state, all_data) {
         if (all_data) {
             state.alldata = all_data
@@ -110,12 +102,20 @@ const mutations = {
         state.self.mainPage = true
     },
     addElement(state, { type, params }) {
+        if (type == "block") {
+            var block = new Block(params.parent)
+            block.setPosition(params.event, state.ictm)
+            state.self.childs.push(block)
 
-        var element = new Element(type, params)
-        state.self.childs.push(element);
-        if (type == 'arrow') {
-            state.arrowObject = element
+        } else if (type == "arrow") {
+            var arrow = new Arrow(params.parent)
+            state.arrowObject = arrow
+            arrow.setStartMiddle(params.arrowStartMiddle)
+            state.self.childs.push(arrow)
         }
+        // var element = new Element(type, params)
+        // state.self.childs.push(element);
+
     },
 
     setArrowPosition(state, { event, arrowEndMiddle }) {
@@ -162,7 +162,7 @@ const mutations = {
     },
 
 
-    setBlockPosition(state, { dragData, position }) {
+    setBlockPosition(state, { dragData, event }) {
 
         dragData.arrows.start.forEach(element => {
             element.calculateArrowPoints()
@@ -170,8 +170,9 @@ const mutations = {
         dragData.arrows.end.forEach(element => {
             element.calculateArrowPoints()
         });
-        dragData.props.styleObject.x = `${gridAttach(position.x)}`
-        dragData.props.styleObject.y = `${gridAttach(position.y)}`
+        dragData.setPosition(event, state.ictm)
+        // dragData.props.styleObject.x = `${gridAttach(position.x)}`
+        // dragData.props.styleObject.y = `${gridAttach(position.y)}`
     },
     deleteMiddle(state, data) {
         let ids = []
@@ -234,7 +235,7 @@ const mutations = {
         console.log("parsed all data", state.self)
     },
     clearAllData(state) {
-        state.alldata = new Element("block", {})
+        state.alldata = new Block()
         state.self = state.alldata
         state.self.mainPage = true
         console.log("create new file")

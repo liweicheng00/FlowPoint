@@ -1,13 +1,7 @@
 <template>
   <g>
     <rect class="block" :id="data.id" v-bind="data.props.styleObject" />
-    <foreignObject
-      :x="styleObject.x"
-      :y="styleObject.y"
-      :width="data.props.styleObject.width"
-      :height="data.props.styleObject.height"
-      pointer-events="none"
-    >
+    <foreignObject v-bind="data.props.styleObject" pointer-events="none">
       <body xmlns="http://www.w3.org/1999/xhtml">
         <div ref="content" class="fo" :class="[fo_content]">
           <div v-html="data.content"></div>
@@ -21,23 +15,21 @@
 export default {
   props: {
     data: Object,
-    parent: Object,
   },
   data: function () {
     return {
       ifFocus: false,
       allowMove: false,
-      styleDefault: {
-        width: "100",
-        height: "30",
-        stroke: "black",
-        rx: "3",
-        fill: "transparent",
-        "stroke-width": "1",
-        x: "0",
-        y: "0",
-      },
-      textDefault: {},
+      // styleDefault: {
+      //   width: "100",
+      //   height: "30",
+      //   stroke: "black",
+      //   rx: "3",
+      //   fill: "transparent",
+      //   "stroke-width": "1",
+      //   x: "0",
+      //   y: "0",
+      // },
       fo_content: "",
     };
   },
@@ -76,37 +68,37 @@ export default {
     },
   },
   computed: {
-    styleObject: function () {
-      if (this.data.props.mouseclickposition) {
-        this.$store.commit("editor/setCTM");
+    // styleObject: function () {
+    //   if (this.data.props.mouseclickposition) {
+    //     this.$store.commit("editor/setCTM");
 
-        var ictm = this.$store.state.editor.ictm;
-        var x =
-          this.data.props.mouseclickposition[0] -
-          parseInt(this.styleDefault.width) / ictm.a / 2;
-        var y =
-          this.data.props.mouseclickposition[1] -
-          parseInt(this.styleDefault.height) / ictm.a / 2;
+    //     var ictm = this.$store.state.editor.ictm;
+    //     var x =
+    //       this.data.props.mouseclickposition[0] -
+    //       parseInt(this.styleDefault.width) / ictm.a / 2;
+    //     var y =
+    //       this.data.props.mouseclickposition[1] -
+    //       parseInt(this.styleDefault.height) / ictm.a / 2;
 
-        var x1 = ictm.a * x + ictm.c * y + ictm.e;
-        var y1 = ictm.b * x + ictm.d * y + ictm.f;
-        var style = Object.assign(this.styleDefault, {
-          color: "red",
-          x: `${x1}`,
-          y: `${y1}`,
-        });
-        this.$store.commit("editor/clearInitPosition", {
-          data: this.data,
-          style: style,
-        });
-        return style;
-      } else {
-        return this.data.props.styleObject;
-      }
-    },
-    textObject: function () {
-      return Object.assign(this.textDefault, {});
-    },
+    //     var x1 = ictm.a * x + ictm.c * y + ictm.e;
+    //     var y1 = ictm.b * x + ictm.d * y + ictm.f;
+    //     var style = Object.assign(this.styleDefault, {
+    //       color: "red",
+    //       x: `${x1}`,
+    //       y: `${y1}`,
+    //     });
+    //     this.$store.commit("editor/clearInitPosition", {
+    //       data: this.data,
+    //       style: style,
+    //     });
+    //     return style;
+    //   } else {
+    //     return this.data.props.styleObject;
+    //   }
+    // },
+    // textObject: function () {
+    //   return Object.assign(this.textDefault, {});
+    // },
     focusingElementId: function () {
       return this.$store.state.editor.FocusingElementId;
     },
@@ -117,13 +109,13 @@ export default {
     //   this.$store.commit("changeFocusingElement", this.data.id);
     //   this.$bus.$emit("Block:focus", this.data.content, this.data.id);
     // },
-    resizeBody() {
-      console.log("here");
-    },
-    gridAttach(value, width) {
-      var a = value % width;
-      return a > width / 2 ? value + (width - a) : value - a;
-    },
+    // resizeBody() {
+    //   console.log("here");
+    // },
+    // gridAttach(value, width) {
+    //   var a = value % width;
+    //   return a > width / 2 ? value + (width - a) : value - a;
+    // },
   },
   beforeDestroy: function () {
     this.$bus.$off("TextEditor:change");

@@ -36,7 +36,7 @@
         />
       </g>
     </svg>
-    <p>Save time:{{ saveTime }}</p>
+    <!-- <p>Save time:{{ saveTime }}</p> -->
   </div>
 </template>
 
@@ -64,13 +64,13 @@ export default {
       props: {
         clientHeight: null,
         clientWidth: null,
-        viewBox: {
-          "min-x": 0,
-          "min-y": 0,
-          width: null,
-          height: null,
-          startPoint: [0, 0],
-        },
+        // viewBox: {
+        //   "min-x": 0,
+        //   "min-y": 0,
+        //   width: null,
+        //   height: null,
+        //   startPoint: [0, 0],
+        // },
       },
       arrowEndMiddle: null,
       arrowStartMiddle: null,
@@ -79,22 +79,22 @@ export default {
   },
 
   computed: {
-    viewBox: {
-      get() {
-        // if (this.props.clientHeight) {
-        //   return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
-        // } else {
-        //   return "0 0 0 0";
-        // }
-        return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
-      },
-      set(newValue) {
-        this.props.viewBox["min-x"] = newValue[0];
-        this.props.viewBox["min-y"] = newValue[1];
-        this.props.viewBox["width"] = newValue[2];
-        this.props.viewBox["height"] = newValue[3];
-      },
-    },
+    // viewBox: {
+    //   get() {
+    //     // if (this.props.clientHeight) {
+    //     //   return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
+    //     // } else {
+    //     //   return "0 0 0 0";
+    //     // }
+    //     return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
+    //   },
+    //   set(newValue) {
+    //     this.props.viewBox["min-x"] = newValue[0];
+    //     this.props.viewBox["min-y"] = newValue[1];
+    //     this.props.viewBox["width"] = newValue[2];
+    //     this.props.viewBox["height"] = newValue[3];
+    //   },
+    // },
     ...mapState("editor", {
       self: (state) => state.self,
       fileName: (state) => state.fileName,
@@ -110,10 +110,15 @@ export default {
     parent() {
       return this.self.parent;
     },
+    viewBox() {
+      if (!this.self.viewBox) {
+        return "0 0 0 0";
+      }
+      return `${this.self.viewBox.minX} ${this.self.viewBox.minY} ${this.self.viewBox.width} ${this.self.viewBox.height}`;
+    },
   },
   created() {
-    this.initViewbox();
-
+    // this.initViewbox();
     // console.log(zoom);
     // this.$nextTick(() => {
     //   // this.$store.commit("getSVG", this.$refs);
@@ -177,6 +182,7 @@ export default {
     this.setBeginData();
     this.getSVG(this.$refs);
     this.setCTM();
+
     // this.$store.commit("setCTM");
     // console.log(
     //   Object.keys(
@@ -193,6 +199,7 @@ export default {
       "getSVG",
       "clearSVG",
       "setCTM",
+      "setViewBox",
       // "setInitViewbox",
       "setBeginData",
       "changeSelf",
@@ -279,6 +286,8 @@ export default {
       //     parent: this.self,
       //   },
       // });
+      this.setCTM();
+
       this.addElement({
         type: "block",
         params: {
@@ -321,7 +330,7 @@ export default {
       this.endLink(event, data);
     },
     middleDblClickEvent(event, child) {
-      this.initViewbox();
+      // this.initViewbox();
       // this.$store.commit("changeSelf", child);
       this.changeSelf(child);
     },
@@ -345,7 +354,7 @@ export default {
     // Tool EventBus Event Methods
     backtoolclickEvent() {
       if (this.parent) {
-        this.initViewbox();
+        // this.initViewbox();
         // this.$store.commit("gobackSelf");
         this.gobackSelf();
       } else {
@@ -359,9 +368,9 @@ export default {
       }).save();
     },
     // Methods
-    initViewbox() {
-      this.viewBox = [0, 0, this.SVG_INITIAL_WIDTH, this.SVG_INITIAL_HEIGHT];
-    },
+    // initViewbox() {
+    //   this.viewBox = [0, 0, this.SVG_INITIAL_WIDTH, this.SVG_INITIAL_HEIGHT];
+    // },
     startLink(event, data) {
       const isBlock = event.target.classList.contains("block");
       if (isBlock) {
@@ -396,7 +405,7 @@ export default {
         this.addElement({
           type: "arrow",
           params: {
-            event: event,
+            parent: this.self,
             arrowStartMiddle: this.arrowStartMiddle,
           },
         });
@@ -415,29 +424,35 @@ export default {
       const isSvg = event.target.classList.contains("Svg");
       if (isSvg) {
         this.canPen = true;
-        this.props.viewBox.startPoint = [
-          this.props.viewBox["min-x"] + event.offsetX,
-          this.props.viewBox["min-y"] + event.offsetY,
-        ];
+        this.setViewBox({ type: "pen", event: event });
+        // this.props.viewBox.startPoint = [
+        //   this.props.viewBox["min-x"] + event.offsetX,
+        //   this.props.viewBox["min-y"] + event.offsetY,
+        // ];
       }
     },
     endPen() {
       this.canPen = false;
     },
     pen(event) {
-      this.props.viewBox["min-x"] =
-        this.props.viewBox.startPoint[0] - event.offsetX;
-      this.props.viewBox["min-y"] =
-        this.props.viewBox.startPoint[1] - event.offsetY;
+      this.setViewBox({ type: "pen", event: event });
+
+      // this.props.viewBox["min-x"] =
+      //   this.props.viewBox.startPoint[0] - event.offsetX;
+      // this.props.viewBox["min-y"] =
+      //   this.props.viewBox.startPoint[1] - event.offsetY;
       // this.$store.commit("setCTM");
       this.setCTM();
     },
     zoom(event) {
-      var w = this.props.viewBox.width + event.deltaY;
-      var h = this.props.viewBox.height + event.deltaY;
+      event.preventDefault();
+      this.setViewBox({ type: "zoom", event: event });
 
-      this.props.viewBox.width = w >= 0 ? w : 0;
-      this.props.viewBox.height = h >= 0 ? h : 0;
+      // var w = this.props.viewBox.width + event.deltaY;
+      // var h = this.props.viewBox.height + event.deltaY;
+
+      // this.props.viewBox.width = w >= 0 ? w : 0;
+      // this.props.viewBox.height = h >= 0 ? h : 0;
       // this.$store.commit("setCTM");
       this.setCTM();
     },
@@ -447,15 +462,15 @@ export default {
     },
     drag(event, dragData) {
       if (this.canDrag) {
-        var ictm = this.$store.state.editor.ictm;
-        var x =
-          event.offsetX -
-          parseInt(dragData.props.styleObject.width) / ictm.a / 2;
-        var y =
-          event.offsetY -
-          parseInt(dragData.props.styleObject.height) / ictm.a / 2;
-        var x1 = ictm.a * x + ictm.c * y + ictm.e;
-        var y1 = ictm.b * x + ictm.d * y + ictm.f;
+        // var ictm = this.$store.state.editor.ictm;
+        // var x =
+        //   event.offsetX -
+        //   parseInt(dragData.props.styleObject.width) / ictm.a / 2;
+        // var y =
+        //   event.offsetY -
+        //   parseInt(dragData.props.styleObject.height) / ictm.a / 2;
+        // var x1 = ictm.a * x + ictm.c * y + ictm.e;
+        // var y1 = ictm.b * x + ictm.d * y + ictm.f;
 
         // this.$store.commit("setBlockPosition", {
         //   dragData: dragData,
@@ -463,8 +478,12 @@ export default {
         // });
         this.setBlockPosition({
           dragData: dragData,
-          position: { x: x1, y: y1 },
+          event: event,
         });
+        // this.setBlockPosition({
+        //   dragData: dragData,
+        //   position: { x: x1, y: y1 },
+        // });
       }
     },
     endDrag() {
