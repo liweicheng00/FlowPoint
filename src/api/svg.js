@@ -7,7 +7,7 @@ class OperateSVG {
     }
 
     save() {
-        console.log(this.classArray)
+        // console.log(this.classArray)
         var usedClass = this.getClass()
 
         this.svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -27,7 +27,8 @@ class OperateSVG {
         styleElement.appendChild(document.createTextNode(s));
         if (styleElement.styleSheet) {
             // This is required for IE8 and below.
-            styleElement.styleSheet.cssText = css;
+            console.log("This is required for IE8 and below.")
+            // styleElement.styleSheet.cssText = css;
         } else {
             usedClass.map(item => {
                 styleElement.appendChild(document.createTextNode(item.style));
@@ -36,7 +37,7 @@ class OperateSVG {
 
         var svgData = this.svgEl.outerHTML;
         var preface = '<?xml version="1.0" standalone="no"?>\r\n';
-        console.log(svgData)
+        // console.log(svgData)
         var svgBlob = new Blob([preface, svgData], {
             type: "image/svg+xml;charset=utf-8",
         });
