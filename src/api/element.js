@@ -156,7 +156,6 @@ class Block extends Element {
         }
     }
     setPosition(event, ictm) {
-
         var x =
             event.offsetX -
             parseInt(this.props.styleObject.width) / ictm.a / 2;

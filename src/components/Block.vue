@@ -20,16 +20,6 @@ export default {
     return {
       ifFocus: false,
       allowMove: false,
-      // styleDefault: {
-      //   width: "100",
-      //   height: "30",
-      //   stroke: "black",
-      //   rx: "3",
-      //   fill: "transparent",
-      //   "stroke-width": "1",
-      //   x: "0",
-      //   y: "0",
-      // },
       fo_content: "",
     };
   },

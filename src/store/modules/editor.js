@@ -11,6 +11,7 @@ const state = () => ({
     FocusingElementId: null,
     alldata: new Block(),
     self: {},
+    focusElements: [],
     arrowObject: null,
     NumOfChilds: [0],
     coor: []
@@ -35,19 +36,8 @@ const mutations = {
             svg: null,
             ctm: null,
             ictm: null,
-            // IdArray: [],
             FocusingElementId: null,
-            alldata: {
-                id: "1",
-                type: "block",
-                props: {},
-                childs: [],
-                mainPage: true,
-                parent: null,
-                arrows: { start: [], end: [] },
-                content: ""
-
-            },
+            alldata: {},
             self: {},
             arrowObject: null,
             NumOfChilds: [0],
@@ -68,8 +58,10 @@ const mutations = {
         state.svg = null
     },
     setCTM(state) {
+
         state.ctm = state.svg.svg.getCTM()
         state.ictm = state.ctm.inverse()
+
         // todo: It seems like somthing getting wrong when wheel rollong too fast
     },
     setViewBox(state, { type, event }) {
@@ -92,9 +84,11 @@ const mutations = {
 
 
     changeSelf(state, child) {
+
         state.self.mainPage = false
         state.self = child
         state.self.mainPage = true
+
     },
     gobackSelf(state) {
         state.self.mainPage = false
