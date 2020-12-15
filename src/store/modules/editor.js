@@ -9,6 +9,7 @@ const state = () => ({
     ctm: null,
     ictm: null,
     FocusingElementId: null,
+    selectedMiddle: {},
     alldata: new Block(),
     self: {},
     focusElements: [],
@@ -66,8 +67,8 @@ const mutations = {
     },
     setViewBox(state, { type, event }) {
         if (type == "pen") {
-            state.self.viewBox.minX -= event.movementX
-            state.self.viewBox.minY -= event.movementY
+            state.self.viewBox.minX -= state.ictm.a * event.movementX
+            state.self.viewBox.minY -= state.ictm.d * event.movementY
         } else if (type == "zoom") {
             state.self.viewBox.width = (state.self.viewBox.width + event.deltaY >= 0) ? state.self.viewBox.width + event.deltaY : 0;
             state.self.viewBox.height = (state.self.viewBox.height + event.deltaY >= 0) ? state.self.viewBox.height + event.deltaY : 0
@@ -168,6 +169,36 @@ const mutations = {
         // dragData.props.styleObject.x = `${gridAttach(position.x)}`
         // dragData.props.styleObject.y = `${gridAttach(position.y)}`
     },
+    // For Middle edit
+    addSelectedMiddle(state, id) {
+        var isNew = true
+        for (var key in state.selectedMiddle) {
+            if (state.selectedMiddle[key].id == id) {
+                state.selectedMiddle[key].class.Selected = false
+                delete state.selectedMiddle[key]
+                isNew = false
+            }
+        }
+        if (isNew) {
+            state.self.childs.every((el, index) => {
+                if (el.id == id) {
+                    state.selectedMiddle[index] = el
+                    el.class.Selected = true
+                    return false
+                } else {
+                    return true
+                }
+            })
+        }
+
+    },
+
+    cancelSelectedMiddle(state) {
+        for (var key in state.selectedMiddle) {
+            state.selectedMiddle[key].class.Selected = false
+        }
+        state.selectedMiddle = {}
+    },
     deleteMiddle(state, data) {
         let ids = []
         ids.push(data.id)
@@ -204,7 +235,7 @@ const mutations = {
     },
 
 
-
+    // For file
     setFileId(state, fileId) {
         state.fileId = fileId
     },

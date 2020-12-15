@@ -1,6 +1,6 @@
 <template>
   <g>
-    <rect class="block" :id="data.id" v-bind="data.props.styleObject" />
+    <rect class="block" v-bind="data.props.styleObject" />
     <foreignObject v-bind="data.props.styleObject" pointer-events="none">
       <body xmlns="http://www.w3.org/1999/xhtml">
         <div ref="content" class="fo" :class="[fo_content]">

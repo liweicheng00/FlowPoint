@@ -1,7 +1,16 @@
 .fo {
     padding: 5px;
+    border: solid 1px black;
+    border-radius: 3px;
   }
 .fo * {
     margin: 0px;
     padding: 0px;
   }
+.Selected .fo { 
+  border: solid 1px darkgoldenrod;
+}
+
+.Selected path { 
+  stroke: darkgoldenrod;
+}

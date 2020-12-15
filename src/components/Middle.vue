@@ -1,7 +1,8 @@
 <template>
   <g
     ref="g"
-    :class="classList"
+    :class="data.class"
+    :id="data.id"
     @mousedown.left="mousedownleft"
     @mouseup.left="mouseupleft"
     @dblclick="dblclick"
@@ -11,7 +12,6 @@
     @mouseleave="mouseleave"
     @keyup.delete="deleteKey"
     @keyup.enter="enterKey"
-    @focus="onFocus"
   >
     <Block v-if="data.type == 'block'" :data="data" :parent="parent" />
     <Arrow v-else-if="data.type == 'arrow'" :data="data" />
@@ -21,6 +21,7 @@
 <script>
 import Arrow from "@/components/Arrow.vue";
 import Block from "@/components/Block.vue";
+import { mapMutations } from "vuex";
 
 export default {
   components: {
@@ -38,15 +39,26 @@ export default {
   },
   created() {},
   computed: {
-    classList() {
-      var c = {
-        Middle: true,
-      };
-      c[this.data.type] = true;
-      return c;
-    },
+    // ...mapState("editor", {
+    //   selectedId: (state) => state.selectedId,
+    // }),
+    // classList() {
+    //   var c = {
+    //     Middle: true,
+    //   };
+    //   c[this.data.type] = true;
+    //   return c;
+    // },
+  },
+  watch: {
+    // selectedId() {
+    //   if (this.selectedId.indexOf(this.data.id) != -1) {
+    //     this.idToData(this.data);
+    //   }
+    // },
   },
   methods: {
+    ...mapMutations("editor", ["idToData"]),
     mousedownright(event) {
       this.$emit("mousedown-right", event, this.data);
     },
@@ -76,10 +88,10 @@ export default {
     enterKey() {
       this.$bus.$emit("Block:enter", this.data.content, this.data.id);
     },
-    onFocus() {
-      this.$store.commit("editor/changeFocusingElement", this.data.id);
-      this.$bus.$emit("Block:focus", this.data.content, this.data.id);
-    },
+    // onFocus() {
+    //   this.$store.commit("editor/changeFocusingElement", this.data.id);
+    //   this.$bus.$emit("Block:focus", this.data.content, this.data.id);
+    // },
   },
   beforeDestroy: function () {},
 };
