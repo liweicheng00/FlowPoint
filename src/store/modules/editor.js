@@ -8,7 +8,6 @@ const state = () => ({
     svg: null,
     ctm: null,
     ictm: null,
-    FocusingElementId: null,
     selectedMiddle: {},
     alldata: new Block(),
     self: {},
@@ -37,7 +36,6 @@ const mutations = {
             svg: null,
             ctm: null,
             ictm: null,
-            FocusingElementId: null,
             alldata: {},
             self: {},
             arrowObject: null,
@@ -130,9 +128,6 @@ const mutations = {
         state.self.childs.pop()
     },
 
-    changeFocusingElement(state, ElementId) {
-        state.FocusingElementId = ElementId
-    },
     // todo:delete
     addChildNum(state, level) {
         var t = level.parentCoor.reduce((ac, cur) => {
@@ -171,25 +166,25 @@ const mutations = {
     },
     // For Middle edit
     addSelectedMiddle(state, id) {
-        var isNew = true
-        for (var key in state.selectedMiddle) {
-            if (state.selectedMiddle[key].id == id) {
-                state.selectedMiddle[key].class.Selected = false
-                delete state.selectedMiddle[key]
-                isNew = false
-            }
-        }
-        if (isNew) {
-            state.self.childs.every((el, index) => {
+
+        if (id in state.selectedMiddle) {
+            state.selectedMiddle[id].class.Selected = false
+            state.selectedMiddle[id].contenteditable = false
+
+            delete state.selectedMiddle[id]
+        } else {
+            state.self.childs.every((el) => {
                 if (el.id == id) {
-                    state.selectedMiddle[index] = el
+                    state.selectedMiddle[id] = el
                     el.class.Selected = true
+                    el.contenteditable = true
                     return false
                 } else {
                     return true
                 }
             })
         }
+
 
     },
 
@@ -220,8 +215,15 @@ const mutations = {
         });
         state.self.childs = a
     },
+    setContentEditable(state, data) {
+        data.contenteditable = true
+    },
 
     // For Block.vue
+    resizeBlock(state, { data, ref }) {
+        data.props.styleObject.width = ref.clientWidth + 5
+        data.props.styleObject.height = ref.clientHeight + 5
+    },
     editContent(state, { data, content }) {
         data.content = content
         // data.props.styleObject.height = ref.clientHeight

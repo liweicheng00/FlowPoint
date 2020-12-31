@@ -14,7 +14,6 @@
           <All />
           <!-- <Preview /> -->
           <Style />
-          <TextEditor />
         </b-col>
       </b-form-row>
     </b-container>
@@ -29,7 +28,6 @@ import All from "@/components/All.vue";
 // import Tree from "@/components/Tree.vue";
 import Style from "@/components/Style.vue";
 import Tool from "@/components/Tool.vue";
-import TextEditor from "@/components/TextEditor.vue";
 import FileTree from "@/components/FileTree.vue";
 import { mapState } from "vuex";
 
@@ -43,7 +41,6 @@ export default {
     // Tree,
     Style,
     Tool,
-    TextEditor,
     FileTree,
   },
 

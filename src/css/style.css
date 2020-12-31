@@ -1,12 +1,21 @@
 .fo {
-    padding: 5px;
-    border: solid 1px black;
-    border-radius: 3px;
-  }
+  padding: 5px;
+  border: solid 1px black;
+  border-radius: 3px;
+  /* height: 100%; */
+  /* width: 100%; */
+  white-space: nowrap; 
+  min-width: 100%;
+  min-height: fit-content;
+  width: fit-content;
+
+
+}
 .fo * {
-    margin: 0px;
-    padding: 0px;
-  }
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
+}
 .Selected .fo { 
   border: solid 1px darkgoldenrod;
 }

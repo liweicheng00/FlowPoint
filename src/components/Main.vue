@@ -1,7 +1,8 @@
 <template>
   <div class="block">
-    <button @click="testFunction">click</button>
+    <!-- <button @click="testFunction">click</button> -->
     <svg
+      style="border: 1px solid black"
       class="Svg"
       ref="svg"
       id="mainSVG"
@@ -17,7 +18,7 @@
       @dblclick.self="dblclickEvent"
       @mousedown.left="leftmousedownEvent"
       @mouseup.left="leftmouseupEvent"
-      @mousemove="mousemoveEvent"
+      @mousemove.self="mousemoveEvent"
       @mouseleave="mouseleaveEvent"
       @wheel="wheelEvent"
     >
@@ -36,6 +37,7 @@
           @mouseleave="middleMouseLeaveEvent"
         />
       </g>
+      <rect v-if="canSelect" ref="selectBox" v-bind="selectBoxParam"></rect>
     </svg>
     <!-- <p>Save time:{{ saveTime }}</p> -->
   </div>
@@ -43,9 +45,9 @@
 
 <script>
 import Middle from "@/components/Middle.vue";
-import OperateSVG from "@/api/svg.js";
+import OperateSVG, { isBBoxIntersect } from "@/api/svg.js";
 import { mapActions, mapMutations, mapState } from "vuex";
-import Snap from "snapsvg-cjs";
+// import Snap from "snapsvg-cjs";
 
 export default {
   components: {
@@ -59,10 +61,18 @@ export default {
       newMutation: true,
 
       svg: null,
-      selectBox: null,
       selectItems: null,
+      selectBoxParam: {
+        width: "0",
+        height: "0",
+        x: "0",
+        y: "0",
+        fill: "none",
+        stroke: "#9999FF",
+      },
 
       canSelect: false,
+      isCtrl: false,
       canZoom: false,
       canPen: false,
       canDrag: false,
@@ -157,8 +167,6 @@ export default {
     });
   },
   mounted: function () {
-    this.svg = Snap("#mainSVG");
-    this.svg.drag(this.select, this.startSelect, this.endSelect);
     this.windowresizeEvent();
     this.setBeginData();
     this.getSVG(this.$refs);
@@ -203,12 +211,6 @@ export default {
       "clearFileId",
       "clearSaveTime",
     ]),
-    testFunction() {
-      console.log(this.svg);
-      console.log(this.svg.selectAll("*"));
-      console.log(this.svg.selectAll(".Middle"));
-    },
-
     callSaveFile() {
       console.log("callSaveFile");
 
@@ -222,38 +224,19 @@ export default {
         this.saveFile();
       }
     },
-    redo() {
-      let commit = this.undone.pop();
-      this.newMutation = false;
-      this[`${commit.type}`](commit.payload);
-      this.newMutation = true;
-    },
-    undo() {
-      this.undone.push(this.done.pop());
-      this.newMutation = false;
-      this[this.EMPTY_STATE]();
-
-      this.done.forEach((mutation) => {
-        console.log(`${mutation.type.split("/")[1]}`, mutation.payload);
-
-        this[`${mutation.type.split("/")[1]}`](mutation.payload);
-
-        this.done.pop();
-      });
-      this.newMutation = true;
-    },
     windowresizeEvent() {
       this.props.clientHeight = this.$el.clientHeight;
       this.props.clientWidth = this.$el.clientWidth;
     },
     keypressEvent(event) {
       if (event.key == "Meta" && event.type == "keydown") {
-        this.canSelect = true;
+        this.isCtrl = true;
       } else if (event.key == "Meta" && event.type == "keyup") {
-        this.canSelect = false;
-        if (this.selectBox) {
-          this.selectBox.remove();
-        }
+        this.isCtrl = false;
+
+        // if (this.selectBox) {
+        //   this.selectBox.remove();
+        // }
       }
     },
     clickEvent(event) {
@@ -274,14 +257,15 @@ export default {
       });
     },
     leftmousedownEvent(event) {
-      if (!this.canSelect) {
+      if (!this.isCtrl) {
         this.startPen(event);
+      } else {
+        this.startSelect(event);
       }
     },
     leftmouseupEvent(event) {
-      if (!this.canSelect) {
-        this.endPen(event);
-      }
+      this.endPen(event);
+      this.endSelect();
     },
     mousemoveEvent(event) {
       event.preventDefault();
@@ -291,6 +275,8 @@ export default {
         this.pen(event);
       } else if (this.canDrag) {
         this.drag(event, this.dragData);
+      } else if (this.canSelect) {
+        this.select(event);
       }
     },
     mouseleaveEvent() {},
@@ -347,8 +333,7 @@ export default {
 
     // Methods
     startLink(event, data) {
-      const isBlock = event.target.classList.contains("block");
-      if (isBlock) {
+      if (data.type == "block") {
         if (!this.arrowStartMiddle) {
           this.linkStatus = true;
           this.arrowStartMiddle = data;
@@ -417,8 +402,9 @@ export default {
       this.dragData = null;
     },
     // For selection with Snap.js
-    startSelect(x, y, event) {
-      if (this.canSelect) {
+    startSelect(event) {
+      if (this.isCtrl) {
+        this.canSelect = true;
         var xx =
           this.ictm.a * event.offsetX +
           this.ictm.c * event.offsetY +
@@ -427,41 +413,46 @@ export default {
           this.ictm.b * event.offsetX +
           this.ictm.d * event.offsetY +
           this.ictm.f;
-
-        this.selectBox = this.svg.rect(xx, yy, 0, 0).attr("stroke", "#9999FF");
+        this.selectBoxParam.x = xx;
+        this.selectBoxParam.y = yy;
       }
     },
     endSelect() {
-      if (this.canSelect) {
-        //get the bounds of the selections
-        var bounds = this.selectBox.getBBox();
-        // var items = set.selectAll("*");
-        this.selectItems = this.svg.selectAll(".Middle");
+      this.canSelect = false;
+      if (this.$refs.selectBox) {
+        var el = document.querySelectorAll(".Middle");
 
-        this.selectItems.forEach((el) => {
-          //here, we want to get the x,y vales of each object regardless of what sort of shape it is, but rect uses rx and ry, circle uses cx and cy, etc
-          //so we'll see if the bounding boxes intercept instead
-          var mybounds = el.getBBox();
-
-          //do bounding boxes overlap?
-          //is one of this object's x extremes between the selection's xextremes?
-          if (Snap.path.isBBoxIntersect(mybounds, bounds)) {
-            // selections.append(el);
-            this.addSelectedMiddle(el.attr("id"));
+        el.forEach((el) => {
+          if (isBBoxIntersect(this.$refs.selectBox, el)) {
+            this.addSelectedMiddle(el.getAttribute("id"));
           }
         });
-        this.selectBox.remove();
-        this.selectBox = null;
 
-        // selections.attr("opacity", 0.5);
+        this.selectBoxParam = {
+          width: "0",
+          height: "0",
+          x: "0",
+          y: "0",
+          fill: "none",
+          stroke: "#9999FF",
+        };
       }
     },
-    select(dx, dy) {
+    select(event) {
       if (this.canSelect) {
         var xoffset = 0;
         var yoffset = 0;
-        dx = this.ictm.a * dx;
-        dy = this.ictm.d * dy;
+
+        var dx =
+          this.ictm.a * event.offsetX +
+          this.ictm.c * event.offsetY +
+          this.ictm.e -
+          this.selectBoxParam.x;
+        var dy =
+          this.ictm.b * event.offsetX +
+          this.ictm.d * event.offsetY +
+          this.ictm.f -
+          this.selectBoxParam.y;
         if (dx < 0) {
           xoffset = dx;
           dx = -1 * dx;
@@ -471,11 +462,9 @@ export default {
           yoffset = dy;
           dy = -1 * dy;
         }
-
-        this.selectBox.transform("T" + xoffset + "," + yoffset);
-        this.selectBox.attr("width", dx);
-        this.selectBox.attr("height", dy);
-        this.selectBox.attr("fill", "none");
+        this.selectBoxParam.transform = `translate(${xoffset} ${yoffset})`;
+        this.selectBoxParam.width = dx;
+        this.selectBoxParam.height = dy;
       }
     },
   },

@@ -19,6 +19,7 @@ class Element {
             // this.type = type
             // this.event = event
             this.type = null
+            this.contenteditable = false
             this.mainPage = false
             this.parent = parent
             this.id = this._uuid()
