@@ -8,9 +8,10 @@ const state = () => ({
     svg: null,
     ctm: null,
     ictm: null,
-    FocusingElementId: null,
+    selectedMiddle: {},
     alldata: new Block(),
     self: {},
+    focusElements: [],
     arrowObject: null,
     NumOfChilds: [0],
     coor: []
@@ -35,19 +36,7 @@ const mutations = {
             svg: null,
             ctm: null,
             ictm: null,
-            // IdArray: [],
-            FocusingElementId: null,
-            alldata: {
-                id: "1",
-                type: "block",
-                props: {},
-                childs: [],
-                mainPage: true,
-                parent: null,
-                arrows: { start: [], end: [] },
-                content: ""
-
-            },
+            alldata: {},
             self: {},
             arrowObject: null,
             NumOfChilds: [0],
@@ -68,14 +57,16 @@ const mutations = {
         state.svg = null
     },
     setCTM(state) {
+
         state.ctm = state.svg.svg.getCTM()
         state.ictm = state.ctm.inverse()
+
         // todo: It seems like somthing getting wrong when wheel rollong too fast
     },
     setViewBox(state, { type, event }) {
         if (type == "pen") {
-            state.self.viewBox.minX -= event.movementX
-            state.self.viewBox.minY -= event.movementY
+            state.self.viewBox.minX -= state.ictm.a * event.movementX
+            state.self.viewBox.minY -= state.ictm.d * event.movementY
         } else if (type == "zoom") {
             state.self.viewBox.width = (state.self.viewBox.width + event.deltaY >= 0) ? state.self.viewBox.width + event.deltaY : 0;
             state.self.viewBox.height = (state.self.viewBox.height + event.deltaY >= 0) ? state.self.viewBox.height + event.deltaY : 0
@@ -92,9 +83,11 @@ const mutations = {
 
 
     changeSelf(state, child) {
+
         state.self.mainPage = false
         state.self = child
         state.self.mainPage = true
+
     },
     gobackSelf(state) {
         state.self.mainPage = false
@@ -135,9 +128,6 @@ const mutations = {
         state.self.childs.pop()
     },
 
-    changeFocusingElement(state, ElementId) {
-        state.FocusingElementId = ElementId
-    },
     // todo:delete
     addChildNum(state, level) {
         var t = level.parentCoor.reduce((ac, cur) => {
@@ -174,6 +164,36 @@ const mutations = {
         // dragData.props.styleObject.x = `${gridAttach(position.x)}`
         // dragData.props.styleObject.y = `${gridAttach(position.y)}`
     },
+    // For Middle edit
+    addSelectedMiddle(state, id) {
+
+        if (id in state.selectedMiddle) {
+            state.selectedMiddle[id].class.Selected = false
+            state.selectedMiddle[id].contenteditable = false
+
+            delete state.selectedMiddle[id]
+        } else {
+            state.self.childs.every((el) => {
+                if (el.id == id) {
+                    state.selectedMiddle[id] = el
+                    el.class.Selected = true
+                    el.contenteditable = true
+                    return false
+                } else {
+                    return true
+                }
+            })
+        }
+
+
+    },
+
+    cancelSelectedMiddle(state) {
+        for (var key in state.selectedMiddle) {
+            state.selectedMiddle[key].class.Selected = false
+        }
+        state.selectedMiddle = {}
+    },
     deleteMiddle(state, data) {
         let ids = []
         ids.push(data.id)
@@ -195,8 +215,15 @@ const mutations = {
         });
         state.self.childs = a
     },
+    setContentEditable(state, data) {
+        data.contenteditable = true
+    },
 
     // For Block.vue
+    resizeBlock(state, { data, ref }) {
+        data.props.styleObject.width = ref.clientWidth + 5
+        data.props.styleObject.height = ref.clientHeight + 5
+    },
     editContent(state, { data, content }) {
         data.content = content
         // data.props.styleObject.height = ref.clientHeight
@@ -210,7 +237,7 @@ const mutations = {
     },
 
 
-
+    // For file
     setFileId(state, fileId) {
         state.fileId = fileId
     },

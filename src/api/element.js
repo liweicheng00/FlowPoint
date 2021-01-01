@@ -19,11 +19,16 @@ class Element {
             // this.type = type
             // this.event = event
             this.type = null
+            this.contenteditable = false
             this.mainPage = false
             this.parent = parent
             this.id = this._uuid()
             this.viewBox = { minX: 0, minY: 0, width: global.SVG_INITIAL_WIDTH, height: global.SVG_INITIAL_HEIGHT }
             this.childs = []
+            this.class = {
+                Middle: true,
+                Selected: false
+            }
         }
     }
     _uuid() {
@@ -146,17 +151,17 @@ class Block extends Element {
             styleObject: {
                 width: "100",
                 height: "30",
-                stroke: "black",
-                rx: "3",
+                // stroke: "transparent",
+                // rx: "3",
                 fill: "transparent",
-                "stroke-width": "1",
+                // "stroke-width": "1",
                 x: "0",
                 y: "0",
             },
         }
+        this.class[this.type] = true
     }
     setPosition(event, ictm) {
-
         var x =
             event.offsetX -
             parseInt(this.props.styleObject.width) / ictm.a / 2;
@@ -187,7 +192,7 @@ class Arrow extends Element {
             arrowStartMiddle: null,
             arrowEndMiddle: null,
         }
-
+        this.class[this.type] = true
     }
     setStartMiddle(arrowStartMiddle) {
         this.props.arrowStartMiddle = arrowStartMiddle

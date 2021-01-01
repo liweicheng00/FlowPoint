@@ -121,9 +121,10 @@ export default {
   },
   methods: {
     rectClick() {
-      console.log("send changeSelf");
-      this.$bus.$emit("changeSelf");
+      console.log("1");
       this.$store.commit("editor/changeSelf", this.data);
+      this.$store.commit("editor/setCTM");
+      console.log("2");
     },
     rectMouseenter() {
       this.$bus.$emit("TreeBlock:mouseenter", this.data);
@@ -131,6 +132,10 @@ export default {
     rectMouseleave() {
       this.$bus.$emit("TreeBlock:mouseleave");
     },
+  },
+  beforeDestroy: function () {
+    this.$bus.$off("TreeBlock:mouseenter");
+    this.$bus.$off("TreeBlock:mouseleave");
   },
   destroyed() {
     this.$store.commit("editor/reduceChildNum", this.l);

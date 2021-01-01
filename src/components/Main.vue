@@ -1,9 +1,11 @@
 <template>
   <div class="block">
+    <!-- <button @click="testFunction">click</button> -->
     <svg
+      style="border: 1px solid black"
       class="Svg"
       ref="svg"
-      id="block"
+      id="mainSVG"
       version="2"
       baseProfile="full"
       xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +18,7 @@
       @dblclick.self="dblclickEvent"
       @mousedown.left="leftmousedownEvent"
       @mouseup.left="leftmouseupEvent"
-      @mousemove="mousemoveEvent"
+      @mousemove.self="mousemoveEvent"
       @mouseleave="mouseleaveEvent"
       @wheel="wheelEvent"
     >
@@ -35,6 +37,7 @@
           @mouseleave="middleMouseLeaveEvent"
         />
       </g>
+      <rect v-if="canSelect" ref="selectBox" v-bind="selectBoxParam"></rect>
     </svg>
     <!-- <p>Save time:{{ saveTime }}</p> -->
   </div>
@@ -42,8 +45,9 @@
 
 <script>
 import Middle from "@/components/Middle.vue";
-import OperateSVG from "@/api/svg.js";
+import OperateSVG, { isBBoxIntersect } from "@/api/svg.js";
 import { mapActions, mapMutations, mapState } from "vuex";
+// import Snap from "snapsvg-cjs";
 
 export default {
   components: {
@@ -56,6 +60,19 @@ export default {
       undone: [],
       newMutation: true,
 
+      svg: null,
+      selectItems: null,
+      selectBoxParam: {
+        width: "0",
+        height: "0",
+        x: "0",
+        y: "0",
+        fill: "none",
+        stroke: "#9999FF",
+      },
+
+      canSelect: false,
+      isCtrl: false,
       canZoom: false,
       canPen: false,
       canDrag: false,
@@ -77,6 +94,7 @@ export default {
       fileName: (state) => state.fileName,
       fileId: (state) => state.fileId,
       saveTime: (state) => state.saveTime,
+      ictm: (state) => state.ictm,
     }),
     childs() {
       return this.self.childs;
@@ -88,6 +106,9 @@ export default {
       if (!this.self.viewBox) {
         return "0 0 0 0";
       }
+      this.$nextTick(() => {
+        this.setCTM();
+      });
       return `${this.self.viewBox.minX} ${this.self.viewBox.minY} ${this.self.viewBox.width} ${this.self.viewBox.height}`;
     },
   },
@@ -116,6 +137,9 @@ export default {
 
     window.addEventListener("resize", () => {
       this.windowresizeEvent();
+      this.$nextTick(() => {
+        this.setCTM();
+      });
     });
     // callsaveFile when close window
     // window.addEventListener("beforeunload", (event) => {
@@ -147,6 +171,12 @@ export default {
     this.setBeginData();
     this.getSVG(this.$refs);
     this.setCTM();
+<<<<<<< HEAD
+=======
+
+    window.addEventListener("keyup", this.keypressEvent);
+    window.addEventListener("keydown", this.keypressEvent);
+>>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
   },
   updated() {
     // this.saveFile();
@@ -169,6 +199,8 @@ export default {
       "addChildNum",
       "reduceChildNum",
       "setBlockPosition",
+      "addSelectedMiddle",
+      "cancelSelectedMiddle",
       "deleteMiddle",
       "editContent",
       "resetBlockHeight",
@@ -195,6 +227,7 @@ export default {
         this.saveFile();
       }
     },
+<<<<<<< HEAD
     redo() {
       let commit = this.undone.pop();
       this.newMutation = false;
@@ -220,14 +253,36 @@ export default {
     windowresizeEvent() {
       this.props.clientHeight = this.$el.clientHeight;
       this.props.clientWidth = this.$el.clientWidth;
+=======
+    windowresizeEvent() {
+      this.props.clientHeight = this.$el.clientHeight;
+      this.props.clientWidth = this.$el.clientWidth;
+    },
+    keypressEvent(event) {
+      if (event.key == "Meta" && event.type == "keydown") {
+        this.isCtrl = true;
+      } else if (event.key == "Meta" && event.type == "keyup") {
+        this.isCtrl = false;
+
+        // if (this.selectBox) {
+        //   this.selectBox.remove();
+        // }
+      }
+>>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
     },
     clickEvent(event) {
       if (this.linkStatus) {
         this.endLink(event);
       }
+      if (!this.canSelect && event.target == this.$refs.svg) {
+        this.cancelSelectedMiddle();
+      }
     },
     dblclickEvent(event) {
+<<<<<<< HEAD
       this.setCTM();
+=======
+>>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
       this.addElement({
         type: "block",
         params: {
@@ -237,19 +292,26 @@ export default {
       });
     },
     leftmousedownEvent(event) {
-      this.startPen(event);
+      if (!this.isCtrl) {
+        this.startPen(event);
+      } else {
+        this.startSelect(event);
+      }
     },
     leftmouseupEvent(event) {
       this.endPen(event);
+      this.endSelect();
     },
     mousemoveEvent(event) {
       event.preventDefault();
       if (this.linkStatus) {
-        this.Link(event);
+        this.link(event);
       } else if (this.canPen) {
         this.pen(event);
       } else if (this.canDrag) {
         this.drag(event, this.dragData);
+      } else if (this.canSelect) {
+        this.select(event);
       }
     },
     mouseleaveEvent() {},
@@ -303,10 +365,10 @@ export default {
         styles: this.$store.state.user.blockStyles,
       }).save();
     },
+
     // Methods
     startLink(event, data) {
-      const isBlock = event.target.classList.contains("block");
-      if (isBlock) {
+      if (data.type == "block") {
         if (!this.arrowStartMiddle) {
           this.linkStatus = true;
           this.arrowStartMiddle = data;
@@ -323,10 +385,13 @@ export default {
       this.arrowStartMiddle = null;
       this.arrowEndMiddle = null;
     },
-    Link(event) {
+    link(event) {
       event.preventDefault();
       if (!this.$store.state.editor.arrowObject) {
+<<<<<<< HEAD
         //
+=======
+>>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
         this.addElement({
           type: "arrow",
           params: {
@@ -353,12 +418,19 @@ export default {
     },
     pen(event) {
       this.setViewBox({ type: "pen", event: event });
+<<<<<<< HEAD
       this.setCTM();
+=======
+>>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
     },
+
     zoom(event) {
       event.preventDefault();
       this.setViewBox({ type: "zoom", event: event });
+<<<<<<< HEAD
       this.setCTM();
+=======
+>>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
     },
     startDrag(data) {
       this.canDrag = true;
@@ -376,9 +448,77 @@ export default {
       this.canDrag = false;
       this.dragData = null;
     },
+    // For selection with Snap.js
+    startSelect(event) {
+      if (this.isCtrl) {
+        this.canSelect = true;
+        var xx =
+          this.ictm.a * event.offsetX +
+          this.ictm.c * event.offsetY +
+          this.ictm.e;
+        var yy =
+          this.ictm.b * event.offsetX +
+          this.ictm.d * event.offsetY +
+          this.ictm.f;
+        this.selectBoxParam.x = xx;
+        this.selectBoxParam.y = yy;
+      }
+    },
+    endSelect() {
+      this.canSelect = false;
+      if (this.$refs.selectBox) {
+        var el = document.querySelectorAll(".Middle");
+
+        el.forEach((el) => {
+          if (isBBoxIntersect(this.$refs.selectBox, el)) {
+            this.addSelectedMiddle(el.getAttribute("id"));
+          }
+        });
+
+        this.selectBoxParam = {
+          width: "0",
+          height: "0",
+          x: "0",
+          y: "0",
+          fill: "none",
+          stroke: "#9999FF",
+        };
+      }
+    },
+    select(event) {
+      if (this.canSelect) {
+        var xoffset = 0;
+        var yoffset = 0;
+
+        var dx =
+          this.ictm.a * event.offsetX +
+          this.ictm.c * event.offsetY +
+          this.ictm.e -
+          this.selectBoxParam.x;
+        var dy =
+          this.ictm.b * event.offsetX +
+          this.ictm.d * event.offsetY +
+          this.ictm.f -
+          this.selectBoxParam.y;
+        if (dx < 0) {
+          xoffset = dx;
+          dx = -1 * dx;
+        }
+
+        if (dy < 0) {
+          yoffset = dy;
+          dy = -1 * dy;
+        }
+        this.selectBoxParam.transform = `translate(${xoffset} ${yoffset})`;
+        this.selectBoxParam.width = dx;
+        this.selectBoxParam.height = dy;
+      }
+    },
   },
   beforeDestroy() {
     this.clearSVG();
+    window.removeEventListener("keyup", this.keypressEvent);
+    window.removeEventListener("keydown", this.keypressEvent);
   },
 };
 </script>

@@ -1,17 +1,24 @@
 <template>
   <g>
-    <rect class="block" :id="data.id" v-bind="data.props.styleObject" />
-    <foreignObject v-bind="data.props.styleObject" pointer-events="none">
+    <!-- <rect class="block" v-bind="data.props.styleObject" /> -->
+    <foreignObject ref="ob" v-bind="data.props.styleObject">
       <body xmlns="http://www.w3.org/1999/xhtml">
-        <div ref="content" class="fo" :class="[fo_content]">
-          <div v-html="data.content"></div>
-        </div>
+        <div
+          tabindex="-1"
+          ref="content"
+          class="fo"
+          :class="[fo_content]"
+          :contenteditable="data.contenteditable"
+          v-html="html_test"
+          @input="onInput"
+        ></div>
       </body>
     </foreignObject>
   </g>
 </template>
 
 <script>
+import { mapMutations, mapState } from "vuex";
 export default {
   props: {
     data: Object,
@@ -19,75 +26,38 @@ export default {
   data: function () {
     return {
       ifFocus: false,
-      allowMove: false,
-      // styleDefault: {
-      //   width: "100",
-      //   height: "30",
-      //   stroke: "black",
-      //   rx: "3",
-      //   fill: "transparent",
-      //   "stroke-width": "1",
-      //   x: "0",
-      //   y: "0",
-      // },
       fo_content: "",
+      html_test: "<li><strong>sd</string></li><li></li>",
     };
   },
   created: function () {
-    // get content from TextEditor
-    this.$bus.$on("TextEditor:change", (content, id) => {
-      if (this.ifFocus && this.data.id == id) {
-        this.$store.commit("editor/editContent", {
-          data: this.data,
-          content: content,
-        });
-      }
-    });
     this.$bus.$on("Style:change", (style) => {
       if (this.ifFocus) {
         this.fo_content = style.name;
       }
     });
-    // this.onFocus();
-  },
-  updated() {
-    if (this.data.content != "") {
-      this.$store.commit("editor/resetBlockHeight", {
-        data: this.data,
-        ref: this.$refs.content,
-      });
-    }
-  },
-  watch: {
-    focusingElementId: function (new_value) {
-      if (new_value == this.data.id) {
-        this.ifFocus = true;
-      } else {
-        this.ifFocus = false;
-      }
-    },
   },
   computed: {
+<<<<<<< HEAD
     focusingElementId: function () {
       return this.$store.state.editor.FocusingElementId;
     },
+=======
+    ...mapState("editor", {
+      isSelected: (state) => {
+        console.log("slelected change");
+
+        return state.selectedMiddle[0];
+      },
+    }),
+>>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
   },
-  mounted: function () {},
   methods: {
-    // onFocus() {
-    //   this.$store.commit("changeFocusingElement", this.data.id);
-    //   this.$bus.$emit("Block:focus", this.data.content, this.data.id);
-    // },
-    // resizeBody() {
-    //   console.log("here");
-    // },
-    // gridAttach(value, width) {
-    //   var a = value % width;
-    //   return a > width / 2 ? value + (width - a) : value - a;
-    // },
-  },
-  beforeDestroy: function () {
-    this.$bus.$off("TextEditor:change");
+    ...mapMutations("editor", ["resizeBlock"]),
+    onInput(event) {
+      // For changing rect and foriegnObject dimensions
+      this.resizeBlock({ data: this.data, ref: event.target });
+    },
   },
 };
 </script>
@@ -99,13 +69,10 @@ export default {
   padding: 2px;
   position: absolute;
 }
-.focus {
-  fill: greenyellow;
-}
+
 body {
   background: transparent;
-}
-.text {
-  padding: 3px;
+  height: 100%;
+  width: 100%;
 }
 </style>
