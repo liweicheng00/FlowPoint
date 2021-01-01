@@ -171,12 +171,9 @@ export default {
     this.setBeginData();
     this.getSVG(this.$refs);
     this.setCTM();
-<<<<<<< HEAD
-=======
 
     window.addEventListener("keyup", this.keypressEvent);
     window.addEventListener("keydown", this.keypressEvent);
->>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
   },
   updated() {
     // this.saveFile();
@@ -227,9 +224,6 @@ export default {
         this.saveFile();
       }
     },
-<<<<<<< HEAD
-    
-=======
     windowresizeEvent() {
       this.props.clientHeight = this.$el.clientHeight;
       this.props.clientWidth = this.$el.clientWidth;
@@ -244,7 +238,6 @@ export default {
         //   this.selectBox.remove();
         // }
       }
->>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
     },
     clickEvent(event) {
       if (this.linkStatus) {
@@ -255,9 +248,6 @@ export default {
       }
     },
     dblclickEvent(event) {
-<<<<<<< HEAD
-=======
->>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
       this.addElement({
         type: "block",
         params: {
@@ -363,9 +353,6 @@ export default {
     link(event) {
       event.preventDefault();
       if (!this.$store.state.editor.arrowObject) {
-<<<<<<< HEAD
-=======
->>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
         this.addElement({
           type: "arrow",
           params: {
@@ -392,17 +379,11 @@ export default {
     },
     pen(event) {
       this.setViewBox({ type: "pen", event: event });
-<<<<<<< HEAD
-=======
->>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
     },
 
     zoom(event) {
       event.preventDefault();
       this.setViewBox({ type: "zoom", event: event });
-<<<<<<< HEAD
-=======
->>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
     },
     startDrag(data) {
       this.canDrag = true;
