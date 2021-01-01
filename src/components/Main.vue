@@ -64,13 +64,6 @@ export default {
       props: {
         clientHeight: null,
         clientWidth: null,
-        // viewBox: {
-        //   "min-x": 0,
-        //   "min-y": 0,
-        //   width: null,
-        //   height: null,
-        //   startPoint: [0, 0],
-        // },
       },
       arrowEndMiddle: null,
       arrowStartMiddle: null,
@@ -79,31 +72,12 @@ export default {
   },
 
   computed: {
-    // viewBox: {
-    //   get() {
-    //     // if (this.props.clientHeight) {
-    //     //   return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
-    //     // } else {
-    //     //   return "0 0 0 0";
-    //     // }
-    //     return `${this.props.viewBox["min-x"]} ${this.props.viewBox["min-y"]} ${this.props.viewBox.width} ${this.props.viewBox.height}`;
-    //   },
-    //   set(newValue) {
-    //     this.props.viewBox["min-x"] = newValue[0];
-    //     this.props.viewBox["min-y"] = newValue[1];
-    //     this.props.viewBox["width"] = newValue[2];
-    //     this.props.viewBox["height"] = newValue[3];
-    //   },
-    // },
     ...mapState("editor", {
       self: (state) => state.self,
       fileName: (state) => state.fileName,
       fileId: (state) => state.fileId,
       saveTime: (state) => state.saveTime,
     }),
-    // self() {
-    //   return this.$store.state.editor.self;
-    // },
     childs() {
       return this.self.childs;
     },
@@ -118,12 +92,6 @@ export default {
     },
   },
   created() {
-    // this.initViewbox();
-    // console.log(zoom);
-    // this.$nextTick(() => {
-    //   // this.$store.commit("getSVG", this.$refs);
-    //   // this.$store.commit("setCTM");
-    // });
     this.$bus.$on("global:new file", () => {
       this.callSaveFile();
       this.clearFileName();
@@ -176,19 +144,9 @@ export default {
   },
   mounted: function () {
     this.windowresizeEvent();
-
-    // this.$store.commit("setBeginData");
-    // this.$store.commit("getSVG", this.$refs);
     this.setBeginData();
     this.getSVG(this.$refs);
     this.setCTM();
-
-    // this.$store.commit("setCTM");
-    // console.log(
-    //   Object.keys(
-    //     this.$store._modules.root._children.editor._rawModule.mutations
-    //   )
-    // );
   },
   updated() {
     // this.saveFile();
@@ -200,7 +158,6 @@ export default {
       "clearSVG",
       "setCTM",
       "setViewBox",
-      // "setInitViewbox",
       "setBeginData",
       "changeSelf",
       "gobackSelf",
@@ -241,7 +198,6 @@ export default {
     redo() {
       let commit = this.undone.pop();
       this.newMutation = false;
-      // this.$store.commit(`${commit.type}`, commit.payload);
       this[`${commit.type}`](commit.payload);
       this.newMutation = true;
     },
@@ -264,30 +220,14 @@ export default {
     windowresizeEvent() {
       this.props.clientHeight = this.$el.clientHeight;
       this.props.clientWidth = this.$el.clientWidth;
-      // this.props.viewBox.height = this.props.clientHeight;
-      // this.props.viewBox.width = this.props.clientWidth;
-      // // for Preview.vue initial size
-      // this.$store.commit("setInitViewbox", [
-      //   this.props.clientWidth,
-      //   this.props.clientHeight,
-      // ]);
     },
     clickEvent(event) {
       if (this.linkStatus) {
-        // this.$store.commit("cancelLink");
         this.endLink(event);
       }
     },
     dblclickEvent(event) {
-      // this.$store.commit("addElement", {
-      //   type: "block",
-      //   params: {
-      //     event: event,
-      //     parent: this.self,
-      //   },
-      // });
       this.setCTM();
-
       this.addElement({
         type: "block",
         params: {
@@ -330,8 +270,6 @@ export default {
       this.endLink(event, data);
     },
     middleDblClickEvent(event, child) {
-      // this.initViewbox();
-      // this.$store.commit("changeSelf", child);
       this.changeSelf(child);
     },
     middleMouseEnterEvent(event, data) {
@@ -354,8 +292,6 @@ export default {
     // Tool EventBus Event Methods
     backtoolclickEvent() {
       if (this.parent) {
-        // this.initViewbox();
-        // this.$store.commit("gobackSelf");
         this.gobackSelf();
       } else {
         // todo: disable button
@@ -368,9 +304,6 @@ export default {
       }).save();
     },
     // Methods
-    // initViewbox() {
-    //   this.viewBox = [0, 0, this.SVG_INITIAL_WIDTH, this.SVG_INITIAL_HEIGHT];
-    // },
     startLink(event, data) {
       const isBlock = event.target.classList.contains("block");
       if (isBlock) {
@@ -383,10 +316,8 @@ export default {
     endLink() {
       this.linkStatus = false;
       if (this.arrowEndMiddle) {
-        // this.$store.commit("endLink", this.arrowEndMiddle);
         this.stopLink(this.arrowEndMiddle);
       } else {
-        // this.$store.commit("cancelLink");
         this.cancelLink();
       }
       this.arrowStartMiddle = null;
@@ -395,13 +326,7 @@ export default {
     Link(event) {
       event.preventDefault();
       if (!this.$store.state.editor.arrowObject) {
-        // this.$store.commit("addElement", {
-        //   type: "arrow",
-        //   params: {
-        //     event: event,
-        //     arrowStartMiddle: this.arrowStartMiddle,
-        //   },
-        // });
+        //
         this.addElement({
           type: "arrow",
           params: {
@@ -410,10 +335,6 @@ export default {
           },
         });
       } else {
-        // this.$store.commit("setArrowPosition", {
-        //   event: event,
-        //   arrowEndMiddle: this.arrowEndMiddle,
-        // });
         this.setArrowPosition({
           event: event,
           arrowEndMiddle: this.arrowEndMiddle,
@@ -425,10 +346,6 @@ export default {
       if (isSvg) {
         this.canPen = true;
         this.setViewBox({ type: "pen", event: event });
-        // this.props.viewBox.startPoint = [
-        //   this.props.viewBox["min-x"] + event.offsetX,
-        //   this.props.viewBox["min-y"] + event.offsetY,
-        // ];
       }
     },
     endPen() {
@@ -436,24 +353,11 @@ export default {
     },
     pen(event) {
       this.setViewBox({ type: "pen", event: event });
-
-      // this.props.viewBox["min-x"] =
-      //   this.props.viewBox.startPoint[0] - event.offsetX;
-      // this.props.viewBox["min-y"] =
-      //   this.props.viewBox.startPoint[1] - event.offsetY;
-      // this.$store.commit("setCTM");
       this.setCTM();
     },
     zoom(event) {
       event.preventDefault();
       this.setViewBox({ type: "zoom", event: event });
-
-      // var w = this.props.viewBox.width + event.deltaY;
-      // var h = this.props.viewBox.height + event.deltaY;
-
-      // this.props.viewBox.width = w >= 0 ? w : 0;
-      // this.props.viewBox.height = h >= 0 ? h : 0;
-      // this.$store.commit("setCTM");
       this.setCTM();
     },
     startDrag(data) {
@@ -462,28 +366,10 @@ export default {
     },
     drag(event, dragData) {
       if (this.canDrag) {
-        // var ictm = this.$store.state.editor.ictm;
-        // var x =
-        //   event.offsetX -
-        //   parseInt(dragData.props.styleObject.width) / ictm.a / 2;
-        // var y =
-        //   event.offsetY -
-        //   parseInt(dragData.props.styleObject.height) / ictm.a / 2;
-        // var x1 = ictm.a * x + ictm.c * y + ictm.e;
-        // var y1 = ictm.b * x + ictm.d * y + ictm.f;
-
-        // this.$store.commit("setBlockPosition", {
-        //   dragData: dragData,
-        //   position: { x: x1, y: y1 },
-        // });
         this.setBlockPosition({
           dragData: dragData,
           event: event,
         });
-        // this.setBlockPosition({
-        //   dragData: dragData,
-        //   position: { x: x1, y: y1 },
-        // });
       }
     },
     endDrag() {
@@ -492,7 +378,6 @@ export default {
     },
   },
   beforeDestroy() {
-    // this.$store.commit("clearSVG");
     this.clearSVG();
   },
 };

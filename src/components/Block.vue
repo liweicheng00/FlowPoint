@@ -68,37 +68,6 @@ export default {
     },
   },
   computed: {
-    // styleObject: function () {
-    //   if (this.data.props.mouseclickposition) {
-    //     this.$store.commit("editor/setCTM");
-
-    //     var ictm = this.$store.state.editor.ictm;
-    //     var x =
-    //       this.data.props.mouseclickposition[0] -
-    //       parseInt(this.styleDefault.width) / ictm.a / 2;
-    //     var y =
-    //       this.data.props.mouseclickposition[1] -
-    //       parseInt(this.styleDefault.height) / ictm.a / 2;
-
-    //     var x1 = ictm.a * x + ictm.c * y + ictm.e;
-    //     var y1 = ictm.b * x + ictm.d * y + ictm.f;
-    //     var style = Object.assign(this.styleDefault, {
-    //       color: "red",
-    //       x: `${x1}`,
-    //       y: `${y1}`,
-    //     });
-    //     this.$store.commit("editor/clearInitPosition", {
-    //       data: this.data,
-    //       style: style,
-    //     });
-    //     return style;
-    //   } else {
-    //     return this.data.props.styleObject;
-    //   }
-    // },
-    // textObject: function () {
-    //   return Object.assign(this.textDefault, {});
-    // },
     focusingElementId: function () {
       return this.$store.state.editor.FocusingElementId;
     },
