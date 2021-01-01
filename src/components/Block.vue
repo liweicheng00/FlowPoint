@@ -1,12 +1,18 @@
 <template>
   <g>
-    <!-- <rect class="block" v-bind="data.props.styleObject" /> -->
-    <foreignObject ref="ob" v-bind="data.props.styleObject">
+    <rect v-bind="data.props.styleObject" />
+    <foreignObject
+      ref="ob"
+      :x="data.props.styleObject.x"
+      :y="data.props.styleObject.y"
+      :width="data.props.styleObject.width"
+      :height="data.props.styleObject.height"
+    >
       <body xmlns="http://www.w3.org/1999/xhtml">
         <div
           tabindex="-1"
           ref="content"
-          class="fo"
+          class="d-text"
           :class="[fo_content]"
           :contenteditable="data.contenteditable"
           v-html="html_test"

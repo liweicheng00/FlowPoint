@@ -151,13 +151,17 @@ class Block extends Element {
             styleObject: {
                 width: "100",
                 height: "30",
-                // stroke: "transparent",
-                // rx: "3",
+                stroke: "black",
+                rx: "3",
                 fill: "transparent",
-                // "stroke-width": "1",
+                "stroke-width": "1",
                 x: "0",
                 y: "0",
             },
+            // TODO: For foreignObject position 
+            textObject: {
+
+            }
         }
         this.class[this.type] = true
     }

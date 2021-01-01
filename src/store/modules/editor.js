@@ -30,26 +30,6 @@ const actions = {
 
 // mutations
 const mutations = {
-
-    emptyState(state) {
-        let i = {
-            svg: null,
-            ctm: null,
-            ictm: null,
-            alldata: {},
-            self: {},
-            arrowObject: null,
-            NumOfChilds: [0],
-            coor: [],
-        }
-
-        for (var key in state) {
-            state.key = i[key]
-        }
-        console.log(state)
-
-
-    },
     getSVG(state, ref) {
         state.svg = ref
     },
@@ -221,6 +201,7 @@ const mutations = {
 
     // For Block.vue
     resizeBlock(state, { data, ref }) {
+        // TODO: adjust
         data.props.styleObject.width = ref.clientWidth + 5
         data.props.styleObject.height = ref.clientHeight + 5
     },
