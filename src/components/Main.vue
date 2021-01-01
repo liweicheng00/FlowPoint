@@ -228,31 +228,7 @@ export default {
       }
     },
 <<<<<<< HEAD
-    redo() {
-      let commit = this.undone.pop();
-      this.newMutation = false;
-      this[`${commit.type}`](commit.payload);
-      this.newMutation = true;
-    },
-    undo() {
-      this.undone.push(this.done.pop());
-      this.newMutation = false;
-      // this.$store.commit(this.EMPTY_STATE);
-      this[this.EMPTY_STATE]();
-
-      this.done.forEach((mutation) => {
-        // this.$store.commit(`${mutation.type}`, mutation.payload);
-        console.log(`${mutation.type.split("/")[1]}`, mutation.payload);
-
-        this[`${mutation.type.split("/")[1]}`](mutation.payload);
-
-        this.done.pop();
-      });
-      this.newMutation = true;
-    },
-    windowresizeEvent() {
-      this.props.clientHeight = this.$el.clientHeight;
-      this.props.clientWidth = this.$el.clientWidth;
+    
 =======
     windowresizeEvent() {
       this.props.clientHeight = this.$el.clientHeight;
@@ -280,7 +256,6 @@ export default {
     },
     dblclickEvent(event) {
 <<<<<<< HEAD
-      this.setCTM();
 =======
 >>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
       this.addElement({
@@ -389,7 +364,6 @@ export default {
       event.preventDefault();
       if (!this.$store.state.editor.arrowObject) {
 <<<<<<< HEAD
-        //
 =======
 >>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
         this.addElement({
@@ -419,7 +393,6 @@ export default {
     pen(event) {
       this.setViewBox({ type: "pen", event: event });
 <<<<<<< HEAD
-      this.setCTM();
 =======
 >>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
     },
@@ -428,7 +401,6 @@ export default {
       event.preventDefault();
       this.setViewBox({ type: "zoom", event: event });
 <<<<<<< HEAD
-      this.setCTM();
 =======
 >>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
     },
