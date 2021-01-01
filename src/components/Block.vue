@@ -38,11 +38,6 @@ export default {
     });
   },
   computed: {
-<<<<<<< HEAD
-    focusingElementId: function () {
-      return this.$store.state.editor.FocusingElementId;
-    },
-=======
     ...mapState("editor", {
       isSelected: (state) => {
         console.log("slelected change");
@@ -50,7 +45,6 @@ export default {
         return state.selectedMiddle[0];
       },
     }),
->>>>>>> 604fb02ab1f165e967ec4bfd41255d01da6bfb44
   },
   methods: {
     ...mapMutations("editor", ["resizeBlock"]),
